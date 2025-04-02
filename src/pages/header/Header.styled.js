@@ -7,7 +7,7 @@ export const HeaderRoot = styled.div`
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.colors.grey};
-  padding: 6px 24px;
+  padding: 6px 34px;
   box-sizing: border-box;
   & svg {
     cursor: pointer;

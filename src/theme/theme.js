@@ -13,7 +13,6 @@ const theme = {
         md: '1.625rem',  // 26px
         lg: '2.5rem',    // 40px
         xl: '3.375rem',  // 54px
-        xxl: '4.375rem', // 70px
     },
 
     colors: {
@@ -21,6 +20,7 @@ const theme = {
         black: '#323232',
         orange: '#F29F05',
         lightOrange: '#FEF5E6',
+        green: '#267365',
         red: '#FF0000',
         dark: '#4C4851',
         lightGrey: '#EEEEEE',

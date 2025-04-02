@@ -5,18 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/assets/images/Logo.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/common/Typography.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/header/Header.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/header/Header.styled.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/theme/theme.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/images/BannerImage.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/CommonButton.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/css/CommonStyle.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/home/Banner.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/home/Home.styled.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/images/Logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/Typography.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/Typography.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/header/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/header/Header.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/header/Header.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/header/Header.styled.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/home/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/theme/theme.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme/theme.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +70,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "publishing",
-    "last_opened_file_path": "/Users/jieun/Desktop/hi_workspace/bangkoo-frontend/src/pages",
+    "last_opened_file_path": "/Users/jieun/Desktop/hi_workspace/bangkoo-frontend/src/assets/images",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -85,9 +84,9 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/pages" />
-      <recent name="$PROJECT_DIR$/src/pages/home" />
       <recent name="$PROJECT_DIR$/src/assets/images" />
+      <recent name="$PROJECT_DIR$/src/pages/home" />
+      <recent name="$PROJECT_DIR$/src/pages" />
       <recent name="$PROJECT_DIR$/src/assets/fonts" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -121,7 +120,7 @@
       <workItem from="1743496082272" duration="3542000" />
       <workItem from="1743502991731" duration="242000" />
       <workItem from="1743503261838" duration="1431000" />
-      <workItem from="1743551066012" duration="8718000" />
+      <workItem from="1743551066012" duration="17130000" />
     </task>
     <servers />
   </component>
