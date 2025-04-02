@@ -14,7 +14,7 @@ const Header = () => {
     return (
         <HeaderRoot>
             <Logo onClick={goToMain} />
-            <Text size="sm" weight={600} style={{cursor: 'pointer'}}>로그인</Text>
+            <Text size="sm" $weight={600} style={{cursor: 'pointer'}}>로그인</Text>
         </HeaderRoot>
     );
 };
