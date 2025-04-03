@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import banner from "../../assets/images/BannerImage.png"
 
-export const HomeRoot = styled.div`
+// 배너
+export const BannerRoot = styled.div`
   width: 100%;
   height: 450px;
   box-sizing: border-box;
@@ -30,7 +31,7 @@ export const HomeRoot = styled.div`
   }
 `;
 
-export const HomeTextStyle = styled.p`
+export const BannerText = styled.p`
   position: relative;
   z-index: 10;
   margin: 0;
@@ -38,11 +39,48 @@ export const HomeTextStyle = styled.p`
   font-weight: 600;
   color: ${({ theme }) => theme.colors.white};
   text-align: center;
-  line-height: 68px;
+  line-height: 55px;
   margin-bottom: ${({ theme }) => theme.spacing.lg};
   text-shadow: 0 3px 4px rgba(0, 0, 0, 0.25);
   & span {
-    font-size: ${({ theme }) => theme.fontSizes.xl};
     font-weight: 900;
+  }
+`;
+
+// STEP
+export const StepRoot = styled.div`
+  width: 100%;
+  height: 460px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 16px;
+  box-sizing: border-box;
+  background-color: ${({ theme, type }) =>
+          type === "basic" ? theme.colors.white : theme.colors.lightOrange};
+`;
+
+export const StepRootIn = styled.div`
+  width: ${({ theme }) => theme.display.base};
+  display: flex;
+  align-items: center;
+`;
+
+export const StepBox = styled.div`
+  width: 50%;
+`;
+
+export const ImageBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const TextBox = styled.div`
+  & p:first-child {
+    margin-bottom: ${({ theme }) => theme.spacing.sm};
+  }
+  & p:last-child {
+    margin-top: ${({ theme }) => theme.spacing.lg};
   }
 `;
