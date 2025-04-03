@@ -16,7 +16,7 @@ function StepComponent({type = 'basic', image, step, title, text}) {
                         <TextBox>
                             <Text size="xl" $weight={900} color="orange">{step}</Text>
                             <Text size="lg" $weight={700}>{title}</Text>
-                            <Text size="md" $weight={600}>{text}</Text>
+                            <Text size="base" $weight={600} $line={"1.4"}>{text}</Text>
                         </TextBox>
                     }
                 </StepBox>
@@ -29,7 +29,7 @@ function StepComponent({type = 'basic', image, step, title, text}) {
                         <TextBox>
                             <Text size="xl" $weight={900} color="orange">{step}</Text>
                             <Text size="lg" $weight={700}>{title}</Text>
-                            <Text size="md" $weight={600}>{text}</Text>
+                            <Text size="base" $weight={600} $line={"1.4"}>{text}</Text>
                         </TextBox>
                     }
                 </StepBox>

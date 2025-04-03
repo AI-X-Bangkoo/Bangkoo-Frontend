@@ -35,11 +35,11 @@ export const BannerText = styled.p`
   position: relative;
   z-index: 10;
   margin: 0;
-  font-size: ${({ theme }) => theme.fontSizes.lg};
+  font-size: ${({ theme }) => theme.fontSizes.xl};
   font-weight: 600;
   color: ${({ theme }) => theme.colors.white};
   text-align: center;
-  line-height: 55px;
+  line-height: 60px;
   margin-bottom: ${({ theme }) => theme.spacing.lg};
   text-shadow: 0 3px 4px rgba(0, 0, 0, 0.25);
   & span {
@@ -50,7 +50,7 @@ export const BannerText = styled.p`
 // STEP
 export const StepRoot = styled.div`
   width: 100%;
-  height: 460px;
+  height: 380px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -61,7 +61,7 @@ export const StepRoot = styled.div`
 `;
 
 export const StepRootIn = styled.div`
-  width: ${({ theme }) => theme.display.base};
+  width: ${({ theme }) => theme.display.sm};
   display: flex;
   align-items: center;
 `;
@@ -74,13 +74,30 @@ export const ImageBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  & img {
+    display: block;
+    transform: scale(0.9)
+  }
 `;
 
 export const TextBox = styled.div`
   & p:first-child {
-    margin-bottom: ${({ theme }) => theme.spacing.sm};
+    margin-bottom: ${({ theme }) => theme.spacing.xs};
   }
   & p:last-child {
-    margin-top: ${({ theme }) => theme.spacing.lg};
+    margin-top: ${({ theme }) => theme.spacing.md};
   }
+`;
+
+// 지금 시작하기 버
+export const StartRoot = styled.div`
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: ${({ theme }) => theme.spacing.xl};
+  background-color: ${({ theme }) => theme.colors.white};
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.1)
 `;

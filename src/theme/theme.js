@@ -2,6 +2,8 @@ const theme = {
     headerHeight: '86px',
 
     display: {
+        xs: '800px',
+        sm: '1000px',
         base: '1200px',
     },
 
@@ -10,9 +12,9 @@ const theme = {
         xs: '1rem',      // 16px
         sm: '1.125rem',  // 18px
         base: '1.25rem', // 20px
-        md: '1.625rem',  // 26px
-        lg: '2.5rem',    // 40px
-        xl: '3.375rem',  // 54px
+        md: '1.5rem',  // 24px
+        lg: '1.875rem',    // 30px
+        xl: '2.625rem',  // 42px
     },
 
     colors: {
