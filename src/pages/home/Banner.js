@@ -1,6 +1,5 @@
 import React from "react";
 import {BannerRoot, BannerText} from "./Home.styled"
-import CommonButton from '../../common/CommonButton';
 
 function Banner() {
     return (
@@ -10,17 +9,6 @@ function Banner() {
                 당신의 <span>공간</span>을 <span>AI</span>와 함께<br/>
                 새롭게 바꿔보세요
             </BannerText>
-            <CommonButton
-                width="220px"
-                height="50px"
-                fontSize="base"
-                fontWeight={900}
-                radius="full"
-                type="fill"
-            >
-                지금 시작하기
-            </CommonButton>
-
         </BannerRoot>
     )
 }

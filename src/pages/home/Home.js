@@ -1,6 +1,7 @@
 import React from "react";
 import Banner from "./Banner"
 import StepComponent from "./StepComponent"
+import StartComponent from "./StartComponent"
 import Step1 from "../../assets/images/Step1.png";
 import Step2 from "../../assets/images/Step2.png";
 import Step3 from "../../assets/images/Step3.png";
@@ -73,6 +74,8 @@ function Home() {
                     </span>
                 }
             />
+
+            <StartComponent />
         </div>
     );
 }

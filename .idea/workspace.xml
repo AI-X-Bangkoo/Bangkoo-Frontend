@@ -5,18 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/assets/images/Step1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/images/Step2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/images/Step3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/images/Step4.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/images/step5.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/home/StartComponent.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/home/StepComponent.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/common/Typography.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/Typography.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/home/Banner.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Banner.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/home/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/home/Home.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.styled.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/home/StartComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/StartComponent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/home/StepComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/StepComponent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/theme/theme.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme/theme.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -122,7 +118,7 @@
       <workItem from="1743502991731" duration="242000" />
       <workItem from="1743503261838" duration="1431000" />
       <workItem from="1743551066012" duration="19254000" />
-      <workItem from="1743637424504" duration="5792000" />
+      <workItem from="1743637424504" duration="7973000" />
     </task>
     <servers />
   </component>
