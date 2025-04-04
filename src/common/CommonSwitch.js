@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { SwitchContainer, CustomSwitch, Label } from "./css/CommonStyle";
 import { useTheme } from "styled-components";
 
-const CommonSwitch = () => {
-    const [checked, setChecked] = useState(true);
+const CommonSwitch = ({checked, setChecked}) => {
     const theme = useTheme(); // styled-components 테마 사용
 
     const handleToggle = () => {

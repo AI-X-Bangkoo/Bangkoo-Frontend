@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { css } from "styled-components";
+import { media } from "../../common/css/media"
 import { styled as muiStyled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 
@@ -46,6 +48,16 @@ export const StyledIconButton = styled.button`
     type === "full" ? theme.colors[color] || color || theme.colors.orange : 'transparent'};
   box-shadow: ${({ type }) =>
     type === "full" ? "0 2px 4px rgba(0, 0, 0, 0.25)" : 'none'};
+
+  ${media.tablet`
+    width: 30px;
+    height: 30px;
+      
+    & svg {
+      width: 20px;
+      height: 20px;
+    }
+  `}
 `;
 
 
@@ -57,14 +69,19 @@ export const SwitchContainer = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
-  width: 110px;
+  width: 100px;
   height: 42px;
   cursor: pointer;
+
+  ${media.tablet`
+    width: 80px;
+    height: 34px;
+  `}
 `;
 
 // "AI 검색" 텍스트
-export const Label = styled("span")(({ theme, $checked }) => ({
-    fontSize: theme.fontSizes.sm,
+export const Label = muiStyled("span")(({ theme, $checked }) => ({
+    fontSize: theme.fontSizes.xs,
     fontWeight: 800,
     color: $checked ? theme.colors.white : theme.colors.black,
     position: "absolute",
@@ -76,7 +93,7 @@ export const Label = styled("span")(({ theme, $checked }) => ({
 
 // MUI Switch 커스텀
 export const CustomSwitch = muiStyled(Switch)(({ theme }) => ({
-    width: 110,
+    width: 100,
     height: 42,
     padding: 0,
     "& .MuiSwitch-switchBase": {
@@ -84,7 +101,7 @@ export const CustomSwitch = muiStyled(Switch)(({ theme }) => ({
         margin: 5,
         transitionDuration: "300ms",
         "&.Mui-checked": {
-            transform: "translateX(68px)",
+            transform: "translateX(58px)",
             color: "#fff",
             "& + .MuiSwitch-track": {
                 backgroundColor: theme.colors.orange,
@@ -132,4 +149,12 @@ export const InputStyle = styled.input`
   &:focus {
     outline: none;
   }
+
+  ${media.tablet`
+    font-size: ${({ theme }) => theme.fontSizes.sm};
+  `}
+  
+  ${media.mobile`
+    font-size: ${({ theme }) => theme.fontSizes.xs};
+  `}
 `;

@@ -7,13 +7,14 @@ import { ReactComponent as MenuIcon } from "../../assets/images/MenuIcon.svg";
 import CommonSwitch from "../../common/CommonSwitch";
 import CommonTextField from "../../common/CommonTextField";
 
-const SearchComponent = () => {
+const SearchComponent = ({shadow, border}) => {
+    const [checked, setChecked] = useState(false);
 
     return (
-        <SearchRoot>
+        <SearchRoot $shadow={shadow} $border={border}>
             <CommonIconButton type={"none"} icon={<MenuIcon/>}></CommonIconButton>
-            <CommonSwitch />
-            <CommonTextField placeholder={"가구를 검색하세요."} />
+            <CommonSwitch checked={checked} setChecked={setChecked}/>
+            <CommonTextField placeholder={checked ? "문장으로 검색하세요." : "가구를 검색하세요."} fontSize="base"/>
             <CommonIconButton type={"none"} icon={<VoiceIcon/>}></CommonIconButton>
             <CommonIconButton type={"none"} icon={<SearchIcon/>}></CommonIconButton>
         </SearchRoot>
