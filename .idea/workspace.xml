@@ -4,19 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/assets/images/CloseIcon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/search/SearchTerm.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/common/CommonTextField.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CommonTextField.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/css/CommonStyle.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/css/CommonStyle.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/home/Banner.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Banner.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/home/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/home/Home.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.styled.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/search/Search.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/Search.styled.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/search/SearchComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchComponent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/search/SearchTerm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchTerm.js" afterDir="false" />
     </list>
-
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -56,7 +52,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "taewon",
+    "git-widget-placeholder": "publishing",
     "last_opened_file_path": "/Users/jieun/Desktop/hi_workspace/bangkoo-frontend/src/assets/images",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -102,6 +98,7 @@
       <workItem from="1743735007570" duration="15629000" />
       <workItem from="1743751121465" duration="7846000" />
       <workItem from="1743773570133" duration="227000" />
+      <workItem from="1743775185253" duration="5248000" />
     </task>
     <servers />
   </component>
