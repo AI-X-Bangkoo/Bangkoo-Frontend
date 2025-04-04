@@ -1,4 +1,5 @@
 import React from "react";
+import {HomeRoot} from "./Home.styled"
 import Banner from "./Banner"
 import StepComponent from "./StepComponent"
 import StartComponent from "./StartComponent"
@@ -10,7 +11,7 @@ import Step5 from "../../assets/images/Step5.png";
 
 function Home() {
     return (
-        <div>
+        <HomeRoot>
             <Banner />
             <StepComponent
                 image={Step1}
@@ -76,7 +77,7 @@ function Home() {
             />
 
             <StartComponent />
-        </div>
+        </HomeRoot>
     );
 }
 export default Home;

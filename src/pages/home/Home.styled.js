@@ -2,6 +2,11 @@ import styled from "styled-components";
 import { media } from "../../common/css/media"
 import banner from "../../assets/images/BannerImage.png"
 
+export const HomeRoot = styled.div`
+    margin-bottom: 110px;
+` ;
+
+
 // 배너
 export const BannerRoot = styled.div`
   width: 100%;

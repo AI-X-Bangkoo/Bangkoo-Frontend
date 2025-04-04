@@ -2,9 +2,11 @@ import React, {useState} from "react";
 import {BannerRoot, BannerText} from "./Home.styled"
 import SearchComponent from "../search/SearchComponent"
 import SearchExplanation from "../search/SearchExplanation"
+import SearchTerm from "../search/SearchTerm"
 
 function Banner() {
     const [isHover, setIsHover] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
 
     return (
         <BannerRoot>
@@ -20,10 +22,17 @@ function Banner() {
                     onMouseEnter={() => setIsHover(true)}
                     onMouseLeave={() => setIsHover(false)}
                 >
-                    <SearchComponent shadow={true}/>
+                    <SearchComponent
+                        shadow={true}
+                        shadow={true}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                    />
                 </div>
                 {/* 검색창 마우스 hover시 */}
                 <SearchExplanation visible={isHover}/>
+
+                {isFocused && <SearchTerm />}
 
             </div>
 

@@ -14,19 +14,15 @@ export const SearchRoot = styled.div`
   border: ${({ theme, $border }) => $border === 'orange' ? `3px solid ${theme.colors.orange}`: `1px solid ${theme.colors.grey}`};
   
   & input {
-    // 100% - 메뉴 - marginRight - switch - 음성 - 검색
-    width: calc(100% - 34px - 6px - 110px - 34px - 34px);
-  }
-  
-  & button:first-child {
-    margin-right: 6px;
+    // 100% - 메뉴 - 음성 - 검색
+    width: calc(100% - 34px - 34px - 34px);
   }
 
   ${media.tablet`
     width: 100%;
     
     & input {
-      width: calc(100% - 30px - 6px - 80px - 30px - 30px);
+      width: calc(100% - 30px - 30px - 30px);
     }
   
     & > div > span:first-child {
@@ -51,8 +47,7 @@ export const SearchRoot = styled.div`
   `}
 `;
 
-// AI검색 설명
-export const ExplanationBox = styled.div`
+export const SearchBox = styled.div`
   position: absolute !important;
   top: 80px;
   background-color: ${({ theme }) => theme.colors.white};
@@ -65,7 +60,16 @@ export const ExplanationBox = styled.div`
   justify-content: center;
   align-items: center;
   box-shadow: 0 4px 4px rgba(0,0,0,0.25);
-  
+
+  ${media.tablet`
+    top: 70px;
+    border-radius: ${({ theme }) => theme.borderRadius.md};
+    padding: 20px 10px;
+  `}
+` ;
+
+// AI검색 설명
+export const ExplanationBox = styled(SearchBox)`
   & p {
     text-align: center;
   }
@@ -77,10 +81,6 @@ export const ExplanationBox = styled.div`
   }
 
   ${media.tablet`
-    top: 70px;
-    border-radius: ${({ theme }) => theme.borderRadius.md};
-    padding: 20px 10px;
-    
     & p:nth-child(2) {
       font-size: 14px;
       margin-top: 6px;
@@ -126,3 +126,51 @@ export const TypingText = styled.p`
     left: 80px;
   `}
 `;
+
+// 최근 검색어
+export const SearchTermBox = styled(SearchBox)`
+  width: 100%;
+  padding: 30px 30px;
+  flex-direction: row;
+`;
+
+export const RecentBox = styled.div`
+  width: 65%;
+  height: 200px;
+  padding: 0 20px 0 0;
+  box-sizing: border-box;
+  border-right: 1px solid ${({ theme }) => theme.colors.grey};
+`;
+
+export const RecentTitleBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  & p:last-child {
+    cursor: pointer;
+  }
+`;
+
+export const RecentTextBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  
+  & svg {
+    width: 12px;
+    height: 12px;
+    & path {
+      stroke: ${({ theme }) => theme.colors.white};
+    }
+  }
+`;
+
+export const PopularityBox = styled.div`
+  width:35%;
+  height: 200px;
+  padding: 0 0 0 20px;
+  box-sizing: border-box;
+`;
+
