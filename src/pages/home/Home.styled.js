@@ -7,7 +7,6 @@ export const BannerRoot = styled.div`
   width: 100%;
   height: 450px;
   box-sizing: border-box;
-  overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
