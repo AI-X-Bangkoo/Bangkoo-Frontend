@@ -5,17 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/assets/images/BannerImage.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/common/CommonButton.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/common/css/CommonStyle.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/home/Banner.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/home/Home.styled.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/ApplyButton.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/three/AutoDownloadViewer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/three/BackgroundUploader.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/three/FixedBackground.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/three/FurnitureViewer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/three/LocalGLTFViewer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/three/ModelUploader.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/three/SketchfabGLTFViewer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/Typography.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/Typography.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/header/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/header/Header.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/header/Header.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/header/Header.styled.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/home/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/theme/theme.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme/theme.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,9 +69,12 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "publishing",
-    "last_opened_file_path": "/Users/jieun/Desktop/hi_workspace/bangkoo-frontend/src/assets/images",
+    "git-widget-placeholder": "taewon",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/201-20/Bangkoo/Bangkoo-Backend",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -84,6 +88,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\201-20\Bangkoo\Bangkoo-Frontend\src\common\three" />
       <recent name="$PROJECT_DIR$/src/assets/images" />
       <recent name="$PROJECT_DIR$/src/pages/home" />
       <recent name="$PROJECT_DIR$/src/pages" />
@@ -94,12 +99,6 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="Bangkoo-Frontend" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
       <module name="Bangkoo-Frontend" />
       <option name="filePath" />
