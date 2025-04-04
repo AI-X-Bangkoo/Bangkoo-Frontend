@@ -14,7 +14,6 @@ const CommonTextField = ({
                              custom,
                              fontSize,
                              onFocus,
-                             onBlur
                          }) => {
     return (
         <InputStyle
@@ -30,7 +29,6 @@ const CommonTextField = ({
             $custom={custom}
             fontSize={fontSize}
             onFocus={onFocus}
-            onBlur={onBlur}
         />
     );
 };

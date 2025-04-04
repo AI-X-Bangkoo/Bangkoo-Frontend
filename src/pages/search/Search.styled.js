@@ -132,11 +132,11 @@ export const SearchTermBox = styled(SearchBox)`
   width: 100%;
   padding: 30px 30px;
   flex-direction: row;
+  align-items: flex-start;
 `;
 
 export const RecentBox = styled.div`
   width: 65%;
-  height: 200px;
   padding: 0 20px 0 0;
   box-sizing: border-box;
   border-right: 1px solid ${({ theme }) => theme.colors.grey};
@@ -152,11 +152,46 @@ export const RecentTitleBox = styled.div`
   }
 `;
 
+export const SearchScrollBox = styled.div`
+  width: 100%;
+  height: 190px;
+  overflow-y: auto;
+  padding-right: 3px;
+  /* 스크롤바 전체 영역 */
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* 스크롤바 트랙 (배경) */
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* 스크롤바 핸들 (움직이는 부분) */
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.darkGrey};
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 3px solid transparent;
+  }
+`;
+
+export const KeywordBox = styled(SearchScrollBox)`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 235px;
+  
+  & button {
+    margin-bottom: ${({ theme }) => theme.spacing.sm};
+  }
+`;
+
 export const RecentTextBox = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+  align-items: flex-start;
+  margin-bottom: ${({ theme }) => theme.spacing.md};
   
   & svg {
     width: 12px;
@@ -167,10 +202,24 @@ export const RecentTextBox = styled.div`
   }
 `;
 
+export const RecentBottomBox = styled.div`
+  border-top: 1px solid ${({ theme }) => theme.colors.grey};
+  padding: 6px;
+  margin-top: ${({ theme }) => theme.spacing.md};
+  display: flex;
+  justify-content: flex-end;
+  & p {
+    cursor: pointer;
+  }
+`;
+
 export const PopularityBox = styled.div`
   width:35%;
-  height: 200px;
   padding: 0 0 0 20px;
   box-sizing: border-box;
+
+  & p {
+    margin-bottom: ${({ theme }) => theme.spacing.lg};
+  }
 `;
 

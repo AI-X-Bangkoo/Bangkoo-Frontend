@@ -6,7 +6,7 @@ import { ReactComponent as SearchIcon } from "../../assets/images/SearchIcon.svg
 import { ReactComponent as MenuIcon } from "../../assets/images/MenuIcon.svg";
 import CommonTextField from "../../common/CommonTextField";
 
-const SearchComponent = ({shadow, border, onFocus, onBlur}) => {
+const SearchComponent = ({shadow, border, onFocus}) => {
 
     return (
         <SearchRoot $shadow={shadow} $border={border}>
@@ -14,9 +14,7 @@ const SearchComponent = ({shadow, border, onFocus, onBlur}) => {
             <CommonTextField
                 fontSize="base"
                 placeholder={ "ex) 빨간색 모던한 의자"}
-                fontSize="base"
                 onFocus={onFocus}
-                onBlur={onBlur}
             />
             <CommonIconButton type={"none"} icon={<VoiceIcon/>}></CommonIconButton>
             <CommonIconButton type={"none"} icon={<SearchIcon/>}></CommonIconButton>

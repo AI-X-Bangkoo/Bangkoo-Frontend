@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import {BannerRoot, BannerText} from "./Home.styled"
 import SearchComponent from "../search/SearchComponent"
 import SearchExplanation from "../search/SearchExplanation"
@@ -7,6 +7,22 @@ import SearchTerm from "../search/SearchTerm"
 function Banner() {
     const [isHover, setIsHover] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
+
+    const containerRef = useRef(null); // 전체 검색 영역 감싸는 div
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            // SearchComponent, SearchTerm 바깥 클릭 시
+            if (containerRef.current && !containerRef.current.contains(event.target)) {
+                setIsFocused(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     return (
         <BannerRoot>
@@ -17,21 +33,19 @@ function Banner() {
             </BannerText>
 
             {/* 검색창 */}
-            <div>
+            <div ref={containerRef}>
                 <div
                     onMouseEnter={() => setIsHover(true)}
                     onMouseLeave={() => setIsHover(false)}
                 >
                     <SearchComponent
                         shadow={true}
-                        shadow={true}
                         onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
                     />
                 </div>
                 {/* 검색창 마우스 hover시 */}
                 <SearchExplanation visible={isHover}/>
-
+                {/* 검색창 클릭시 */}
                 {isFocused && <SearchTerm />}
 
             </div>
