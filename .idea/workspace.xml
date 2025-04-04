@@ -5,13 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/assets/images/MenuIcon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/images/SearchIcon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/images/VoiceIcon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/CommonIconButton.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/CommonSwitch.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/CommonTextField.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/css/media.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/search/Search.styled.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/search/SearchComponent.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/Typography.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/Typography.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/CommonButton.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CommonButton.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/css/CommonStyle.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/css/CommonStyle.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/home/Banner.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Banner.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/home/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/home/Home.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.styled.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/home/StartComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/StartComponent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/home/StepComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/StepComponent.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/theme/theme.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme/theme.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -27,22 +37,9 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <favorite-branches>
-      <branch-storage>
-        <map>
-          <entry type="LOCAL">
-            <value>
-              <list>
-                <branch-info repo="$PROJECT_DIR$" source="dev" />
-              </list>
-            </value>
-          </entry>
-        </map>
-      </branch-storage>
-    </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="publishing" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -61,44 +58,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;publishing&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/jieun/Desktop/hi_workspace/bangkoo-frontend/src/assets/images&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "publishing",
+    "last_opened_file_path": "/Users/jieun/Desktop/hi_workspace/bangkoo-frontend/src/pages/search",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/pages/search" />
       <recent name="$PROJECT_DIR$/src/assets/images" />
-      <recent name="$PROJECT_DIR$/src/pages/home" />
-      <recent name="$PROJECT_DIR$/src/pages" />
       <recent name="$PROJECT_DIR$/src/assets/fonts" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/pages/header" />
     </key>
   </component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
-      <module name="Bangkoo-Frontend" />
+      <module name="bangkoo-frontend" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="Bangkoo-Frontend" />
+      <module name="bangkoo-frontend" />
       <option name="filePath" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -114,11 +104,9 @@
       <option name="presentableId" value="Default" />
       <updated>1743494947018</updated>
       <workItem from="1743494948044" duration="1115000" />
-      <workItem from="1743496082272" duration="3542000" />
-      <workItem from="1743502991731" duration="242000" />
-      <workItem from="1743503261838" duration="1431000" />
-      <workItem from="1743551066012" duration="19254000" />
-      <workItem from="1743637424504" duration="7973000" />
+      <workItem from="1743496082272" duration="2167000" />
+      <workItem from="1743668346355" duration="1909000" />
+      <workItem from="1743735007570" duration="10154000" />
     </task>
     <servers />
   </component>
