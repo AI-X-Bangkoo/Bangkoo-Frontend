@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { media } from "../../common/css/media"
 import banner from "../../assets/images/BannerImage.png"
 
 // 배너
@@ -24,10 +25,9 @@ export const BannerRoot = styled.div`
     opacity: 0.7;
     z-index: 0;
   }
-  & > button {
+  & > div {
     position: relative;
     z-index: 10;
-    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.25);
   }
 `;
 
@@ -45,6 +45,16 @@ export const BannerText = styled.p`
   & span {
     font-weight: 900;
   }
+
+  ${media.tablet`
+    font-size: ${({ theme }) => theme.fontSizes.lg};
+    line-height: 40px;
+  `}
+
+  ${media.mobile`
+    font-size: ${({ theme }) => theme.fontSizes.md};
+    line-height: 40px;
+  `}
 `;
 
 // STEP
@@ -58,16 +68,33 @@ export const StepRoot = styled.div`
   box-sizing: border-box;
   background-color: ${({ theme, type }) =>
           type === "basic" ? theme.colors.white : theme.colors.lightOrange};
+  
+  ${media.tablet`
+    height: auto;
+    
+    &:nth-child(even) > div > div:first-child {
+      order: 2;
+    }
+  `}
 `;
 
 export const StepRootIn = styled.div`
   width: ${({ theme }) => theme.display.sm};
   display: flex;
   align-items: center;
+
+  ${media.tablet`
+    flex-direction: column;
+    width: 100%;
+  `}
 `;
 
 export const StepBox = styled.div`
   width: 50%;
+  
+  ${media.tablet`
+    width: 100%;
+  `}
 `;
 
 export const ImageBox = styled.div`
@@ -76,7 +103,16 @@ export const ImageBox = styled.div`
   align-items: center;
   & img {
     display: block;
-    transform: scale(0.9)
+    transform: scale(0.9);
+
+    ${media.tablet`
+      transform: scale(0.7);
+      height: auto;
+    `}
+    
+    ${media.mobile`
+      width: 60%;
+    `}
   }
 `;
 
@@ -87,6 +123,20 @@ export const TextBox = styled.div`
   & p:last-child {
     margin-top: ${({ theme }) => theme.spacing.md};
   }
+  
+  ${media.tablet`
+    text-align: center;
+    
+    & p:first-child {
+      font-size: ${({ theme }) => theme.fontSizes.lg};
+    }
+    & p:nth-child(2) {
+        font-size: ${({ theme }) => theme.fontSizes.md};
+    }
+    & p:last-child {
+      font-size: ${({ theme }) => theme.fontSizes.sm};
+    }
+  `}
 `;
 
 // 지금 시작하기 버
@@ -97,6 +147,7 @@ export const StartRoot = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
   padding: ${({ theme }) => theme.spacing.xl};
   background-color: ${({ theme }) => theme.colors.white};
   box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.1)

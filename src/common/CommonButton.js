@@ -11,6 +11,7 @@ const CommonButton = ({
           borderRadius,
           color,
           type = "fill",
+          onClick,
           ...rest
       }) => {
     return (
@@ -23,6 +24,7 @@ const CommonButton = ({
             borderRadius={borderRadius}
             color={color}
             type={type}
+            onClick={onClick}
             {...rest}
         >
             {children}

@@ -1,8 +1,30 @@
+// src/theme/theme.js
+import { createTheme } from '@mui/material/styles';
+
+const baseTheme = createTheme({
+    palette: {
+        mode: 'light',
+        primary: {
+            main: '#F29F05',
+        },
+        grey: {
+            main: '#C2C2C2',
+        },
+        text: {
+            primary: '#323232',
+        },
+    },
+    shape: {
+        borderRadius: 6,
+    },
+});
+
+// 추가 속성 (styled-components용) 합치기
 const theme = {
+    ...baseTheme,
     headerHeight: '86px',
 
     display: {
-        xs: '800px',
         sm: '1000px',
         base: '1200px',
     },
