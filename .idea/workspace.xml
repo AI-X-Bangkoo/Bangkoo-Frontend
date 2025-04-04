@@ -5,12 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/assets/images/SearchImage.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/search/SearchExplanation.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/images/CloseIcon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/search/SearchTerm.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/CommonSwitch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CommonSwitch.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/css/CommonStyle.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/css/CommonStyle.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/CommonTextField.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CommonTextField.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/home/Banner.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Banner.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/home/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/home/Home.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.styled.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/search/Search.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/Search.styled.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/search/SearchComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchComponent.js" afterDir="false" />
@@ -98,7 +98,8 @@
       <workItem from="1743496082272" duration="2167000" />
       <workItem from="1743668346355" duration="1909000" />
       <workItem from="1743735007570" duration="15629000" />
-      <workItem from="1743751121465" duration="1710000" />
+      <workItem from="1743751121465" duration="7846000" />
+      <workItem from="1743773570133" duration="227000" />
     </task>
     <servers />
   </component>

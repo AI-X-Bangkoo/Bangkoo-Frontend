@@ -12,7 +12,9 @@ const CommonTextField = ({
                              name,
                              line,
                              custom,
-                             fontSize
+                             fontSize,
+                             onFocus,
+                             onBlur
                          }) => {
     return (
         <InputStyle
@@ -27,6 +29,8 @@ const CommonTextField = ({
             $line={line}
             $custom={custom}
             fontSize={fontSize}
+            onFocus={onFocus}
+            onBlur={onBlur}
         />
     );
 };
