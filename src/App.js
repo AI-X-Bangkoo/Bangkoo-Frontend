@@ -9,7 +9,7 @@ function App() {
           <Header />
           <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/furniture-add" element={<FurnitureEditorPage />} /> {/* ✅ 태원 */}
+              <Route path="/placement/add" element={<FurnitureEditorPage />} /> {/* ✅ 태원 */}
           </Routes>
       </BrowserRouter>
   );

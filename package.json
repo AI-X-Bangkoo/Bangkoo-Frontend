@@ -3,15 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-<<<<<<< HEAD
     "@react-three/drei": "^10.0.5",
     "@react-three/fiber": "^9.1.1",
     "@react-three/postprocessing": "^3.0.4",
-=======
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.0.1",
->>>>>>> 99e0a3f19f7d6da9661e5756043eba0990fa9c4e
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
