@@ -1,5 +1,5 @@
 import React from "react";
-import {TabMenu, Tab, TabLineStyle} from "./css/CommonStyle";
+import {TabMenu, Tab, TabLineStyle} from "./css/Tabs.styled";
 
 function CommonTabs({ tabs = [], current, onChange, fontSize }) {
 
