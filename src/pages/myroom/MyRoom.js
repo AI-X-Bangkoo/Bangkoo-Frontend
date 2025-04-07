@@ -9,9 +9,17 @@ import AIFurnitureList from "./AIFurnitureList";
 import MyInterior from "./MyInterior";
 import { toast } from "react-toastify";
 import CustomToast from "../../common/CustomToast";
+import CommonDialog from "../../common/CommonDialog";
+import {Text} from "../../common/Typography";
 
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
+    const [showFurnitureDeleteDialog, setShowFurnitureDeleteDialog] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    const [showInteriorDeleteDialog, setShowInteriorDeleteDialog] = useState(false);
+    const [selectedInteriorItem, setSelectedInteriorItem] = useState(null);
+    const [deleteAllInterior, setDeleteAllInterior] = useState(false);
 
     const tabList = [
         { id: "my", label: "나의 가구" },
@@ -43,12 +51,9 @@ function MyRoom() {
     // 클릭 시 이벤트 핸들러
     const handlePlusMinus = (item) => {
         if (item.isCustom) {
-            // 추천에서 추가된 항목이면 제거
-            setMyFurnitureList((prevList) =>
-                prevList.filter(f => f.id !== item.id)
-            );
+            setSelectedItem(item);
+            setShowFurnitureDeleteDialog(true);
         } else {
-            // 기본 가구면 type만 토글
             setMyFurnitureList((prevList) =>
                 prevList.map((f) =>
                     f.id === item.id
@@ -62,6 +67,18 @@ function MyRoom() {
         }
     };
 
+    const handleConfirmDelete = () => {
+        setMyFurnitureList((prevList) =>
+            prevList.filter(f => f.id !== selectedItem.id)
+        );
+        setShowFurnitureDeleteDialog(false);
+        setSelectedItem(null);
+    };
+
+    const handleCloseDialog = () => {
+        setShowFurnitureDeleteDialog(false);
+        setSelectedItem(null);
+    };
 
     const handlePlus = (item) => {
         const newItem = {
@@ -86,8 +103,37 @@ function MyRoom() {
         });
     };
 
-    const handleDelete = (item) => {
-        setInteriorList((prevList) => prevList.filter(i => i.id !== item.id));
+    // 인테리어 삭제 다이얼로그 오픈
+    const handleInteriorDelete = (item) => {
+        setSelectedInteriorItem(item);
+        setDeleteAllInterior(false);
+        setShowInteriorDeleteDialog(true);
+    };
+
+// 전체 삭제 다이얼로그 오픈
+    const handleInteriorDeleteAll = () => {
+        setDeleteAllInterior(true);
+        setShowInteriorDeleteDialog(true);
+    };
+
+// 다이얼로그 '제거' 버튼 클릭 시
+    const handleConfirmInteriorDelete = () => {
+        if (deleteAllInterior) {
+            setInteriorList([]);
+        } else if (selectedInteriorItem) {
+            setInteriorList((prev) => prev.filter(i => i.id !== selectedInteriorItem.id));
+        }
+
+        setShowInteriorDeleteDialog(false);
+        setSelectedInteriorItem(null);
+        setDeleteAllInterior(false);
+    };
+
+// 다이얼로그 닫기
+    const handleCloseInteriorDialog = () => {
+        setShowInteriorDeleteDialog(false);
+        setSelectedInteriorItem(null);
+        setDeleteAllInterior(false);
     };
 
     return (
@@ -115,11 +161,41 @@ function MyRoom() {
                     }
 
                     {currentTab === "interior" &&
-                        <MyInterior interiorList={interiorList} onDelete={handleDelete}/>
+                        <MyInterior
+                            interiorList={interiorList}
+                            onDelete={handleInteriorDelete}
+                            onDeleteAll={handleInteriorDeleteAll}
+                        />
                     }
                 </GridBox>
 
             </RightPanel>
+
+            <CommonDialog
+                open={showFurnitureDeleteDialog}
+                title={"알림"}
+                submitText={"제거"}
+                onClose={handleCloseDialog}
+                onClick={handleConfirmDelete}
+                children={
+                    <Text size="xs" $weight={500}>내가구 목록에서 제거하시겠습니까?</Text>
+                }
+            />
+
+            <CommonDialog
+                open={showInteriorDeleteDialog}
+                title={"알림"}
+                submitText={"제거"}
+                onClose={handleCloseInteriorDialog}
+                onClick={handleConfirmInteriorDelete}
+                children={
+                    <Text size="xs" $weight={500}>
+                        {deleteAllInterior
+                            ? "사진을 모두 삭제하시겠습니까?"
+                            : "사진을 정말 삭제하시겠습니까?"}
+                    </Text>
+                }
+            />
         </MainLayout>
     );
 }

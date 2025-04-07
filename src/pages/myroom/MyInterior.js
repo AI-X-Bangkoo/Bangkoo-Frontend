@@ -3,30 +3,27 @@ import {InteriorBox, InteriorControllerBox} from "./MyRoom.styled";
 import MyInteriorList from "./MyInteriorList";
 import CommonButton from "../../common/CommonButton";
 
-function MyInterior({ interiorList = [], onDelete }) {
+function MyInterior({ interiorList = [], onDelete , onDeleteAll}) {
     const [isEditMode, setIsEditMode] = useState(false);
     const [displayList, setDisplayList] = useState(interiorList);
 
     // 편집 모드에 따라 type 변경
     useEffect(() => {
-        if (isEditMode) {
-            const updated = interiorList.map((item) => ({ ...item, type: "removeButton" }));
-            setDisplayList(updated);
-        } else {
-            const updated = interiorList.map((item) => ({ ...item, type: "basic" }));
-            setDisplayList(updated);
-        }
+        const updated = interiorList.map((item) => ({
+            ...item,
+            type: isEditMode ? "removeButton" : "basic",
+        }));
+        setDisplayList(updated);
     }, [isEditMode, interiorList]);
 
-    // 삭제 핸들러
+    // 삭제 버튼 클릭 시 상위로 이벤트 전달
     const handleDelete = (item) => {
-        const filtered = displayList.filter(i => i.id !== item.id);
-        setDisplayList(filtered);
+        if (onDelete) onDelete(item);
     };
 
-    // 전체 삭제
+    // 전체 삭제 버튼 클릭 시 상위로 전달
     const handleDeleteAll = () => {
-        setDisplayList([]);
+        if (onDeleteAll) onDeleteAll();
     };
 
     const buttonProps = {
@@ -44,7 +41,7 @@ function MyInterior({ interiorList = [], onDelete }) {
                 {isEditMode && (
                     <CommonButton
                         {...buttonProps}
-                        bg="red"
+                        bgColor="red"
                         onClick={handleDeleteAll}
                     >
                         전체 삭제

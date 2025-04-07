@@ -5,17 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/assets/images/CheckCircleIcon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/common/CustomToast.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/CommonDialog.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/css/Button.styled.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/css/Dialog.styled.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/css/IconButton.styled.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/css/ImageBox.styled.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/css/Switch.styled.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/css/Tabs.styled.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/css/TextField.styled.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/css/Toast.styled.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/css/CommonStyle.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/css/CommonStyle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/furnitureSearch/SearchPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/furnitureSearch/SearchPage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/myroom/AIFurnitureList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/AIFurnitureList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/CommonButton.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CommonButton.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/CommonIconButton.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CommonIconButton.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/CommonImageBox.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CommonImageBox.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/CommonSwitch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CommonSwitch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/CommonTabs.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CommonTabs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/CommonTextField.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CommonTextField.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/CustomToast.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CustomToast.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/css/CommonStyle.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyInterior.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyInterior.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyRoom.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyRoom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/search/SearchInput.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchInput.styled.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +118,7 @@
       <workItem from="1743835954291" duration="4156000" />
       <workItem from="1743983218873" duration="18674000" />
       <workItem from="1744006197555" duration="9575000" />
-      <workItem from="1744029381052" duration="3349000" />
+      <workItem from="1744029381052" duration="9187000" />
     </task>
     <servers />
   </component>

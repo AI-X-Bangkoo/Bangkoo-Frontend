@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { SwitchContainer, CustomSwitch, Label } from "./css/CommonStyle";
+import React  from "react";
+import { SwitchContainer, CustomSwitch, Label } from "./css/Switch.styled";
 import { useTheme } from "styled-components";
 
 const CommonSwitch = ({checked, setChecked}) => {

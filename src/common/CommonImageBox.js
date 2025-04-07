@@ -1,5 +1,5 @@
 import React from "react";
-import {ImageBoxStyle, AiChip, BottomRightBox, CheckboxArea, CenterBox} from "./css/CommonStyle"
+import {ImageBoxStyle, AiChip, BottomRightBox, CheckboxArea, CenterBox} from "./css/ImageBox.styled"
 import CommonIconButton from "../common/CommonIconButton"
 import { ReactComponent as AiIcon } from "../assets/images/AiIcon.svg";
 import { ReactComponent as PlusIcon } from "../assets/images/PlusIcon.svg";

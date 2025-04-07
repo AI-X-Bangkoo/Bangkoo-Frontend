@@ -187,6 +187,11 @@ export const KeywordBox = styled(SearchScrollBox)`
   
   & button {
     margin-bottom: ${({ theme }) => theme.spacing.sm};
+    
+    &:hover {
+      background-color: ${({ theme }) => theme.colors.orange};
+      color: ${({ theme }) => theme.colors.white};
+    }
   }
 `;
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactComponent as CheckCircleIcon } from "../assets/images/CheckCircleIcon.svg";
 import { ReactComponent as CloseIcon } from "../assets/images/CloseIcon.svg";
-import { ToastContainer } from './css/CommonStyle';
+import { ToastContainer } from './css/Toast.styled';
 import CommonIconButton from "./CommonIconButton";
 import {Text} from "./Typography";
 

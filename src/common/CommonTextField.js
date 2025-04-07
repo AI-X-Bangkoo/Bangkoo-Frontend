@@ -1,5 +1,5 @@
 import React from "react";
-import {InputWrapper, InputStyle, ClearAllButton, ClearAllBox} from "./css/CommonStyle";
+import {InputWrapper, InputStyle, ClearAllBox} from "./css/TextField.styled";
 import { ReactComponent as CloseIcon } from "../assets/images/CloseIcon.svg";
 import CommonIconButton from "./CommonIconButton";
 
