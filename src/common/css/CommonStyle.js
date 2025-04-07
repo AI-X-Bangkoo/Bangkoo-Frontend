@@ -137,15 +137,24 @@ export const StyledIconButton = styled.button`
 // }));
 
 // input
-export const InputStyle = styled.input`
+
+export const InputWrapper = styled.div`
+  position: relative;
   width: ${({ width }) => width || "100%"};
   height: ${({ height }) => height || "40px"};
-  background-color: #fff;
   border: ${({ theme, $custom, $line }) =>
-          $custom === "outline" ? `1px solid ${theme.colors[$line] || $line || theme.colors.grey}` : "none"};
+      $custom === "outline" ? `1px solid ${theme.colors[$line] || $line || theme.colors.grey}` : "none"};
   border-radius: ${({theme}) => theme.borderRadius.sm};
+  background-color: #fff;
+`;
+
+export const InputStyle = styled.input`
+  width: calc(100% - 20px - 6px);
+  height: 100%;
+  border: none;
   padding: 0 10px;
   box-sizing: border-box;
+  background-color: transparent;
   font-size: ${({ theme, fontSize }) =>
           fontSize ? theme.fontSizes[fontSize] : theme.fontSizes.sm};
 
@@ -166,29 +175,90 @@ export const InputStyle = styled.input`
   `}
 `;
 
+export const ClearAllBox = styled.div`
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  svg {
+    width: 14px;
+    height: 14px;
+    path {
+      stroke: ${({ theme }) => theme.colors.white};
+    }
+  }
+`;
+
 // 이미지 박스
 export const ImageBoxStyle = styled.div`
   width: 100%;
   aspect-ratio: 4 / 3;
-  border-radius:  ${({ theme }) => theme.borderRadius.md};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
   border: 1px solid ${({ theme }) => theme.colors.grey};
   overflow: hidden;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   & img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
-  
-  &:hover {
-    
-    
-  }
-` ;
 
-export const LabelBox = styled.div`
+  &:hover div.center-box {
+    opacity: 1;
+    pointer-events: auto;
+  }
+`;
+
+export const AiChip = styled.div`
+  width: 50px;
+  height: 50px;
   position: absolute;
-  
-` ;
+  top: 0;
+  left: 0;
+  background-color: ${({ theme }) => theme.colors.orange};
+  border-radius: 0;
+  color: #fff;
+  font-size:  ${({ theme }) => theme.fontSizes.xxs};
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  box-sizing: border-box;
+`;
+
+export const CenterBox = styled.div.attrs(() => ({
+    className: "center-box"
+  }))`
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+`;
+
+export const BottomRightBox = styled.div`
+  position: absolute;
+  bottom: ${({ theme }) => theme.spacing.sm};
+  right: ${({ theme }) => theme.spacing.sm};
+`;
+
+export const CheckboxArea = styled.div`
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  cursor: pointer;
+`;

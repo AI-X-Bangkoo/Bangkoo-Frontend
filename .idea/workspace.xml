@@ -5,23 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/assets/images/ImageIcon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/images/TestImage.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/common/ImageBox.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/furnitureSearch/SearchPage.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/furnitureSearch/SearchPage.styled.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/search/AISearchComponent.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/search/Category.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/images/AiIcon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/images/CheckIcon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/images/MinusIcon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/images/PlusIcon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/images/TrashIcon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/images/UnCheckIcon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/CommonImageBox.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/search/ImageSearchBox.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/CommonTextField.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/CommonTextField.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/ImageBox.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/common/css/CommonStyle.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/css/CommonStyle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/header/Header.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/header/Header.styled.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/home/Banner.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Banner.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/home/Home.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.styled.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/search/Search.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchInput.styled.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/search/SearchComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchInputComponent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/search/SearchExplanation.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchExplanation.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/search/SearchTerm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchTerm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/furnitureSearch/SearchPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/furnitureSearch/SearchPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/search/AISearchComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/AISearchComponent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/search/SearchInput.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchInput.styled.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/search/SearchInputComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchInputComponent.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +110,7 @@
       <workItem from="1743773570133" duration="227000" />
       <workItem from="1743775185253" duration="11117000" />
       <workItem from="1743835954291" duration="4156000" />
-      <workItem from="1743983218873" duration="871000" />
+      <workItem from="1743983218873" duration="15675000" />
     </task>
     <servers />
   </component>
