@@ -5,13 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/pages/myroom/AIFurnitureTab.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/myroom/InteriorTab.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/myroom/MyFurnitureTab.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/myroom/useAddFurnitureWithToast.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/myroom/useFurnitureDialog.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/store.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/furniture/furnitureSlice.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/furniture/interiorSlice.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/furniture/recommendedSlice.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/myroom/useMyRoomLogic.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/AIFurnitureTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/AIFurnitureTab.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/InteriorTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/InteriorTab.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyFurnitureTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyFurnitureTab.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyRoom.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyRoom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/useAddFurnitureWithToast.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/useAddFurnitureWithToast.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,7 +111,7 @@
       <workItem from="1743835954291" duration="4156000" />
       <workItem from="1743983218873" duration="18674000" />
       <workItem from="1744006197555" duration="9575000" />
-      <workItem from="1744029381052" duration="10713000" />
+      <workItem from="1744029381052" duration="13108000" />
     </task>
     <servers />
   </component>

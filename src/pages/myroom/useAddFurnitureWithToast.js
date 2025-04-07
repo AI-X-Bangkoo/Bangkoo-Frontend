@@ -1,8 +1,12 @@
 import { toast } from "react-toastify";
 import CustomToast from "../../common/CustomToast";
+import { useDispatch } from "react-redux";
+import { addFurniture as addFurnitureAction } from "../../features/furniture/furnitureSlice";
 
 // 토스트 포함 추가 로직
-export function useAddFurnitureWithToast(setMyFurnitureList) {
+export function useAddFurnitureWithToast() {
+    const dispatch = useDispatch();
+
     return function addFurniture(item) {
         const newItem = {
             ...item,
@@ -11,7 +15,7 @@ export function useAddFurnitureWithToast(setMyFurnitureList) {
             isCustom: true,
         };
 
-        setMyFurnitureList((prev) => [...prev, newItem]);
+        dispatch(addFurnitureAction(newItem));
 
         toast(({ closeToast }) => (
             <CustomToast
