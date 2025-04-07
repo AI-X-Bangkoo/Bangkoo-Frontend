@@ -1,0 +1,21 @@
+import React from "react";
+import { FurnitureGrid } from "./MyRoom.styled";
+import CommonImageBox from "../../common/CommonImageBox";
+
+
+function FurnitureList({ furnitureList = [], onPlusMinus }) {
+    return (
+        <FurnitureGrid>
+            {furnitureList.map((item) => (
+                <CommonImageBox
+                    key={item.id}
+                    image={item.image}
+                    type={item.type}
+                    onPlusMinus={() => onPlusMinus(item)}
+                />
+            ))}
+        </FurnitureGrid>
+    );
+}
+
+export default FurnitureList;
