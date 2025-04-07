@@ -16,7 +16,7 @@ function AIFurnitureList({ furnitureList = [], onPlus }) {
                     />
                     <Text size="base" $weight={800}>{item.title}</Text>
                     <Text size="xs" $weight={600}>{item.text}</Text>
-                    <Text size="xs" $weight={600}>₩ {item.price}</Text>
+                    <Text size="xs" $weight={600}>₩ {item.price.toLocaleString()}</Text>
                 </TextBox>
 
 
