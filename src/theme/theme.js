@@ -58,6 +58,7 @@ const theme = {
         md: '16px',
         lg: '18px',
         xl: '26px',
+        xxl: '38px',
     },
 
     borderRadius: {

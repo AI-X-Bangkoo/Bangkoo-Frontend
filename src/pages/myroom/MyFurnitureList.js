@@ -3,7 +3,7 @@ import { FurnitureGrid } from "./MyRoom.styled";
 import CommonImageBox from "../../common/CommonImageBox";
 
 
-function FurnitureList({ furnitureList = [], onPlusMinus }) {
+function MyFurnitureList({ furnitureList = [], onPlusMinus }) {
     return (
         <FurnitureGrid>
             {furnitureList.map((item) => (
@@ -18,4 +18,4 @@ function FurnitureList({ furnitureList = [], onPlusMinus }) {
     );
 }
 
-export default FurnitureList;
+export default MyFurnitureList;
