@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { media } from "../../common/css/media"
-import { styled as muiStyled } from "@mui/material/styles";
-import Switch from "@mui/material/Switch";
+// import { styled as muiStyled } from "@mui/material/styles";
+// import Switch from "@mui/material/Switch";
 
 // 버튼
 export const StyledButton = styled.button`
@@ -165,3 +165,30 @@ export const InputStyle = styled.input`
     font-size: ${({ theme }) => theme.fontSizes.xs};
   `}
 `;
+
+// 이미지 박스
+export const ImageBoxStyle = styled.div`
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius:  ${({ theme }) => theme.borderRadius.md};
+  border: 1px solid ${({ theme }) => theme.colors.grey};
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  & img {
+    width: 100%;
+  }
+  
+  &:hover {
+    
+    
+  }
+` ;
+
+export const LabelBox = styled.div`
+  position: absolute;
+  
+` ;
