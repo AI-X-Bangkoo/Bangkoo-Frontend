@@ -7,6 +7,8 @@ import TestImage from "../../assets/images/TestImage.png";
 import MyFurnitureList from "./MyFurnitureList";
 import AIFurnitureList from "./AIFurnitureList";
 import MyInterior from "./MyInterior";
+import { toast } from "react-toastify";
+import CustomToast from "../../common/CustomToast";
 
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
@@ -60,14 +62,28 @@ function MyRoom() {
         }
     };
 
+
     const handlePlus = (item) => {
-        const alreadyExists = myFurnitureList.some(f => f.id === item.id);
-        if (!alreadyExists) {
-            setMyFurnitureList((prev) => [
-                ...prev,
-                { ...item, type: "hoverMinus", isCustom: true }
-            ]);
-        }
+        const newItem = {
+            ...item,
+            id: Date.now(), // 고유 ID로 여러 번 추가되도록
+            type: "hoverMinus",
+            isCustom: true,
+        };
+
+        setMyFurnitureList((prev) => [...prev, newItem]);
+
+        toast(({ closeToast }) => (
+            <CustomToast
+                message="선택하신 가구가 내 가구에 추가되었습니다."
+                closeToast={closeToast}
+            />
+        ), {
+            position: "top-center",
+            autoClose: 5000, // 5초
+            hideProgressBar: true,
+            closeButton: false, // 커스텀 버튼 쓸 거니까 기본 버튼 제거
+        });
     };
 
     const handleDelete = (item) => {

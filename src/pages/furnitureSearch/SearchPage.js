@@ -64,7 +64,7 @@ function SearchPage() {
                         <CommonImageBox image={item.image} type={"basic"} onLink={item.link}/>
                         <Text size="xs" $weight={800}>{item.title}</Text>
                         <Text size="xs" $weight={600}>{item.text}</Text>
-                        <Text size="md" $weight={800}>₩ {item.price}</Text>
+                        <Text size="md" $weight={800}>₩ {item.price.toLocaleString()}</Text>
                         <CommonButton
                             width="100%"
                             height="44px"
