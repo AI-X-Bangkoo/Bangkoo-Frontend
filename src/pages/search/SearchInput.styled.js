@@ -14,15 +14,15 @@ export const SearchRoot = styled.div`
   border: ${({ theme, $border }) => $border === 'orange' ? `3px solid ${theme.colors.orange}`: `1px solid ${theme.colors.grey}`};
   
   & input {
-    // 100% - 메뉴 - 음성 - 검색
-    width: calc(100% - 34px - 34px - 34px);
+    // 100% - 메뉴 - 이미지 - 음성 - 검색
+    width: calc(100% - 34px - 34px - 34px - 34px);
   }
 
   ${media.tablet`
     width: 100%;
     
     & input {
-      width: calc(100% - 30px - 30px - 30px);
+      width: calc(100% - 30px - 30px - 30px - 30px);
     }
   
     & > div > span:first-child {
@@ -223,3 +223,40 @@ export const PopularityBox = styled.div`
   }
 `;
 
+// 카테고리
+export const CategoryBox = styled.div`
+  position: absolute !important;
+  left: 20px;
+  top: 65px;
+  height: 310px;
+  background-color: ${({ theme }) => theme.colors.white};
+  padding: 12px 20px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 4px rgba(0,0,0,0.25);
+  border-radius: ${({ theme }) => theme.borderRadius.sm};
+  overflow-y: auto;
+  
+  & p {
+    cursor: pointer;
+    margin-top: ${({ theme }) => theme.spacing.md}; 
+    margin-bottom: ${({ theme }) => theme.spacing.md}; 
+  }
+  
+  /* 스크롤바 전체 영역 */
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* 스크롤바 트랙 (배경) */
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* 스크롤바 핸들 (움직이는 부분) */
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.darkGrey};
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 3px solid transparent;
+  }
+`;

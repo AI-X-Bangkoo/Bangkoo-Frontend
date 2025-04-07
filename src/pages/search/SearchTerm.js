@@ -7,7 +7,7 @@ import {
     RecentTextBox,
     RecentBottomBox,
     SearchScrollBox, KeywordBox,
-} from "./Search.styled";
+} from "./SearchInput.styled";
 import { Text } from "../../common/Typography";
 import CommonIconButton from "../../common/CommonIconButton"
 import { ReactComponent as CloseIcon } from "../../assets/images/CloseIcon.svg";

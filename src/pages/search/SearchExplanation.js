@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ExplanationBox, ImageBox, TypingText } from "./Search.styled";
+import { ExplanationBox, ImageBox, TypingText } from "./SearchInput.styled";
 import { Text } from "../../common/Typography";
 import SearchImage from "../../assets/images/SearchImage.png";
 

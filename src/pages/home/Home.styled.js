@@ -4,6 +4,7 @@ import banner from "../../assets/images/BannerImage.png"
 
 export const HomeRoot = styled.div`
     margin-bottom: 110px;
+    margin-top: ${({ theme }) => theme.headerHeight};
 ` ;
 
 
@@ -29,10 +30,7 @@ export const BannerRoot = styled.div`
     opacity: 0.7;
     z-index: 0;
   }
-  & > div {
-    position: relative;
-    z-index: 10;
-  }
+  
 `;
 
 export const BannerText = styled.p`
