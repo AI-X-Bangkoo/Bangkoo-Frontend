@@ -79,8 +79,80 @@ export const AIControllerBox = styled.div`
   position: relative;
 `;
 
+// 검색 버튼
+export const AISearchButton = styled.button`
+  position: absolute;
+  right: -16px;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 60px;
+  border-radius: ${({ theme }) => theme.borderRadius.sm} 0 0 ${({ theme }) => theme.borderRadius.sm};
+  border:0;
+  background-color: ${({ theme }) => theme.colors.orange};
+  color: ${({ theme }) => theme.colors.white};
+  font-size: ${({ theme }) => theme.fontSizes.xxs};
+  font-weight: 600;
+  cursor: pointer;
+  
+  & svg {
+    width: 18px;
+    height: 18px;
+    margin-bottom: 6px;
+    & path, circle {
+      stroke: ${({ theme }) => theme.colors.white};
+    }
+  }
+`;
+
+export const SearchTooltip = styled.div`
+  position: absolute;
+  right: 40px;
+  top: -10px;
+  width: 200px;
+  background-color: ${({ theme }) => theme.colors.dark};
+  color: #fff;
+  font-size: ${({ theme }) => theme.fontSizes.xxs};
+  padding: 10px 16px;
+  border-radius: 10px;
+  z-index: 100;
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: -20px;
+    top: 25px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent transparent ${({ theme }) => theme.colors.dark};
+  }
+
+  & > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    
+    & svg {
+      width: 12px;
+      height: 12px;
+      & path {
+        stroke: ${({ theme }) => theme.colors.white}
+      }
+    }
+  }
+  
+  & p {
+    line-height: 1.4;
+  }
+
+`;
+
 export const TabBox = styled.div`
-  margin-top: ${({ theme }) => theme.spacing.xl};
+  margin-top: ${({ theme }) => theme.spacing.xxl};
   margin-bottom: ${({ theme }) => theme.spacing.xl};
 `;
 
@@ -91,8 +163,7 @@ export const FurnitureGrid = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing.md};
   padding-right: 10px;
   box-sizing: border-box;
-
-  /* 스크롤은 부모에서 처리 */
+  
   & > * {
     min-width: 0;
   }
@@ -100,4 +171,32 @@ export const FurnitureGrid = styled.div`
   ${media.tablet`
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   `}
+`;
+
+export const TextBox = styled.div`
+
+  & p:nth-child(2){
+    padding-top: ${({ theme }) => theme.spacing.sm};
+  }
+  
+  & p:nth-child(3){
+    padding-top: ${({ theme }) => theme.spacing.xs};
+    padding-bottom: ${({ theme }) => theme.spacing.sm};
+  }
+`;
+
+export const InteriorBox = styled.div`
+
+ 
+`;
+
+export const InteriorControllerBox = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: ${({ theme }) => theme.spacing.md};
+  
+  & button:last-child {
+    margin-left: ${({ theme }) => theme.spacing.sm};;
+  }
 `;

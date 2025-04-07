@@ -30,6 +30,12 @@ function CommonImageBox({
         );
     }
 
+    const buttonProps = {
+        width: "34px",
+        height: "34px",
+        type: "full",
+    };
+
     return (
         <ImageBoxStyle >
             <img src={image} alt="가구 이미지" />
@@ -45,12 +51,10 @@ function CommonImageBox({
             {type === "hoverPlus" && (
                 <CenterBox>
                     <CommonIconButton
-                        type="full"
-                        width="40px"
-                        height="40px"
                         color="orange"
                         onClick={onPlusMinus}
                         icon={<PlusIcon />}
+                        {...buttonProps}
                     />
                 </CenterBox>
             )}
@@ -58,12 +62,10 @@ function CommonImageBox({
             {type === "hoverMinus" && (
                 <CenterBox>
                     <CommonIconButton
-                        type="full"
-                        width="40px"
-                        height="40px"
                         color="red"
                         onClick={onPlusMinus}
                         icon={<MinusIcon />}
+                        {...buttonProps}
                     />
                 </CenterBox>
             )}
@@ -71,14 +73,14 @@ function CommonImageBox({
             {/* 하단 플러스 버튼 (aiPlus) */}
             {type === "aiPlus" && (
                 <BottomRightBox>
-                    <CommonIconButton type="full" width={"40px"} height={"40px"} onClick={onPlus} color="orange" icon={<PlusIcon />} />
+                    <CommonIconButton onClick={onPlus} color="orange" icon={<PlusIcon />} {...buttonProps}/>
                 </BottomRightBox>
             )}
 
             {/*/!* 삭제 버튼 (외부 제어) *!/*/}
             {type === "removeButton" && showDelete && (
                 <BottomRightBox>
-                    <CommonIconButton type="full" width={"40px"} height={"40px"} onClick={onDelete} color="red" icon={<TrashIcon />} />
+                    <CommonIconButton onClick={onDelete} color="red" icon={<TrashIcon />} {...buttonProps}/>
                 </BottomRightBox>
             )}
 

@@ -4,7 +4,9 @@ import FurnitureController from "./FurnitureController";
 import FurnitureAIController from "./FurnitureAIController";
 import CommonTabs from "../../common/CommonTabs";
 import TestImage from "../../assets/images/TestImage.png";
-import FurnitureList from "./FurnitureList";
+import MyFurnitureList from "./MyFurnitureList";
+import AIFurnitureList from "./AIFurnitureList";
+import MyInterior from "./MyInterior";
 
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
@@ -15,25 +17,61 @@ function MyRoom() {
         { id: "interior", label: "내 인테리어" }
     ];
 
-    const [furnitureList, setFurnitureList] = useState([
-        { id: 1, image: TestImage, type: "hoverMinus" },
-        { id: 2, image: TestImage, type: "hoverMinus" },
-        { id: 3, image: TestImage, type: "hoverMinus" },
-        { id: 4, image: TestImage, type: "hoverMinus" },
+    const [myFurnitureList, setMyFurnitureList] = useState([
+        { id: 1, image: TestImage, type: "hoverMinus", isCustom: false },
+        { id: 2, image: TestImage, type: "hoverMinus", isCustom: false },
+        { id: 3, image: TestImage, type: "hoverMinus", isCustom: false },
+        { id: 4, image: TestImage, type: "hoverMinus", isCustom: false },
+    ]);
+
+    const [aiFurnitureList, setAiFurnitureList] = useState([
+        { id: 5, image: TestImage, type: "aiPlus", title:"LAGAN 라간", text:"빌트인 식기세척기, 60cm", price: 699000},
+        { id: 6, image: TestImage, type: "aiPlus", title:"LAGAN 라간", text:"빌트인 식기세척기, 60cm", price: 699000 },
+        { id: 7, image: TestImage, type: "aiPlus", title:"LAGAN 라간", text:"빌트인 식기세척기, 60cm", price: 699000 },
+        { id: 8, image: TestImage, type: "aiPlus", title:"LAGAN 라간", text:"빌트인 식기세척기, 60cm", price: 699000 },
+    ]);
+
+    const [interiorList, setInteriorList] = useState([
+        { id: 1, image: TestImage, type: "removeButton", text:"첫번째 내방 인테리어"},
+        { id: 2, image: TestImage, type: "removeButton", text:"첫번째 내방 인테리어첫번째 내방 인테리어첫번째 내방 인테리어첫번째 내방 인테리어"},
+        { id: 3, image: TestImage, type: "removeButton", text:"첫번째 내방 인테리어"},
+
     ]);
 
     // 클릭 시 이벤트 핸들러
     const handlePlusMinus = (item) => {
-        setFurnitureList((prevList) =>
-            prevList.map((furniture) =>
-                furniture.id === item.id
-                    ? {
-                        ...furniture,
-                        type: furniture.type === "hoverMinus" ? "hoverPlus" : "hoverMinus",
-                    }
-                    : furniture
-            )
-        );
+        if (item.isCustom) {
+            // 추천에서 추가된 항목이면 제거
+            setMyFurnitureList((prevList) =>
+                prevList.filter(f => f.id !== item.id)
+            );
+        } else {
+            // 기본 가구면 type만 토글
+            setMyFurnitureList((prevList) =>
+                prevList.map((f) =>
+                    f.id === item.id
+                        ? {
+                            ...f,
+                            type: f.type === "hoverMinus" ? "hoverPlus" : "hoverMinus",
+                        }
+                        : f
+                )
+            );
+        }
+    };
+
+    const handlePlus = (item) => {
+        const alreadyExists = myFurnitureList.some(f => f.id === item.id);
+        if (!alreadyExists) {
+            setMyFurnitureList((prev) => [
+                ...prev,
+                { ...item, type: "hoverMinus", isCustom: true }
+            ]);
+        }
+    };
+
+    const handleDelete = (item) => {
+        setInteriorList((prevList) => prevList.filter(i => i.id !== item.id));
     };
 
     return (
@@ -52,8 +90,19 @@ function MyRoom() {
                 </TabBox>
 
                 <GridBox>
-                    <FurnitureList furnitureList={furnitureList} onPlusMinus={handlePlusMinus}/>
+                    {currentTab === "my" &&
+                        <MyFurnitureList furnitureList={myFurnitureList} onPlusMinus={handlePlusMinus}/>
+                    }
+
+                    {currentTab === "recommend" &&
+                        <AIFurnitureList furnitureList={aiFurnitureList} onPlus={handlePlus}/>
+                    }
+
+                    {currentTab === "interior" &&
+                        <MyInterior interiorList={interiorList} onDelete={handleDelete}/>
+                    }
                 </GridBox>
+
             </RightPanel>
         </MainLayout>
     );
