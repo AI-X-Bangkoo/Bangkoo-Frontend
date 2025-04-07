@@ -3,7 +3,7 @@ import "./App.css";
 import Header from './pages/header/Header';
 import Home from './pages/home/Home';
 import FurnitureEditorPage from './pages/3d/FurnitureEditorPage'; // ✅ 태원
-import AISearchComponent from './pages/furnitureSearch/SearchPage'
+import AISearchComponent from './pages/furnitureSearch/SearchPage';
 import MyRoom from "./pages/myroom/MyRoom";
 
 import { ToastContainer } from 'react-toastify';
