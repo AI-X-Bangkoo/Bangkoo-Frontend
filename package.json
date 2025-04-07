@@ -23,8 +23,13 @@
     "react-toastify": "^11.0.5",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.16",
+<<<<<<< HEAD
     "three": "^0.175.0",
     "web-vitals": "^2.1.4"
+=======
+    "web-vitals": "^2.1.4",
+    "yarn": "^1.22.22"
+>>>>>>> 0a6a98b (로그인 연결)
   },
   "scripts": {
     "start": "react-scripts start",
