@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+// ✅ MyRoom.jsx (전체 페이지 with Redux 관리된 추천가구 포함)
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { GridBox, LeftPanel, MainLayout, RightPanel, TabBox } from "./MyRoom.styled";
 import FurnitureController from "./FurnitureController";
 import FurnitureAIController from "./FurnitureAIController";
 import CommonTabs from "../../common/CommonTabs";
-import TestImage from "../../assets/images/TestImage.png";
 import { Text } from "../../common/Typography";
 import CommonDialog from "../../common/CommonDialog";
 
@@ -13,65 +14,48 @@ import InteriorTab from "./InteriorTab";
 
 import { useFurnitureDialog, useInteriorDialog } from "./useFurnitureDialog";
 import { useAddFurnitureWithToast } from "./useAddFurnitureWithToast";
+import { useMyRoomLogic } from "./useMyRoomLogic";
+import { setInitialFurniture } from "../../features/furniture/furnitureSlice";
+import { setInterior } from "../../features/furniture/interiorSlice";
+import { setRecommendedFurniture } from "../../features/furniture/recommendedSlice";
+import TestImage from "../../assets/images/TestImage.png";
 
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
 
-    const [myFurnitureList, setMyFurnitureList] = useState([
-        { id: 1, image: TestImage, type: "hoverMinus", isCustom: false },
-        { id: 2, image: TestImage, type: "hoverMinus", isCustom: false },
-        { id: 3, image: TestImage, type: "hoverMinus", isCustom: false },
-        { id: 4, image: TestImage, type: "hoverMinus", isCustom: false },
-    ]);
-
-    const [aiFurnitureList] = useState([
-        { id: 5, image: TestImage, type: "aiPlus", title: "LAGAN 라간", text: "빌트인 식기세척기, 60cm", price: 699000 },
-        { id: 6, image: TestImage, type: "aiPlus", title: "LAGAN 라간", text: "빌트인 식기세척기, 60cm", price: 699000 },
-        { id: 7, image: TestImage, type: "aiPlus", title: "LAGAN 라간", text: "빌트인 식기세척기, 60cm", price: 699000 },
-        { id: 8, image: TestImage, type: "aiPlus", title: "LAGAN 라간", text: "빌트인 식기세척기, 60cm", price: 699000 },
-    ]);
-
-    const [interiorList, setInteriorList] = useState([
-        { id: 1, image: TestImage, type: "removeButton", text: "첫번째 내방 인테리어" },
-        { id: 2, image: TestImage, type: "removeButton", text: "인테리어 설명인테리어 설명인테리어 설명인테리어 설명인테리어 설명인테리어 설명인테리어 설명" },
-        { id: 3, image: TestImage, type: "removeButton", text: "첫번째 내방 인테리어" },
-    ]);
-
+    const dispatch = useDispatch();
     const furnitureDialog = useFurnitureDialog();
     const interiorDialog = useInteriorDialog();
-    const addFurniture = useAddFurnitureWithToast(setMyFurnitureList);
+    const addFurniture = useAddFurnitureWithToast();
+    const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
+
+    useEffect(() => {
+        dispatch(setInitialFurniture([
+            { id: 1, image: TestImage, type: "hoverMinus", isCustom: false },
+            { id: 2, image: TestImage, type: "hoverMinus", isCustom: false },
+            { id: 3, image: TestImage, type: "hoverMinus", isCustom: false },
+            { id: 4, image: TestImage, type: "hoverMinus", isCustom: false },
+        ]));
+
+        dispatch(setInterior([
+            { id: 1, image: TestImage, type: "removeButton", text: "첫번째 내방 인테리어" },
+            { id: 2, image: TestImage, type: "removeButton", text: "인테리어 설명 인테리어 설명 인테리어 설명" },
+            { id: 3, image: TestImage, type: "removeButton", text: "세 번째 인테리어" },
+        ]));
+
+        dispatch(setRecommendedFurniture([
+            { id: 101, image: TestImage, type: "aiPlus", title: "LAGAN 라간 1", text: "빌트인 식기세척기, 60cm", price: 699000 },
+            { id: 102, image: TestImage, type: "aiPlus", title: "LAGAN 라간 2", text: "스마트 테이블", price: 299000 },
+            { id: 103, image: TestImage, type: "aiPlus", title: "LAGAN 라간 3", text: "슬림 책상 세트", price: 159000 },
+            { id: 104, image: TestImage, type: "aiPlus", title: "LAGAN 라간 4", text: "인테리어 장식장", price: 499000 },
+        ]));
+    }, [dispatch]);
 
     const tabList = [
         { id: "my", label: "나의 가구" },
         { id: "recommend", label: "추천 가구" },
         { id: "interior", label: "내 인테리어" },
     ];
-
-    const handlePlusMinus = (item) => {
-        if (item.isCustom) {
-            furnitureDialog.openDialog(item);
-        } else {
-            setMyFurnitureList((prev) =>
-                prev.map((f) =>
-                    f.id === item.id ? { ...f, type: f.type === "hoverMinus" ? "hoverPlus" : "hoverMinus" } : f
-                )
-            );
-        }
-    };
-
-    const handleConfirmDelete = () => {
-        setMyFurnitureList((prev) => prev.filter((f) => f.id !== furnitureDialog.selectedItem.id));
-        furnitureDialog.closeDialog();
-    };
-
-    const handleConfirmInteriorDelete = () => {
-        if (interiorDialog.deleteAll) {
-            setInteriorList([]);
-        } else if (interiorDialog.selectedItem) {
-            setInteriorList((prev) => prev.filter((i) => i.id !== interiorDialog.selectedItem.id));
-        }
-        interiorDialog.close();
-    };
 
     return (
         <MainLayout>
@@ -84,9 +68,9 @@ function MyRoom() {
                     <CommonTabs tabs={tabList} current={currentTab} onChange={setCurrentTab} />
                 </TabBox>
                 <GridBox>
-                    {currentTab === "my" && <MyFurnitureTab furnitureList={myFurnitureList} onPlusMinus={handlePlusMinus} />}
-                    {currentTab === "recommend" && <AIFurnitureTab furnitureList={aiFurnitureList} onPlus={addFurniture} />}
-                    {currentTab === "interior" && <InteriorTab interiorList={interiorList} onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}
+                    {currentTab === "my" && <MyFurnitureTab onCustomRemove={furnitureDialog.openDialog} />}
+                    {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} />}
+                    {currentTab === "interior" && <InteriorTab onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}
                 </GridBox>
             </RightPanel>
 
