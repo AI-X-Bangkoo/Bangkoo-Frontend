@@ -11,6 +11,10 @@
 # production
 /build
 
+# IDE 관련 파일 무시
+.vscode/
+.idea/
+
 # misc
 .DS_Store
 .env
@@ -22,6 +26,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# IntelliJ / WebStorm
-.idea/
