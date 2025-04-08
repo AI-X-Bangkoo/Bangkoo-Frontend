@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
 export const HeaderRoot = styled.div`
+  position: fixed;
+  top:0;
   width: 100%;
   height: ${({ theme }) => theme.headerHeight};
   display: flex;
@@ -9,6 +11,8 @@ export const HeaderRoot = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.grey};
   padding: 6px 34px;
   box-sizing: border-box;
+  background-color: ${({ theme }) => theme.colors.white};
+  z-index: 20;
   & svg {
     cursor: pointer;
   }

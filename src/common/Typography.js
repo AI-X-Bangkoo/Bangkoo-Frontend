@@ -6,6 +6,6 @@ export const Text = styled.p`
           size ? theme.fontSizes[size] : theme.fontSizes.xs};
   font-weight: ${({ $weight }) => $weight || 500};
   color: ${({ theme, color }) => theme.colors[color] || theme.colors.black};
-  line-height: ${({ line }) => line || 1.6};;
+  line-height: ${({ $line }) => $line || 'normal'};;
   margin: 0;
 `;
