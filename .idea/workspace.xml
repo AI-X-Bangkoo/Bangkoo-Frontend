@@ -5,10 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/pages/myroom/SearchDrawer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/myroom/css/SearchDrawer.styled.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyRoom.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyRoom.styled.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/myroom/dialog/AiRecommended.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/dialog/AiRecommended.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/myroom/dialog/css/AiRecommended.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/dialog/css/AiRecommended.styled.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/AIFurnitureList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/AIFurnitureList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/FurnitureAIController.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/FurnitureAIController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/FurnitureController.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/FurnitureController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/InteriorTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/InteriorTab.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyFurnitureList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyFurnitureList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyFurnitureTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyFurnitureTab.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyInterior.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyInterior.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyInteriorList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyInteriorList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyRoom.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyRoom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyRoom.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/css/MyRoom.styled.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/theme/theme.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme/theme.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +79,7 @@
       <recent name="$PROJECT_DIR$/src/assets/fonts" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/pages/myroom/css" />
       <recent name="$PROJECT_DIR$/src/pages" />
     </key>
   </component>
@@ -106,7 +117,7 @@
       <workItem from="1743983218873" duration="18674000" />
       <workItem from="1744006197555" duration="9575000" />
       <workItem from="1744029381052" duration="13108000" />
-      <workItem from="1744080992669" duration="10698000" />
+      <workItem from="1744080992669" duration="15581000" />
     </task>
     <servers />
   </component>

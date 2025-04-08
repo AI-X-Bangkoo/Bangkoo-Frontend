@@ -3,7 +3,7 @@ import MyFurnitureList from "./MyFurnitureList";
 import { toggleFurniture } from "../../features/furniture/furnitureSlice";
 import {Text} from "../../common/Typography";
 import React from "react";
-import {EmptyBox} from "./MyRoom.styled";
+import {EmptyBox} from "./css/MyRoom.styled";
 
 export default function MyFurnitureTab({ onCustomRemove }) {
     const dispatch = useDispatch();

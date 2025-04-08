@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import MyInterior from "./MyInterior";
 import {Text} from "../../common/Typography";
-import {EmptyBox} from "./MyRoom.styled";
+import {EmptyBox} from "./css/MyRoom.styled";
 import React from "react";
 
 export default function InteriorTab({ onDelete, onDeleteAll }) {
