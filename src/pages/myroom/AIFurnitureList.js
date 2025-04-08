@@ -1,5 +1,5 @@
 import React from "react";
-import {FurnitureGrid, TextBox} from "./MyRoom.styled";
+import {FurnitureGrid, TextBox} from "./css/MyRoom.styled";
 import CommonImageBox from "../../common/CommonImageBox";
 import {Text} from "../../common/Typography";
 
