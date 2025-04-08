@@ -11,8 +11,9 @@
 # production
 /build
 
-# JetBrains IDEs
-.idea/workspace.xml
+# IDE 관련 파일 무시
+.vscode/
+.idea/
 
 # misc
 .DS_Store
