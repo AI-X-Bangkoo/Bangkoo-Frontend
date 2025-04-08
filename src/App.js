@@ -16,7 +16,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/placement/add" element={<FurnitureEditorPage />} />{" "}
+        <Route path="/placement" element={<FurnitureEditorPage />} />{" "}
         {/* ✅ 태원 */}
         <Route path="/search" element={<AISearchComponent />} />
         <Route path="/myroom" element={<MyRoom />} />
