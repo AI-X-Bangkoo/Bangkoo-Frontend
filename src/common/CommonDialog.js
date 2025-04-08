@@ -17,6 +17,7 @@ const CommonDialog = ({
                           title,
                           children,
                           cancel = true,
+                          submit = true,
                           submitText = '확인',
                       }) => {
 
@@ -45,11 +46,14 @@ const CommonDialog = ({
                     />
                 }
 
-                <CommonButton
-                    onClick={onClick}
-                    children={submitText}
-                    {...buttonProps}
-                />
+                {submit &&
+                    <CommonButton
+                        onClick={onClick}
+                        children={submitText}
+                        {...buttonProps}
+                    />
+                }
+
             </ControllerBox>
         </DialogStyle>
     );

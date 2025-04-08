@@ -11,7 +11,13 @@ import MyFurnitureTab from "./MyFurnitureTab";
 import AIFurnitureTab from "./AIFurnitureTab";
 import InteriorTab from "./InteriorTab";
 
-import {useAIDialog, useFurnitureDialog, useInteriorDialog, useInteriorSaveDialog} from "./useFurnitureDialog";
+import {
+    useAIDialog,
+    useFurnitureDialog,
+    useInteriorDialog,
+    useInteriorSaveDialog,
+    useSettingDialog
+} from "./useFurnitureDialog";
 import { useAddFurnitureWithToast } from "./useAddFurnitureWithToast";
 import { useMyRoomLogic } from "./useMyRoomLogic";
 import { setInitialFurniture } from "../../features/furniture/furnitureSlice";
@@ -19,6 +25,7 @@ import { setInterior } from "../../features/furniture/interiorSlice";
 import { setRecommendedFurniture } from "../../features/furniture/recommendedSlice";
 import TestImage from "../../assets/images/TestImage.png";
 import InteriorSave from "./dialog/InteriorSave";
+import Setting from "./dialog/Setting";
 import AiRecommended from "./dialog/AiRecommended";
 
 function MyRoom() {
@@ -28,6 +35,7 @@ function MyRoom() {
     const furnitureDialog = useFurnitureDialog();
     const interiorDialog = useInteriorDialog();
     const interiorSaveDialog = useInteriorSaveDialog();
+    const settingDialog = useSettingDialog();
     const aiDialog = useAIDialog();
     const addFurniture = useAddFurnitureWithToast();
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
@@ -63,10 +71,13 @@ function MyRoom() {
     return (
         <MainLayout>
             <LeftPanel>
-                <FurnitureController saveClick={interiorSaveDialog.openDialog}/>
+                <FurnitureController
+                    saveClick={interiorSaveDialog.openDialog}
+                    aiClick={aiDialog.openDialog}
+                />
             </LeftPanel>
             <RightPanel>
-                <FurnitureAIController aiClick={aiDialog.openDialog} />
+                <FurnitureAIController settingClick={settingDialog.openDialog} />
                 <TabBox>
                     <CommonTabs tabs={tabList} current={currentTab} onChange={setCurrentTab} />
                 </TabBox>
@@ -112,11 +123,22 @@ function MyRoom() {
             </CommonDialog>
 
             <CommonDialog
-                open={aiDialog.open}
+                open={settingDialog.open}
                 title="AI 추천 조건"
                 submitText="설정"
-                onClose={aiDialog.closeDialog}
+                onClose={settingDialog.closeDialog}
                 onClick={() => {}}
+            >
+                <Setting/>
+            </CommonDialog>
+
+            <CommonDialog
+                open={aiDialog.open}
+                title="AI 추천 가구"
+                submitText="설정"
+                cancel={false}
+                submit={false}
+                onClose={aiDialog.closeDialog}
             >
                 <AiRecommended/>
             </CommonDialog>
