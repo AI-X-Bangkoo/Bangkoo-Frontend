@@ -6,7 +6,7 @@ import { ReactComponent as CloseIcon } from "../../assets/images/CloseIcon.svg";
 import {Text} from "../../common/Typography";
 import CommonIconButton from "../../common/CommonIconButton";
 
-function FurnitureAIController() {
+function FurnitureAIController({aiClick}) {
     const [isTooltipVisible, setIsTooltipVisible] = useState(true);
 
     const handleCloseTooltip = () => {
@@ -22,6 +22,7 @@ function FurnitureAIController() {
                 fontWeight="800"
                 radius="sm"
                 type="fill"
+                onClick={aiClick}
             >
                 AI 추천 조건
             </CommonButton>
