@@ -4,6 +4,7 @@ import {Dialog} from "@mui/material";
 export const DialogStyle = styled(Dialog)`
     & .MuiPaper-root {
         min-width: 300px;
+        max-width: 1200px;
         border-radius: ${({ theme }) => theme.borderRadius.sm};
     }
 `;

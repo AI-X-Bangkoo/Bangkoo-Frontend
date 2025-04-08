@@ -13,7 +13,7 @@ import CommonIconButton from "../../common/CommonIconButton"
 import { ReactComponent as CloseIcon } from "../../assets/images/CloseIcon.svg";
 import CommonButton from "../../common/CommonButton";
 
-function SearchTerm({}) {
+function SearchTerm() {
     const items = [
         {id: 1, value: "빨간색 원형 탁자"},
         {id: 2, value: "북유럽 스타일의 침대 북유럽 스타일의 침대 북유럽 스타일의 북유럽 스타일의 침대 북유럽 스타일의 침대"},

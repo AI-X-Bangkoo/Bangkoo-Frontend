@@ -2,7 +2,7 @@ import React from "react";
 import {ControllerBox, FlexBox} from "./MyRoom.styled";
 import CommonButton from "../../common/CommonButton";
 
-function MyRoom() {
+function MyRoom({saveClick}) {
 
     const buttonProps = {
         height: "44px",
@@ -39,6 +39,7 @@ function MyRoom() {
                 <CommonButton
                     width="80px"
                     type="outline"
+                    onClick={saveClick}
                     {...buttonProps}
                 >
                     저장

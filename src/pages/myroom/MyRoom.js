@@ -1,4 +1,3 @@
-// ✅ MyRoom.jsx (전체 페이지 with Redux 관리된 추천가구 포함)
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { GridBox, LeftPanel, MainLayout, RightPanel, TabBox } from "./MyRoom.styled";
@@ -12,13 +11,14 @@ import MyFurnitureTab from "./MyFurnitureTab";
 import AIFurnitureTab from "./AIFurnitureTab";
 import InteriorTab from "./InteriorTab";
 
-import { useFurnitureDialog, useInteriorDialog } from "./useFurnitureDialog";
+import { useFurnitureDialog, useInteriorDialog, useInteriorSaveDialog } from "./useFurnitureDialog";
 import { useAddFurnitureWithToast } from "./useAddFurnitureWithToast";
 import { useMyRoomLogic } from "./useMyRoomLogic";
 import { setInitialFurniture } from "../../features/furniture/furnitureSlice";
 import { setInterior } from "../../features/furniture/interiorSlice";
 import { setRecommendedFurniture } from "../../features/furniture/recommendedSlice";
 import TestImage from "../../assets/images/TestImage.png";
+import InteriorSave from "./dialog/InteriorSave";
 
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
@@ -26,6 +26,7 @@ function MyRoom() {
     const dispatch = useDispatch();
     const furnitureDialog = useFurnitureDialog();
     const interiorDialog = useInteriorDialog();
+    const interiorSaveDialog = useInteriorSaveDialog();
     const addFurniture = useAddFurnitureWithToast();
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
 
@@ -60,7 +61,7 @@ function MyRoom() {
     return (
         <MainLayout>
             <LeftPanel>
-                <FurnitureController />
+                <FurnitureController saveClick={interiorSaveDialog.openDialog}/>
             </LeftPanel>
             <RightPanel>
                 <FurnitureAIController />
@@ -96,6 +97,16 @@ function MyRoom() {
                         ? "사진을 모두 삭제하시겠습니까?"
                         : "사진을 정말 삭제하시겠습니까?"}
                 </Text>
+            </CommonDialog>
+
+            <CommonDialog
+                open={interiorSaveDialog.open}
+                title="인테리어 저장"
+                submitText="저장"
+                onClose={interiorSaveDialog.closeDialog}
+                onClick={() => {}}
+            >
+                <InteriorSave/>
             </CommonDialog>
         </MainLayout>
     );

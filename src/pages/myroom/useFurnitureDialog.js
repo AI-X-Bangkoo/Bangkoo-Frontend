@@ -42,3 +42,17 @@ export function useInteriorDialog() {
 
     return { open, selectedItem, deleteAll, openDelete, openDeleteAll, close };
 }
+
+export function useInteriorSaveDialog() {
+    const [open, setOpen] = useState(false);
+
+    const openDialog = () => {
+        setOpen(true);
+    };
+
+    const closeDialog = () => {
+        setOpen(false);
+    };
+
+    return { open, openDialog, closeDialog };
+}
