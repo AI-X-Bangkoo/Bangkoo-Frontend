@@ -149,20 +149,26 @@ const handleApply = async () => {
     // ⭐ 2. AI 서버로 전송
     finalCanvas.toBlob(async (blob) => {
         const formData = new FormData();
-        formData.append('backgroundImage', blob, 'bg.png');
+        formData.append('background', blob, 'bg.png');
 
         const modelName = modelUrl?.split('/')?.pop() || 'unknown_model.glb';
-        formData.append('modelName', modelName);
+//        formData.append('modelName', modelName);
 
         try {
-            const response = await fetch('http://localhost:8080/placement/add', {
+            const response = await fetch('http://localhost:8080/api/placement?mode=remove', {
                 method: 'POST',
                 body: formData,
             });
 
             if (!response.ok) throw new Error('Server Error');
 
-            const result = await response.json();
+            const base64 = await response.text();
+            const win = window.open();
+            if (win) {
+                win.document.write(`<img src="data:image/png;base64,${base64}" style="max-width:100%;" />`);
+            } else {
+                alert("팝업이 차단돼서 미리보기를 볼 수 없음!");
+            }
             console.log('AI Result:', result);
             alert('AI 배치 요청 성공!');
 
