@@ -11,7 +11,7 @@ import MyFurnitureTab from "./MyFurnitureTab";
 import AIFurnitureTab from "./AIFurnitureTab";
 import InteriorTab from "./InteriorTab";
 
-import { useFurnitureDialog, useInteriorDialog, useInteriorSaveDialog } from "./useFurnitureDialog";
+import {useAIDialog, useFurnitureDialog, useInteriorDialog, useInteriorSaveDialog} from "./useFurnitureDialog";
 import { useAddFurnitureWithToast } from "./useAddFurnitureWithToast";
 import { useMyRoomLogic } from "./useMyRoomLogic";
 import { setInitialFurniture } from "../../features/furniture/furnitureSlice";
@@ -19,6 +19,7 @@ import { setInterior } from "../../features/furniture/interiorSlice";
 import { setRecommendedFurniture } from "../../features/furniture/recommendedSlice";
 import TestImage from "../../assets/images/TestImage.png";
 import InteriorSave from "./dialog/InteriorSave";
+import AiRecommended from "./dialog/AiRecommended";
 
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
@@ -27,6 +28,7 @@ function MyRoom() {
     const furnitureDialog = useFurnitureDialog();
     const interiorDialog = useInteriorDialog();
     const interiorSaveDialog = useInteriorSaveDialog();
+    const aiDialog = useAIDialog();
     const addFurniture = useAddFurnitureWithToast();
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
 
@@ -64,7 +66,7 @@ function MyRoom() {
                 <FurnitureController saveClick={interiorSaveDialog.openDialog}/>
             </LeftPanel>
             <RightPanel>
-                <FurnitureAIController />
+                <FurnitureAIController aiClick={aiDialog.openDialog} />
                 <TabBox>
                     <CommonTabs tabs={tabList} current={currentTab} onChange={setCurrentTab} />
                 </TabBox>
@@ -107,6 +109,16 @@ function MyRoom() {
                 onClick={() => {}}
             >
                 <InteriorSave/>
+            </CommonDialog>
+
+            <CommonDialog
+                open={aiDialog.open}
+                title="AI 추천 조건"
+                submitText="설정"
+                onClose={aiDialog.closeDialog}
+                onClick={() => {}}
+            >
+                <AiRecommended/>
             </CommonDialog>
         </MainLayout>
     );

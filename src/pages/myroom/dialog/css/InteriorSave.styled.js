@@ -4,8 +4,8 @@ export const InteriorRoot = styled.div`
   display: flex;
   flex-direction: column;
   
-  & p {
-    margin-bottom: ${({ theme }) => theme.spacing.sm};;
+  & > p {
+    margin-bottom: ${({ theme }) => theme.spacing.sm};
   }
 `;
 

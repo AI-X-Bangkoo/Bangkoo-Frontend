@@ -56,3 +56,17 @@ export function useInteriorSaveDialog() {
 
     return { open, openDialog, closeDialog };
 }
+
+export function useAIDialog() {
+    const [open, setOpen] = useState(false);
+
+    const openDialog = () => {
+        setOpen(true);
+    };
+
+    const closeDialog = () => {
+        setOpen(false);
+    };
+
+    return { open, openDialog, closeDialog };
+}
