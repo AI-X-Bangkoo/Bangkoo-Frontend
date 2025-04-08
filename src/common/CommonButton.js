@@ -1,11 +1,11 @@
 import React from "react";
-import {StyledButton} from "./css/CommonStyle"
+import {StyledButton} from "./css/Button.styled"
 
 const CommonButton = ({
           children,
           width,
           height,
-          bg,
+          bgColor,
           fontSize,
           fontWeight,
           borderRadius,
@@ -18,7 +18,7 @@ const CommonButton = ({
         <StyledButton
             width={width}
             height={height}
-            bg={bg}
+            $bgColor={bgColor}
             fontSize={fontSize}
             fontWeight={fontWeight}
             borderRadius={borderRadius}

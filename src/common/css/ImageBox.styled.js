@@ -1,0 +1,71 @@
+import styled from "styled-components";
+
+export const ImageBoxStyle = styled.div`
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  border: 1px solid ${({ theme }) => theme.colors.grey};
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &:hover div.center-box {
+    opacity: 1;
+    pointer-events: auto;
+  }
+`;
+
+export const AiChip = styled.div`
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: ${({ theme }) => theme.colors.orange};
+  border-radius: 0;
+  color: #fff;
+  font-size:  ${({ theme }) => theme.fontSizes.xxs};
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  box-sizing: border-box;
+`;
+
+export const CenterBox = styled.div.attrs(() => ({
+    className: "center-box"
+}))`
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+`;
+
+export const BottomRightBox = styled.div`
+  position: absolute;
+  bottom: ${({ theme }) => theme.spacing.sm};
+  right: ${({ theme }) => theme.spacing.sm};
+`;
+
+export const CheckboxArea = styled.div`
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  cursor: pointer;
+`;

@@ -1,0 +1,160 @@
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { GridBox, LeftPanel, MainLayout, RightPanel, TabBox } from "./css/MyRoom.styled";
+import FurnitureController from "./FurnitureController";
+import FurnitureAIController from "./FurnitureAIController";
+import CommonTabs from "../../common/CommonTabs";
+import { Text } from "../../common/Typography";
+import CommonDialog from "../../common/CommonDialog";
+
+import MyFurnitureTab from "./MyFurnitureTab";
+import AIFurnitureTab from "./AIFurnitureTab";
+import InteriorTab from "./InteriorTab";
+
+import {
+    useAIDialog,
+    useFurnitureDialog,
+    useInteriorDialog,
+    useInteriorSaveDialog,
+    useSettingDialog
+} from "./useFurnitureDialog";
+import { useAddFurnitureWithToast } from "./useAddFurnitureWithToast";
+import { useMyRoomLogic } from "./useMyRoomLogic";
+import { setInitialFurniture } from "../../features/furniture/furnitureSlice";
+import { setInterior } from "../../features/furniture/interiorSlice";
+import { setRecommendedFurniture } from "../../features/furniture/recommendedSlice";
+import TestImage from "../../assets/images/TestImage.png";
+import InteriorSave from "./dialog/InteriorSave";
+import Setting from "./dialog/Setting";
+import AiRecommended from "./dialog/AiRecommended";
+import SearchDrawer from "./SearchDrawer";
+
+function MyRoom() {
+    const [currentTab, setCurrentTab] = useState("my");
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+    const openDrawer = () => setIsDrawerOpen(true);
+    const closeDrawer = () => setIsDrawerOpen(false);
+
+    const dispatch = useDispatch();
+    const furnitureDialog = useFurnitureDialog();
+    const interiorDialog = useInteriorDialog();
+    const interiorSaveDialog = useInteriorSaveDialog();
+    const settingDialog = useSettingDialog();
+    const aiDialog = useAIDialog();
+    const addFurniture = useAddFurnitureWithToast();
+    const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
+
+    useEffect(() => {
+        dispatch(setInitialFurniture([
+            { id: 1, image: TestImage, type: "hoverMinus", isCustom: false },
+            { id: 2, image: TestImage, type: "hoverMinus", isCustom: false },
+            { id: 3, image: TestImage, type: "hoverMinus", isCustom: false },
+            { id: 4, image: TestImage, type: "hoverMinus", isCustom: false },
+        ]));
+
+        dispatch(setInterior([
+            { id: 1, image: TestImage, type: "removeButton", text: "첫번째 내방 인테리어" },
+            { id: 2, image: TestImage, type: "removeButton", text: "인테리어 설명 인테리어 설명 인테리어 설명" },
+            { id: 3, image: TestImage, type: "removeButton", text: "세 번째 인테리어" },
+        ]));
+
+        dispatch(setRecommendedFurniture([
+            { id: 101, image: TestImage, type: "aiPlus", title: "LAGAN 라간 1", text: "빌트인 식기세척기, 60cm", price: 699000 },
+            { id: 102, image: TestImage, type: "aiPlus", title: "LAGAN 라간 2", text: "스마트 테이블", price: 299000 },
+            { id: 103, image: TestImage, type: "aiPlus", title: "LAGAN 라간 3", text: "슬림 책상 세트", price: 159000 },
+            { id: 104, image: TestImage, type: "aiPlus", title: "LAGAN 라간 4", text: "인테리어 장식장", price: 499000 },
+        ]));
+    }, [dispatch]);
+
+    const tabList = [
+        { id: "my", label: "나의 가구" },
+        { id: "recommend", label: "추천 가구" },
+        { id: "interior", label: "내 인테리어" },
+    ];
+
+    return (
+        <MainLayout>
+            <LeftPanel>
+                <FurnitureController
+                    saveClick={interiorSaveDialog.openDialog}
+                    aiClick={aiDialog.openDialog}
+                />
+            </LeftPanel>
+            <RightPanel>
+                <FurnitureAIController
+                    settingClick={settingDialog.openDialog}
+                    onSearchClick={openDrawer}
+                />
+                {/* 검색 drawer 영역*/}
+                {isDrawerOpen && <SearchDrawer onClose={closeDrawer} />}
+
+                <TabBox>
+                    <CommonTabs tabs={tabList} current={currentTab} onChange={setCurrentTab} />
+                </TabBox>
+                <GridBox>
+                    {currentTab === "my" && <MyFurnitureTab onCustomRemove={furnitureDialog.openDialog} />}
+                    {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} />}
+                    {currentTab === "interior" && <InteriorTab onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}
+                </GridBox>
+            </RightPanel>
+
+            <CommonDialog
+                open={furnitureDialog.open}
+                title="알림"
+                submitText="제거"
+                onClose={furnitureDialog.closeDialog}
+                onClick={handleConfirmDelete}
+            >
+                <Text size="xs" $weight={500}>내가구 목록에서 제거하시겠습니까?</Text>
+            </CommonDialog>
+
+            <CommonDialog
+                open={interiorDialog.open}
+                title="알림"
+                submitText="제거"
+                onClose={interiorDialog.close}
+                onClick={handleConfirmInteriorDelete}
+            >
+                <Text size="xs" $weight={500}>
+                    {interiorDialog.deleteAll
+                        ? "사진을 모두 삭제하시겠습니까?"
+                        : "사진을 정말 삭제하시겠습니까?"}
+                </Text>
+            </CommonDialog>
+
+            <CommonDialog
+                open={interiorSaveDialog.open}
+                title="인테리어 저장"
+                submitText="저장"
+                onClose={interiorSaveDialog.closeDialog}
+                onClick={() => {}}
+            >
+                <InteriorSave/>
+            </CommonDialog>
+
+            <CommonDialog
+                open={settingDialog.open}
+                title="AI 추천 조건"
+                submitText="설정"
+                onClose={settingDialog.closeDialog}
+                onClick={() => {}}
+            >
+                <Setting/>
+            </CommonDialog>
+
+            <CommonDialog
+                open={aiDialog.open}
+                title="AI 추천 가구"
+                submitText="설정"
+                cancel={false}
+                submit={false}
+                onClose={aiDialog.closeDialog}
+            >
+                <AiRecommended/>
+            </CommonDialog>
+        </MainLayout>
+    );
+}
+
+export default MyRoom;

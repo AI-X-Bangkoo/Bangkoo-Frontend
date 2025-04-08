@@ -55,14 +55,21 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "/Applications/IntelliJ IDEA.app/Contents/plugins/javascript-impl/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/pages/myroom/dialog/css" />
       <recent name="$PROJECT_DIR$/src/assets/images" />
+      <recent name="$PROJECT_DIR$/src/pages/myroom" />
       <recent name="$PROJECT_DIR$/src/pages/search" />
       <recent name="$PROJECT_DIR$/src/assets/fonts" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/pages/myroom/css" />
+      <recent name="$PROJECT_DIR$/src/pages" />
     </key>
   </component>
   <component name="RunManager">
@@ -92,7 +99,14 @@
       <workItem from="1743496082272" duration="2167000" />
       <workItem from="1743668346355" duration="1909000" />
       <workItem from="1743735007570" duration="15629000" />
-      <workItem from="1743751121465" duration="1710000" />
+      <workItem from="1743751121465" duration="7846000" />
+      <workItem from="1743773570133" duration="227000" />
+      <workItem from="1743775185253" duration="11117000" />
+      <workItem from="1743835954291" duration="4156000" />
+      <workItem from="1743983218873" duration="18674000" />
+      <workItem from="1744006197555" duration="9575000" />
+      <workItem from="1744029381052" duration="13108000" />
+      <workItem from="1744080992669" duration="15873000" />
     </task>
     <servers />
   </component>

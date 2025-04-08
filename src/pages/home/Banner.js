@@ -1,10 +1,8 @@
-import React, {useState} from "react";
+import React from "react";
 import {BannerRoot, BannerText} from "./Home.styled"
-import SearchComponent from "../search/SearchComponent"
-import SearchExplanation from "../search/SearchExplanation"
+import AISearchComponent from "../search/AISearchComponent";
 
 function Banner() {
-    const [isHover, setIsHover] = useState(false);
 
     return (
         <BannerRoot>
@@ -15,17 +13,7 @@ function Banner() {
             </BannerText>
 
             {/* 검색창 */}
-            <div>
-                <div
-                    onMouseEnter={() => setIsHover(true)}
-                    onMouseLeave={() => setIsHover(false)}
-                >
-                    <SearchComponent shadow={true}/>
-                </div>
-                {/* 검색창 마우스 hover시 */}
-                <SearchExplanation visible={isHover}/>
-
-            </div>
+            <AISearchComponent />
 
         </BannerRoot>
     )

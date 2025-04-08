@@ -1,4 +1,3 @@
-// src/theme/theme.js
 import { createTheme } from '@mui/material/styles';
 
 const baseTheme = createTheme({
@@ -58,6 +57,7 @@ const theme = {
         md: '16px',
         lg: '18px',
         xl: '26px',
+        xxl: '38px',
     },
 
     borderRadius: {

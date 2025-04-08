@@ -1,5 +1,5 @@
 import React from "react";
-import {StyledIconButton} from "./css/CommonStyle"
+import {StyledIconButton} from "./css/IconButton.styled"
 
 const CommonIconButton = ({width, height, icon, type, color, onClick}) => {
     return (
