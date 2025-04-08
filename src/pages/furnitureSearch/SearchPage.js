@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import AISearchComponent from "../search/AISearchComponent";
 import {GridBox, SearchRoot, SearchTermBox} from "./SearchPage.styled";
 import {Text} from "../../common/Typography";

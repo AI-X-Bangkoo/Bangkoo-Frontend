@@ -4,7 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="" />
+    <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/assets/images/TestMyRoom.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/myroom/dialog/InteriorSave.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/myroom/dialog/css/InteriorSave.styled.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/css/Dialog.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/css/Dialog.styled.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/furnitureSearch/SearchPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/furnitureSearch/SearchPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/AIFurnitureTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/AIFurnitureTab.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/FurnitureController.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/FurnitureController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyRoom.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyRoom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/useFurnitureDialog.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/useFurnitureDialog.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/search/SearchTerm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchTerm.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -97,6 +109,7 @@
       <workItem from="1743983218873" duration="18674000" />
       <workItem from="1744006197555" duration="9575000" />
       <workItem from="1744029381052" duration="13108000" />
+      <workItem from="1744080992669" duration="2348000" />
     </task>
     <servers />
   </component>
