@@ -1,5 +1,7 @@
 import React from "react";
-import { InputStyle } from "./css/CommonStyle";
+import {InputWrapper, InputStyle, ClearAllBox} from "./css/TextField.styled";
+import { ReactComponent as CloseIcon } from "../assets/images/CloseIcon.svg";
+import CommonIconButton from "./CommonIconButton";
 
 const CommonTextField = ({
                              type = "text",
@@ -14,22 +16,44 @@ const CommonTextField = ({
                              custom,
                              fontSize,
                              onFocus,
+                             imagePreviewUrl,
+                             onClearAll,
                          }) => {
+
+    const handleKeyDown = (e) => {
+        if (e.key === "Backspace" && value === "" && imagePreviewUrl && onClearAll) {
+            onClearAll();
+        }
+    };
+
+    const shouldShowClear = value !== "" || imagePreviewUrl;
+
     return (
-        <InputStyle
-            type={type}
-            width={width}
-            height={height}
-            placeholder={placeholder}
-            value={value}
-            onChange={onChange}
-            disabled={disabled}
-            name={name}
-            $line={line}
-            $custom={custom}
-            fontSize={fontSize}
-            onFocus={onFocus}
-        />
+        <InputWrapper width={width} height={height} $line={line} $custom={custom}>
+            <InputStyle
+                type={type}
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+                disabled={disabled}
+                name={name}
+
+
+                fontSize={fontSize}
+                onFocus={onFocus}
+                onKeyDown={handleKeyDown}
+            />
+            {shouldShowClear && (
+                <ClearAllBox onClick={onClearAll}>
+                    <CommonIconButton
+                        type="full"
+                        width="20px"
+                        height="20px"
+                        icon={<CloseIcon />}
+                    />
+                </ClearAllBox>
+            )}
+        </InputWrapper>
     );
 };
 

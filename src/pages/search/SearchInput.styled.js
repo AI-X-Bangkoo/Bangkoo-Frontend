@@ -12,11 +12,6 @@ export const SearchRoot = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.full};
   box-shadow: ${({ $shadow }) => $shadow ? '0 4px 4px rgba(0,0,0,0.25)': 'none'};
   border: ${({ theme, $border }) => $border === 'orange' ? `3px solid ${theme.colors.orange}`: `1px solid ${theme.colors.grey}`};
-  
-  & input {
-    // 100% - 메뉴 - 이미지 - 음성 - 검색
-    width: calc(100% - 34px - 34px - 34px - 34px);
-  }
 
   ${media.tablet`
     width: 100%;
@@ -46,6 +41,14 @@ export const SearchRoot = styled.div`
     
   `}
 `;
+
+export const InputBox = styled.div`
+  width: calc(100% - 34px - 34px - 34px - 34px);
+
+  ${media.tablet`
+    width: calc(100% - 30px - 30px - 30px - 30px);
+  `}
+` ;
 
 export const SearchBox = styled.div`
   position: absolute !important;
@@ -184,6 +187,11 @@ export const KeywordBox = styled(SearchScrollBox)`
   
   & button {
     margin-bottom: ${({ theme }) => theme.spacing.sm};
+    
+    &:hover {
+      background-color: ${({ theme }) => theme.colors.orange};
+      color: ${({ theme }) => theme.colors.white};
+    }
   }
 `;
 
@@ -258,5 +266,70 @@ export const CategoryBox = styled.div`
     border-radius: 10px;
     background-clip: padding-box;
     border: 3px solid transparent;
+  }
+`;
+
+// 이미지 검색
+export const PreviewImage = styled.img`
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  margin-left: 10px;
+  object-fit: cover;
+`;
+
+export const ImageSearchWrapper = styled(SearchBox)`
+  width: 100%;
+  align-items: flex-start;
+  
+  & p:first-child {
+    margin-bottom: ${({ theme }) => theme.spacing.md};
+  }
+`;
+
+export const ImageLinkBox = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: ${({ theme }) => theme.spacing.sm} 0 ;
+  
+  & button {
+    margin-left: ${({ theme }) => theme.spacing.sm};
+  }
+`;
+
+export const LineStyle = styled.div`
+  width: calc((100% / 2) - 30px);
+  height: 1px;
+  background-color: ${({ theme }) => theme.colors.grey};
+`;
+
+export const ImageInputWrapper = styled.div`
+  width: calc(100% - 80px - ${({ theme }) => theme.spacing.sm});
+  display: flex;
+  flex-direction: column;
+`;
+
+export const DropZone = styled.div`
+  width: 100%;
+  height: 100px;
+  border: 2px dashed ${({ theme, $active }) => $active ? theme.colors.orange : theme.colors.grey};
+  border-radius: ${({ theme }) => theme.borderRadius.sm};
+  background-color: ${({ $active }) => ($active ? "rgba(255, 165, 0, 0.1)" : "#fafafa")};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: ${({ theme }) => theme.spacing.md};
+  margin-top: ${({ theme }) => theme.spacing.sm};
+  transition: border-color 0.2s, background-color 0.2s;
+  
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.orange};
+  }
+  
+  & p {
+    margin-bottom: 0px !important;
   }
 `;

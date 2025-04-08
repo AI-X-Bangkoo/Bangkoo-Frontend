@@ -5,23 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/assets/images/ImageIcon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/assets/images/TestImage.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/common/ImageBox.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/furnitureSearch/SearchPage.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/furnitureSearch/SearchPage.styled.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/search/AISearchComponent.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/search/Category.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/css/CommonStyle.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/css/CommonStyle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/header/Header.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/header/Header.styled.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/home/Banner.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Banner.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/home/Home.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home/Home.styled.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/search/Search.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchInput.styled.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/search/SearchComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchInputComponent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/search/SearchExplanation.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchExplanation.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/search/SearchTerm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/search/SearchTerm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyRoom.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyRoom.styled.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/dialog/AiRecommended.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/dialog/AiRecommended.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/dialog/css/AiRecommended.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/dialog/css/AiRecommended.styled.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,27 +44,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;publishing&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/jieun/Desktop/hi_workspace/bangkoo-frontend/src/assets/images&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Applications/IntelliJ IDEA.app/Contents/plugins/javascript-impl/jsLanguageServicesImpl/external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "publishing",
+    "last_opened_file_path": "/Users/jieun/Desktop/hi_workspace/bangkoo-frontend/src/pages/myroom/dialog/css",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "/Applications/IntelliJ IDEA.app/Contents/plugins/javascript-impl/jsLanguageServicesImpl/external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/pages/myroom/dialog/css" />
       <recent name="$PROJECT_DIR$/src/assets/images" />
+      <recent name="$PROJECT_DIR$/src/pages/myroom" />
       <recent name="$PROJECT_DIR$/src/pages/search" />
       <recent name="$PROJECT_DIR$/src/assets/fonts" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/pages" />
     </key>
   </component>
   <component name="RunManager">
@@ -111,7 +103,10 @@
       <workItem from="1743773570133" duration="227000" />
       <workItem from="1743775185253" duration="11117000" />
       <workItem from="1743835954291" duration="4156000" />
-      <workItem from="1743983218873" duration="871000" />
+      <workItem from="1743983218873" duration="18674000" />
+      <workItem from="1744006197555" duration="9575000" />
+      <workItem from="1744029381052" duration="13108000" />
+      <workItem from="1744080992669" duration="10698000" />
     </task>
     <servers />
   </component>
