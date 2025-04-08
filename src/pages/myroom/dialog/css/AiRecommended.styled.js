@@ -57,9 +57,10 @@ export const StyleButton = styled.button`
   min-width: 90px;
   padding: 6px 10px;
   border-radius: 20px;
-  border: 1px solid ${({ $active }) => ($active ? "#f4a100" : "#ccc")};
-  background-color: ${({ $active }) => ($active ? "#f4a100" : "#fff")};
-  color: ${({ $active }) => ($active ? "#fff" : "#000")};
+  border: 1px solid ${({ theme, $active }) => ($active ? theme.colors.orange : theme.colors.grey)};
+  background-color: ${({ theme, $active }) => ($active ? theme.colors.orange : theme.colors.white)};
+  color: ${({ theme, $active }) => ($active ? theme.colors.white : theme.colors.dark)};
+  font-weight: ${({ $active }) => ($active ? 700 : 500)};
   cursor: pointer;
   font-size: 13px;
 `;

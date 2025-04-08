@@ -5,16 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e5a8c7a-97e8-49eb-940c-9eece14d7036" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/pages/myroom/dialog/AiRecommended.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/myroom/dialog/css/AiRecommended.styled.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/myroom/FurnitureAIController.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/FurnitureAIController.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/myroom/InteriorTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/InteriorTab.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyFurnitureTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyFurnitureTab.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyRoom.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyRoom.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/myroom/MyRoom.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/MyRoom.styled.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/myroom/dialog/css/InteriorSave.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/dialog/css/InteriorSave.styled.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/myroom/useFurnitureDialog.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/useFurnitureDialog.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/myroom/dialog/css/AiRecommended.styled.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/myroom/dialog/css/AiRecommended.styled.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +103,7 @@
       <workItem from="1743983218873" duration="18674000" />
       <workItem from="1744006197555" duration="9575000" />
       <workItem from="1744029381052" duration="13108000" />
-      <workItem from="1744080992669" duration="6077000" />
+      <workItem from="1744080992669" duration="6407000" />
     </task>
     <servers />
   </component>
