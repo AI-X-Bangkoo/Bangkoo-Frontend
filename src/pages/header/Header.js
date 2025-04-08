@@ -22,7 +22,8 @@ const Header = () => {
         style={{ cursor: "pointer" }}
         onClick={kakaoLogin}
       >
-        로그인
+        {isLoggedIn ? "로그아웃" : "로그인"}
+        {/* 로그인 상태에 따라 텍스트 변경 */}
       </Text>
     </HeaderRoot>
   );
