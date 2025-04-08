@@ -1,5 +1,5 @@
 import React from "react";
-import {ControllerBox, FlexBox} from "./MyRoom.styled";
+import {ControllerBox, FlexBox} from "./css/MyRoom.styled";
 import CommonButton from "../../common/CommonButton";
 
 function MyRoom({saveClick, aiClick}) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { GridBox, LeftPanel, MainLayout, RightPanel, TabBox } from "./MyRoom.styled";
+import { GridBox, LeftPanel, MainLayout, RightPanel, TabBox } from "./css/MyRoom.styled";
 import FurnitureController from "./FurnitureController";
 import FurnitureAIController from "./FurnitureAIController";
 import CommonTabs from "../../common/CommonTabs";
@@ -27,9 +27,14 @@ import TestImage from "../../assets/images/TestImage.png";
 import InteriorSave from "./dialog/InteriorSave";
 import Setting from "./dialog/Setting";
 import AiRecommended from "./dialog/AiRecommended";
+import SearchDrawer from "./SearchDrawer";
 
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+    const openDrawer = () => setIsDrawerOpen(true);
+    const closeDrawer = () => setIsDrawerOpen(false);
 
     const dispatch = useDispatch();
     const furnitureDialog = useFurnitureDialog();
@@ -77,7 +82,13 @@ function MyRoom() {
                 />
             </LeftPanel>
             <RightPanel>
-                <FurnitureAIController settingClick={settingDialog.openDialog} />
+                <FurnitureAIController
+                    settingClick={settingDialog.openDialog}
+                    onSearchClick={openDrawer}
+                />
+                {/* 검색 drawer 영역*/}
+                {isDrawerOpen && <SearchDrawer onClose={closeDrawer} />}
+
                 <TabBox>
                     <CommonTabs tabs={tabList} current={currentTab} onChange={setCurrentTab} />
                 </TabBox>
