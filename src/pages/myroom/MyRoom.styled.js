@@ -117,7 +117,7 @@ export const SearchTooltip = styled.div`
   color: #fff;
   font-size: ${({ theme }) => theme.fontSizes.xxs};
   padding: 10px 16px;
-  border-radius: 10px;
+  border-radius: ${({ theme }) => theme.borderRadius.sm};
   z-index: 100;
 
   &::after {

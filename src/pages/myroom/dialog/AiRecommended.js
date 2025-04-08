@@ -54,7 +54,7 @@ function AiRecommended() {
                     배치 결과 보기까지 <span>{progress}%</span> 진행중
                 </Text>
                 <ProgressOuter>
-                    <ProgressInner percent={progress} />
+                    <ProgressInner $percent={progress} />
                 </ProgressOuter>
             </ProgressBarWrapper>
         </AiRecommendedRoot>

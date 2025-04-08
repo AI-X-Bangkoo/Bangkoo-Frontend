@@ -61,6 +61,6 @@ export const ProgressInner = styled.div`
   background: ${({ theme }) => theme.colors.orange};
   height: 100%;
   border-radius: ${({ theme }) => theme.borderRadius.full};
-  width: ${({ percent }) => percent}%;
+  width: ${({ $percent }) => $percent}%;
   transition: width 0.5s ease;
 `;
