@@ -12,7 +12,6 @@ import AISearchComponent from "../search/AISearchComponent";
 import CommonImageBox from "../../common/CommonImageBox";
 import TestImage from "../../assets/images/TestImage.png";
 import CommonButton from "../../common/CommonButton";
-import {AISearchButton} from "./css/MyRoom.styled";
 import { ReactComponent as CloseIcon } from "../../assets/images/CloseIcon.svg";
 
 const SearchDrawer = ({ onClose }) => {
