@@ -2,7 +2,7 @@ import React from "react";
 import {ControllerBox, FlexBox} from "./MyRoom.styled";
 import CommonButton from "../../common/CommonButton";
 
-function MyRoom({saveClick}) {
+function MyRoom({saveClick, aiClick}) {
 
     const buttonProps = {
         height: "44px",
@@ -32,6 +32,7 @@ function MyRoom({saveClick}) {
                 <CommonButton
                     width="135px"
                     type="outline"
+                    onClick={aiClick}
                     {...buttonProps}
                 >
                     배치 결과 보기

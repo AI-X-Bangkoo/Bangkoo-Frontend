@@ -1,66 +1,66 @@
 import styled from "styled-components";
+import Slider from "react-slick";
 
 export const AiRecommendedRoot = styled.div`
   display: flex;
   flex-direction: column;
+  position: relative;
   
   & > p {
-    margin-bottom: ${({ theme }) => theme.spacing.sm};;
+    text-align: center;
+    margin-bottom: ${({ theme }) => theme.spacing.xl};
+    
+    & span {
+      color: ${({ theme }) => theme.colors.orange};
+    }
   }
 `;
 
-export const BudgetInputWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
+export const StyledSlider = styled(Slider)`
+  width: 800px;
+  .slick-slide {
+    width: 200px !important;
+    padding: 0 ${({ theme }) => theme.spacing.sm};
+  }
+
+  .slick-track {
+    display: flex;
+    align-items: center;
+  }
 `;
 
-export const BudgetInputGroup = styled.div`
-  display: flex;
-  align-items: center;
+export const ImageWrapper = styled.div`
+  padding: ${({ theme }) => theme.spacing.sm};
+`;
+
+export const FurnitureImageStyled = styled.img`
+  width: 100%;
+  aspect-ratio: 4 / 3;
   border: 1px solid ${({ theme }) => theme.colors.grey};
+  object-fit: cover;
+`;
+
+export const ProgressBarWrapper = styled.div`
+  margin-top: ${({ theme }) => theme.spacing.lg};
+  & p {
+    text-align: center;
+    margin-bottom: ${({ theme }) => theme.spacing.sm};;
+    & span {
+      font-weight: 900;
+    }
+  }
+`;
+
+export const ProgressOuter = styled.div`
+  background: ${({ theme }) => theme.colors.lightGrey};
   border-radius: ${({ theme }) => theme.borderRadius.full};
-  padding: 8px 12px;
-  background-color: ${({ theme }) => theme.colors.white};
+  height: 15px;
 `;
 
-export const BudgetInput = styled.input`
-  border: none;
-  outline: none;
-  font-size: ${({ theme }) => theme.fontSizes.xxs};
-  color: ${({ theme }) => theme.colors.black};
-  font-weight: 500;
-  width: 100px;
-  appearance: none;
-  text-align: right;
-
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    appearance: none;
-    margin: 0;
-  }
-
-  &[type='number'] {
-    appearance: textfield;
-  }
-`;
-
-export const StyleButtonWrapper = styled.div`
-  width: 385px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-export const StyleButton = styled.button`
-  min-width: 90px;
-  padding: 6px 10px;
-  border-radius: 20px;
-  border: 1px solid ${({ theme, $active }) => ($active ? theme.colors.orange : theme.colors.grey)};
-  background-color: ${({ theme, $active }) => ($active ? theme.colors.orange : theme.colors.white)};
-  color: ${({ theme, $active }) => ($active ? theme.colors.white : theme.colors.dark)};
-  font-weight: ${({ $active }) => ($active ? 700 : 500)};
-  cursor: pointer;
-  font-size: 13px;
+export const ProgressInner = styled.div`
+  background: ${({ theme }) => theme.colors.orange};
+  height: 100%;
+  border-radius: ${({ theme }) => theme.borderRadius.full};
+  width: ${({ percent }) => percent}%;
+  transition: width 0.5s ease;
 `;

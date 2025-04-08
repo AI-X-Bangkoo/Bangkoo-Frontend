@@ -1,88 +1,62 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {
     AiRecommendedRoot,
-    BudgetInput, BudgetInputGroup,
-    BudgetInputWrapper,
-    StyleButton,
-    StyleButtonWrapper
+    FurnitureImageStyled,
+    ImageWrapper, ProgressBarWrapper, ProgressInner, ProgressOuter,
+    StyledSlider,
 } from "./css/AiRecommended.styled";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import {Text} from "../../../common/Typography";
 
+import TestImage from "../../../assets/images/TestImage.png";
+
 function AiRecommended() {
-    const [minBudget, setMinBudget] = useState("");
-    const [maxBudget, setMaxBudget] = useState("");
-    const [selectedStyles, setSelectedStyles] = useState([]);
+        const [progress, setProgress] = useState(10);
 
-    const styleOptions = [
-        "모던",
-        "미니멀",
-        "북유럽",
-        "빈티지",
-        "인더스트리얼",
-        "전통",
-        "엘레강스",
-        "내추럴",
-    ];
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setProgress((prev) => (prev >= 100 ? 100 : prev + 5));
+        }, 500);
 
-    // 천 단위 콤마 추가 함수
-    const formatNumber = (value) => {
-        const numericValue = value.replace(/[^0-9]/g, "");
-        return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return () => clearInterval(timer);
+    }, []);
+
+    const sliderSettings = {
+        dots: false,
+        arrows: false,
+        infinite: true,
+        slidesToShow: 3.5,
+        slidesToScroll: 1,
+        autoplay: true,
+        speed: 4000,
+        autoplaySpeed: 0,
+        cssEase: "linear",
+        pauseOnHover: false,
     };
 
-    // 콤마 제거 함수
-    const unformatNumber = (value) => value.replace(/,/g, "");
+    const images = Array.from({ length: 10 }).map((_, i) => (
+        <ImageWrapper key={i}>
+            <FurnitureImageStyled src={TestImage} alt={`가구 ${i + 1}`} />
+        </ImageWrapper>
+    ));
 
-    const toggleStyle = (style) => {
-        setSelectedStyles((prev) =>
-            prev.includes(style)
-                ? prev.filter((s) => s !== style)
-                : [...prev, style]
-        );
-    };
-
-
-
-    return(
+    return (
         <AiRecommendedRoot>
-            <Text size="xxs" $weight={600}>예산 금액 설정</Text>
-            <BudgetInputWrapper>
-                <BudgetInputGroup>
-                    <Text size="xxs" $weight={600}>₩</Text>
-                    <BudgetInput
-                        type="text"
-                        placeholder={"0"}
-                        value={formatNumber(minBudget)}
-                        onChange={(e) => setMinBudget(unformatNumber(e.target.value))}
-                    />
-                </BudgetInputGroup>
+            <Text size="md" $weight={700}>
+                “당신의 <span>공간</span>을 더 아름답게, <span>AI</span>가 어울리는 <span>가구</span>를 골라드려요”
+            </Text>
 
-                <Text size="xxs" $weight={600}>~</Text>
+            <StyledSlider {...sliderSettings}>{images}</StyledSlider>
 
-                <BudgetInputGroup>
-                    <Text size="xxs" $weight={600}>₩</Text>
-                    <BudgetInput
-                        type="text"
-                        placeholder={"0"}
-                        value={formatNumber(maxBudget)}
-                        onChange={(e) => setMaxBudget(unformatNumber(e.target.value))}
-                    />
-                </BudgetInputGroup>
-            </BudgetInputWrapper>
-
-            <Text size="xxs" $weight={600}>스타일 설정</Text>
-            <StyleButtonWrapper>
-                {styleOptions.map((style) => (
-                    <StyleButton
-                        key={style}
-                        $active={selectedStyles.includes(style)}
-                        onClick={() => toggleStyle(style)}
-                    >
-                        {style}
-                    </StyleButton>
-                ))}
-            </StyleButtonWrapper>
-
+            <ProgressBarWrapper>
+                <Text size="xxs" $weight={500}>
+                    배치 결과 보기까지 <span>{progress}%</span> 진행중
+                </Text>
+                <ProgressOuter>
+                    <ProgressInner percent={progress} />
+                </ProgressOuter>
+            </ProgressBarWrapper>
         </AiRecommendedRoot>
     )
 }
