@@ -10,6 +10,9 @@ const useAuth = () => {
   const { kakaoLogin } = useKakaoLogin(); // 카카오 로그인 요청 함수
   const navigate = useNavigate();
 
+  // 메시지 (dialog) - 지은
+  const [alertMessage, setAlertMessage] = useState(null);
+
   useEffect(() => {
     const cookie = document.cookie;
     const nicknameMatch = cookie.match(/nickname=([^;]+)/);
@@ -41,7 +44,7 @@ const useAuth = () => {
   const logout = async () => {
     try {
       // 로그아웃 API 호출 (서버에서 로그아웃 처리)
-      await axios.post("http://localhost:6816/auth/logout", null, {
+      await axios.post("http://localhost:8080/auth/logout", null, {
         withCredentials: true,
       });
 
@@ -53,11 +56,13 @@ const useAuth = () => {
       setUser(null);
 
       // 로그아웃 후 홈 화면으로 리다이렉트
-      alert("로그아웃 되었습니다.");
+      setAlertMessage("로그아웃 되었습니다."); // 지은
+      // alert("로그아웃 되었습니다.");
       navigate("/", { replace: true }); // 홈 화면으로 리다이렉트
     } catch (err) {
       console.error("로그아웃 실패:", err);
-      alert("로그아웃 실패. 다시 시도해주세요.");
+      setAlertMessage("로그아웃 실패. 다시 시도해주세요."); // 지은
+      // alert("로그아웃 실패. 다시 시도해주세요.");
     }
   };
 
@@ -86,6 +91,8 @@ const useAuth = () => {
     logout,
     toggleLogin,
     setLoginInfo,
+    alertMessage,
+    setAlertMessage
   };
 };
 
