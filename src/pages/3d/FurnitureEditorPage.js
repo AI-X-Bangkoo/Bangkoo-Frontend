@@ -155,7 +155,7 @@ const handleApply = async () => {
 //        formData.append('modelName', modelName);
 
         try {
-            const response = await fetch('http://localhost:8080/api/placement?mode=remove', {
+            const response = await fetch('http://localhost:6816/api/placement?mode=remove', {
                 method: 'POST',
                 body: formData,
             });
