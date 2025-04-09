@@ -28,6 +28,7 @@ import InteriorSave from "./dialog/InteriorSave";
 import Setting from "./dialog/Setting";
 import AiRecommended from "./dialog/AiRecommended";
 import SearchDrawer from "./SearchDrawer";
+import ImageUploader from "./ImageUploader";
 
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
@@ -80,6 +81,12 @@ function MyRoom() {
                     saveClick={interiorSaveDialog.openDialog}
                     aiClick={aiDialog.openDialog}
                 />
+                <ImageUploader/>
+                <Text size="sm" $weight={600} >
+                    가구 추가, 이동, 제거가 완료되면
+                    <span style={{fontWeight:800}}> 배치 결과 보기</span>
+                    버튼을 눌러주세요
+                </Text>
             </LeftPanel>
             <RightPanel>
                 <FurnitureAIController
