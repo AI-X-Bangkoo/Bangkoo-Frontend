@@ -5,6 +5,7 @@ import {Text} from "../../common/Typography";
 import CommonButton from "../../common/CommonButton";
 import CommonImageBox from "../../common/CommonImageBox";
 import TestImage from "../../assets/images/TestImage.png";
+import {useNavigate} from "react-router-dom";
 
 function SearchPage() {
     const list = [
@@ -50,6 +51,12 @@ function SearchPage() {
         },
     ]
 
+    const navigate = useNavigate();
+
+    const goToRoom = () => {
+        navigate("/myroom"); // 홈 화면으로 리다이렉트
+    };
+
     return (
         <SearchRoot>
             <AISearchComponent/>
@@ -72,6 +79,7 @@ function SearchPage() {
                             fontWeight={900}
                             radius="sm"
                             type="fill"
+                            onClick={goToRoom}
                         >
                             내방 인테리어 하러가기
                         </CommonButton>
