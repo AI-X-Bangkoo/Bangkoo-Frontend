@@ -7,8 +7,8 @@ const useKakaoLogin = () => {
   const REST_API_KEY = process.env.REACT_APP_KAKAO_CLIENT_ID;
   const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI;
 
-  //console.log("REST_API_KEY:", REST_API_KEY); // 환경 변수 확인
-  //console.log("REDIRECT_URI:", REDIRECT_URI); // 환경 변수 확인
+  // console.log("REST_API_KEY:", REST_API_KEY); // 환경 변수 확인
+  // console.log("REDIRECT_URI:", REDIRECT_URI); // 환경 변수 확인
 
   const KAKAO_AUTH_URL =
     `https://kauth.kakao.com/oauth/authorize` +
