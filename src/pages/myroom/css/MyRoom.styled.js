@@ -16,6 +16,12 @@ export const LeftPanel = styled.div`
   border-right: 1px solid ${({ theme }) => theme.colors.grey};
   display: flex;
   flex-direction: column;
+
+  & > p {
+    margin-top: ${({ theme }) => theme.spacing.lg};
+    text-align: center;
+    margin-bottom: ${({ theme }) => theme.spacing.lg};
+  }
 `;
 
 export const RightPanel = styled.div`

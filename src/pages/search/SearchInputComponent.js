@@ -6,6 +6,7 @@ import { ReactComponent as SearchIcon } from "../../assets/images/SearchIcon.svg
 import { ReactComponent as MenuIcon } from "../../assets/images/MenuIcon.svg";
 import { ReactComponent as ImageIcon } from "../../assets/images/ImageIcon.svg";
 import CommonTextField from "../../common/CommonTextField";
+import {useNavigate} from "react-router-dom";
 
 const SearchInputComponent = ({
                                   shadow,
@@ -18,6 +19,12 @@ const SearchInputComponent = ({
         }) => {
 
     const [text, setText] = useState("");
+
+    const navigate = useNavigate();
+
+    const goToSearch = () => {
+        navigate("/search"); // 홈 화면으로 리다이렉트
+    };
 
     return (
         <SearchRoot $shadow={shadow} $border={border}>
@@ -42,7 +49,7 @@ const SearchInputComponent = ({
 
             <CommonIconButton type={"none"} icon={<ImageIcon/>} onClick={onClickImage}></CommonIconButton>
             <CommonIconButton type={"none"} icon={<VoiceIcon/>}></CommonIconButton>
-            <CommonIconButton type={"none"} icon={<SearchIcon/>}></CommonIconButton>
+            <CommonIconButton onClick={goToSearch} type={"none"} icon={<SearchIcon/>}></CommonIconButton>
         </SearchRoot>
     )
 }

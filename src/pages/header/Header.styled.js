@@ -13,7 +13,16 @@ export const HeaderRoot = styled.div`
   box-sizing: border-box;
   background-color: ${({ theme }) => theme.colors.white};
   z-index: 20;
-  & svg {
+  & > svg {
     cursor: pointer;
+  }
+`;
+
+export const LoginBox = styled.div`
+  display: flex;
+  align-items: center;
+  
+  & p {
+    margin-left: ${({ theme }) => theme.spacing.sm};;
   }
 `;
