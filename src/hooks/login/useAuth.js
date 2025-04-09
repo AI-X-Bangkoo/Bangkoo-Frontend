@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useKakaoLogin from "./useKakaoLogin"; // 카카오 로그인 훅
 import axios from "axios";
 
@@ -9,10 +9,11 @@ const useAuth = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false); // 로그인 요청 상태 관리
   const { kakaoLogin } = useKakaoLogin(); // 카카오 로그인 요청 함수
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const cookie = document.cookie;
-    const nicknameMatch = cookie.match(/nickname=([^;]+)/);
+    const nicknameMatch = cookie.match(/nickname=([^;]+)/); //닉네임 확인
 
     if (nicknameMatch) {
       setIsLoggedIn(true);
@@ -21,7 +22,7 @@ const useAuth = () => {
       setIsLoggedIn(false);
       setUser(null);
     }
-  }, []); // 빈 배열을 넣어 최초 렌더링 시만 실행되도록
+  }, [location.pathname]); // 빈 배열을 넣어 최초 렌더링 시만 실행되도록
 
   // 로그인 요청 (카카오 로그인)
   const login = useCallback(async () => {
