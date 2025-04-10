@@ -1,4 +1,6 @@
 // FurnitureEditorPage.js
+// 작성자: 김태원
+
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { Canvas, useThree, useLoader, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
@@ -94,6 +96,8 @@ export default function FurnitureEditorPage() {
     const [canvasSize, setCanvasSize] = useState({ width: 1024, height: 768 });
     const [showMask, setShowMask] = useState(false);
 
+    const [modelList, setModelList] = useState([]);
+
     const handleBackgroundLoad = (url) => {
         const img = new Image();
         img.onload = () => {
@@ -155,7 +159,7 @@ const handleApply = async () => {
 //        formData.append('modelName', modelName);
 
         try {
-            const response = await fetch('http://localhost:6816/api/placement?mode=remove', {
+            const response = await fetch('http://localhost:6816/api/placement?mode=add', {
                 method: 'POST',
                 body: formData,
             });
