@@ -9,6 +9,7 @@ import KakaoCallback from "./pages/auth/KakaoCallback";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import FurnitureEditorContainer from "./pages/3d/FurnitureEditorContainer";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/placement" element={<FurnitureEditorPage />} />{" "}
+        <Route path="/Editor" element={<FurnitureEditorContainer />} />
         {/* ✅ 태원 */}
         <Route path="/search" element={<AISearchComponent />} />
         <Route path="/myroom" element={<MyRoom />} />
