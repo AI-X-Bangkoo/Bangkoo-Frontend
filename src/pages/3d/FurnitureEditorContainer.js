@@ -1,7 +1,7 @@
 // FurnitureEditorContainer.js
 import React, { useState } from 'react';
 import BackgroundSection from './BackgroundSection';
-import Canvas3DSection from './Canvas3DSection';
+import Canvas3DSection from '@/components/canvas/Canvas3DSection';
 import ActionSection from './ActionSection';
 
 export default function FurnitureEditorContainer() {

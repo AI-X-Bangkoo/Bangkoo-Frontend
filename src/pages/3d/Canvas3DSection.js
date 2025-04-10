@@ -1,9 +1,8 @@
-// Canvas3DSection.js
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import FixedBackground from '../../common/three/FixedBackground';
-import Model from './Model';
+import FixedBackground from '@/common/three/FixedBackground';
+import Model from '@/components/canvas/Model/Model'; 
 
 export default function Canvas3DSection({ background, modelUrl, canvasSize, showMask }) {
   return (
