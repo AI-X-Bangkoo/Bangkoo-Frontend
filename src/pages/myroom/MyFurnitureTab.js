@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import MyFurnitureList from "./MyFurnitureList";
 import { toggleFurniture } from "../../features/furniture/furnitureSlice";
+import { setItemChecked } from "../../features/furniture/selectionSlice";
 import {Text} from "../../common/Typography";
 import React from "react";
 import {EmptyBox} from "./css/MyRoom.styled";
@@ -14,6 +15,11 @@ export default function MyFurnitureTab({ onCustomRemove }) {
             onCustomRemove(item);
         } else {
             dispatch(toggleFurniture(item.id));
+        }
+
+        // SearchDrawer 체크 해제
+        if (item.originalId !== undefined) {
+            dispatch(setItemChecked({ id: item.originalId, checked: false }));
         }
     };
 

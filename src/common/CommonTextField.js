@@ -18,11 +18,17 @@ const CommonTextField = ({
                              onFocus,
                              imagePreviewUrl,
                              onClearAll,
+                             onEnter,
                          }) => {
 
     const handleKeyDown = (e) => {
+        // 1. 백스페이스 + 이미지 있는 경우 → 이미지 제거
         if (e.key === "Backspace" && value === "" && imagePreviewUrl && onClearAll) {
             onClearAll();
+        }
+
+        if (e.key === "Enter" && typeof onEnter === "function") {
+            onEnter();
         }
     };
 

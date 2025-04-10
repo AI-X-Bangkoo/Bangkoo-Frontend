@@ -15,7 +15,7 @@ export const UploadContainer = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.md };
   text-align: center;
   background-color: ${({ theme }) => theme.colors.white };
-  cursor: pointer;
+  //cursor: pointer;
   position: relative;
   box-sizing: border-box;
 `;

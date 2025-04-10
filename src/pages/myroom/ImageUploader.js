@@ -67,7 +67,7 @@ function ImageUploader() {
             <UploadContainer
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
-                onClick={triggerFileInput}
+                // onClick={triggerFileInput}
                 $hasImage={!!imageUrl}
             >
                 {!imageUrl ? (

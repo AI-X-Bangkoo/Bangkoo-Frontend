@@ -1,4 +1,9 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+    removeRecentKeyword,
+    clearRecentKeywords,
+} from "../../features/search/searchSlice";
 import {
     SearchTermBox,
     RecentBox,
@@ -14,6 +19,9 @@ import { ReactComponent as CloseIcon } from "../../assets/images/CloseIcon.svg";
 import CommonButton from "../../common/CommonButton";
 
 function SearchTerm() {
+    const dispatch = useDispatch();
+    const recentKeywords = useSelector((state) => state.search.recentKeywords);
+
     const items = [
         {id: 1, value: "빨간색 원형 탁자"},
         {id: 2, value: "북유럽 스타일의 침대 북유럽 스타일의 침대 북유럽 스타일의 북유럽 스타일의 침대 북유럽 스타일의 침대"},
@@ -36,10 +44,17 @@ function SearchTerm() {
                 </RecentTitleBox>
 
                 <SearchScrollBox>
-                    {items?.map((item) => (
-                        <RecentTextBox key={item.id}>
-                            <Text size="xs" $weight={500}>{item.value}</Text>
-                            <CommonIconButton width="20px" height="20px" type="full" color="orange" icon={<CloseIcon/>} />
+                    {recentKeywords.map((item) => (
+                        <RecentTextBox key={item}>
+                            <Text size="xs" $weight={500}>{item}</Text>
+                            <CommonIconButton
+                                width="20px"
+                                height="20px"
+                                type="full"
+                                color="orange"
+                                icon={<CloseIcon/>}
+                                onClick={() => dispatch(removeRecentKeyword(item))}
+                            />
                         </RecentTextBox>
                     ))}
                 </SearchScrollBox>
@@ -54,7 +69,7 @@ function SearchTerm() {
             <PopularityBox>
                 <Text size="sm" $weight={800}>인기 검색어</Text>
                 <KeywordBox>
-                    {keyword?.map((item) => (
+                    {keyword.map((item) => (
                         <CommonButton
                             key={item.id}
                             width="90px"

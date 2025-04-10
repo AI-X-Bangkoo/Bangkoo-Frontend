@@ -32,7 +32,7 @@ function ImageSearchBox({ onSearchComplete }) {
             const file = e.dataTransfer.files[0];
             setImageFile(file);
             const localUrl = URL.createObjectURL(file);
-            onSearchComplete(localUrl); // 👉 드래그 업로드도 바로 닫기
+            onSearchComplete(localUrl); // 드래그 업로드도 바로 닫기
         }
     };
 
@@ -54,7 +54,7 @@ function ImageSearchBox({ onSearchComplete }) {
         if (file) {
             setImageFile(file);
             const localUrl = URL.createObjectURL(file);
-            onSearchComplete(localUrl); // 👉 업로드 시 바로 창 닫기
+            onSearchComplete(localUrl); // 업로드 시 바로 창 닫기
         }
     };
 
@@ -104,6 +104,7 @@ function ImageSearchBox({ onSearchComplete }) {
                         onClearAll={() => {
                             setImageUrl("");
                         }}
+                        onEnter={handleSearch}
                     />
 
                 </ImageInputWrapper>

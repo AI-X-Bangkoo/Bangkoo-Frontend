@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {
     BudgetInput, BudgetInputGroup,
     BudgetInputWrapper, SettingRoot,
@@ -7,10 +7,13 @@ import {
 } from "./css/Setting.styled";
 import {Text} from "../../../common/Typography";
 
+import { useSelector, useDispatch } from "react-redux";
+import { setBudget, setSelectedStyles } from "../../../features/ai/aiSlice";
+
 function Setting() {
-    const [minBudget, setMinBudget] = useState("");
-    const [maxBudget, setMaxBudget] = useState("");
-    const [selectedStyles, setSelectedStyles] = useState([]);
+    const dispatch = useDispatch();
+    const budget = useSelector((state) => state.ai.budget);
+    const selectedStyles = useSelector((state) => state.ai.selectedStyles);
 
     const styleOptions = [
         "모던",
@@ -32,12 +35,18 @@ function Setting() {
     // 콤마 제거 함수
     const unformatNumber = (value) => value.replace(/,/g, "");
 
+    const handleBudgetChange = (type, value) => {
+        dispatch(setBudget({
+            ...budget,
+            [type]: unformatNumber(value)
+        }));
+    };
+
     const toggleStyle = (style) => {
-        setSelectedStyles((prev) =>
-            prev.includes(style)
-                ? prev.filter((s) => s !== style)
-                : [...prev, style]
-        );
+        const updated = selectedStyles.includes(style)
+            ? selectedStyles.filter((s) => s !== style)
+            : [...selectedStyles, style];
+        dispatch(setSelectedStyles(updated));
     };
 
 
@@ -51,8 +60,8 @@ function Setting() {
                     <BudgetInput
                         type="text"
                         placeholder={"0"}
-                        value={formatNumber(minBudget)}
-                        onChange={(e) => setMinBudget(unformatNumber(e.target.value))}
+                        value={formatNumber(budget.min)}
+                        onChange={(e) => handleBudgetChange("min", e.target.value)}
                     />
                 </BudgetInputGroup>
 
@@ -63,8 +72,8 @@ function Setting() {
                     <BudgetInput
                         type="text"
                         placeholder={"0"}
-                        value={formatNumber(maxBudget)}
-                        onChange={(e) => setMaxBudget(unformatNumber(e.target.value))}
+                        value={formatNumber(budget.max)}
+                        onChange={(e) => handleBudgetChange("max", e.target.value)}
                     />
                 </BudgetInputGroup>
             </BudgetInputWrapper>
