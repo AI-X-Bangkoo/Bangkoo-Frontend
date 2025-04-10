@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setKeyword, setUploadedImage, addRecentKeyword } from "../../features/search/searchSlice";
+import { setUploadedImage } from "../../features/search/searchSlice";
+// import { setKeyword, setUploadedImage, addRecentKeyword } from "../../features/search/searchSlice";
 
 import {SearchRoot, PreviewImage, InputBox} from "./SearchInput.styled"
 import CommonIconButton from "../../common/CommonIconButton";
@@ -10,6 +11,7 @@ import { ReactComponent as MenuIcon } from "../../assets/images/MenuIcon.svg";
 import { ReactComponent as ImageIcon } from "../../assets/images/ImageIcon.svg";
 import CommonTextField from "../../common/CommonTextField";
 import {useNavigate} from "react-router-dom";
+import useSearchHistory from "../furnitureSearch/useSearchHistory";
 
 const SearchInputComponent = ({
                                   shadow,
@@ -22,17 +24,20 @@ const SearchInputComponent = ({
         }) => {
 
     const dispatch = useDispatch();
-    const text = useSelector((state) => state.search.keyword); // Redux 상태 사용
-
     const navigate = useNavigate();
 
+    const { keyword, updateKeyword, addKeyword } = useSearchHistory(); // 사용
+    const uploadedImage = useSelector((state) => state.search.uploadedImage);
+
+    const text = useSelector((state) => state.search.keyword); // Redux 상태 사용
+
     const handleTextChange = (e) => {
-        dispatch(setKeyword(e.target.value)); // 상태 변경
+        updateKeyword(e.target.value); // 상태 변경
     };
 
     const goToSearch = () => {
         if (text.trim() !== "") {
-            dispatch(addRecentKeyword(text)); // 검색 히스토리 저장
+            addKeyword(keyword); // 검색 히스토리 저장
         }
         navigate("/search"); // 홈 화면으로 리다이렉트
     };
@@ -52,8 +57,8 @@ const SearchInputComponent = ({
                     onFocus={onFocus}
                     imagePreviewUrl={imagePreviewUrl}
                     onClearAll={() => {
-                        dispatch(setKeyword(""));               // 텍스트 초기화
-                        dispatch(setUploadedImage(null));       // 이미지도 함께 초기화
+                        updateKeyword("");            // 텍스트 초기화
+                        dispatch(setUploadedImage(null));      // 이미지도 함께 초기화
                         if (typeof onClearImage === "function") onClearImage();
                     }}
                 />
