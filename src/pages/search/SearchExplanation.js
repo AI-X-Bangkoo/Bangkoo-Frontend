@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { ExplanationBox, ImageBox, TypingText } from "./SearchInput.styled";
-import { Text } from "../../common/Typography";
-import SearchImage from "../../assets/images/SearchImage.png";
+import { ExplanationBox, ImageBox, TypingText } from "./css/SearchInput.styled";
+import { Text } from "@/common/Typography";
+import SearchImage from "@/assets/images/SearchImage.png";
 
 function SearchExplanation({ visible }) {
     const fullText = "빨간색 모던한 의자";

@@ -5,10 +5,9 @@ import {
     StyleButton,
     StyleButtonWrapper
 } from "./css/Setting.styled";
-import {Text} from "../../../common/Typography";
-
+import {Text} from "@/common/Typography";
 import { useSelector, useDispatch } from "react-redux";
-import { setBudget, setSelectedStyles } from "../../../features/ai/aiSlice";
+import { setBudget, setSelectedStyles } from "@/features/ai/aiSlice";
 
 function Setting() {
     const dispatch = useDispatch();

@@ -1,8 +1,7 @@
 import React from "react";
 import {FurnitureGrid, TextBox} from "./css/MyRoom.styled";
-import CommonImageBox from "../../common/CommonImageBox";
-import {Text} from "../../common/Typography";
-
+import CommonImageBox from "@/common/CommonImageBox";
+import {Text} from "@/common/Typography";
 
 function AIFurnitureList({ furnitureList = [], onPlus }) {
     return (

@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { media } from "../../common/css/media"
-import banner from "../../assets/images/BannerImage.png"
+import { media } from "@/common/css/media"
+import banner from "@/assets/images/BannerImage.png"
 
 export const HomeRoot = styled.div`
     margin-bottom: 110px;

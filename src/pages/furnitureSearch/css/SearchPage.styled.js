@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { media } from "../../common/css/media"
+import { media } from "@/common/css/media"
 
 export const SearchRoot = styled.div`
   width: ${({ theme }) => theme.display.base};

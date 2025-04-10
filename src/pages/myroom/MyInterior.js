@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {InteriorBox, InteriorControllerBox} from "./css/MyRoom.styled";
 import MyInteriorList from "./MyInteriorList";
-import CommonButton from "../../common/CommonButton";
+import CommonButton from "@/common/CommonButton";
 
 function MyInterior({ interiorList = [], onDelete , onDeleteAll}) {
     const [isEditMode, setIsEditMode] = useState(false);

@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useEffect, useRef }  from 'react';
 import {
     DialogStyle,
     TitleBox,
@@ -21,6 +21,15 @@ const CommonDialog = ({
                           submitText = '확인',
                       }) => {
 
+    const dialogRef = useRef(null); // 다이얼로그 DOM 참조
+
+    // 포커스 이동
+    useEffect(() => {
+        if (open && dialogRef.current) {
+            dialogRef.current.focus();
+        }
+    }, [open]);
+
     const buttonProps = {
         width:"140px",
         height: "40px",
@@ -28,7 +37,7 @@ const CommonDialog = ({
     };
 
     return (
-        <DialogStyle onClose={onClose} open={open}>
+        <DialogStyle open={open}>
             <TitleBox>
                 <Text size="base" $weight={700}>{title}</Text>
                 <IconButton onClick={onClose}><CloseIcon /></IconButton>

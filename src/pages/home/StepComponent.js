@@ -1,6 +1,6 @@
 import React from "react";
-import {StepRoot, StepRootIn, StepBox, ImageBox, TextBox} from "./Home.styled"
-import { Text } from "../../common/Typography";
+import {StepRoot, StepRootIn, StepBox, ImageBox, TextBox} from "./css/Home.styled"
+import { Text } from "@/common/Typography";
 
 function StepComponent({type = 'basic', image, step, title, text}) {
 

@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
-import { removeFurniture } from '../../features/furniture/furnitureSlice';
-import { removeInterior, removeAllInterior } from '../../features/furniture/interiorSlice';
+import { removeFurniture } from '@/features/furniture/furnitureSlice';
+import { removeInterior, removeAllInterior } from '@/features/furniture/interiorSlice';
 
 export function useMyRoomLogic(furnitureDialog, interiorDialog) {
     const dispatch = useDispatch();

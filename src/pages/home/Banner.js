@@ -1,5 +1,5 @@
 import React from "react";
-import {BannerRoot, BannerText} from "./Home.styled"
+import {BannerRoot, BannerText} from "./css/Home.styled"
 import AISearchComponent from "../search/AISearchComponent";
 
 function Banner() {

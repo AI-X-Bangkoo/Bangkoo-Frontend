@@ -1,14 +1,13 @@
 import React, { useRef, useState } from "react";
-
-import { ReactComponent as ImageUploaderIcon } from "./../../assets/images/ImageUploaderIcon.svg";
-import {Text} from "../../common/Typography";
+import { ReactComponent as ImageUploaderIcon } from "@/assets/images/ImageUploaderIcon.svg";
+import {Text} from "@/common/Typography";
 import {
     DeleteBox,
     PreviewImage, UploadBox,
     UploadContainer,
     UploadInput,
 } from "./css/ImageUploader.styled";
-import CommonButton from "../../common/CommonButton";
+import CommonButton from "@/common/CommonButton";
 
 function ImageUploader() {
     const [imageUrl, setImageUrl] = useState(null);

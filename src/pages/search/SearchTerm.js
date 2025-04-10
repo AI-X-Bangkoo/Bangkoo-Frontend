@@ -1,9 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-    removeRecentKeyword,
-    clearRecentKeywords,
-} from "../../features/search/searchSlice";
+import { removeRecentKeyword } from "@/features/search/searchSlice";
 import {
     SearchTermBox,
     RecentBox,
@@ -12,12 +9,12 @@ import {
     RecentTextBox,
     RecentBottomBox,
     SearchScrollBox, KeywordBox,
-} from "./SearchInput.styled";
-import { Text } from "../../common/Typography";
-import CommonIconButton from "../../common/CommonIconButton"
-import { ReactComponent as CloseIcon } from "../../assets/images/CloseIcon.svg";
-import CommonButton from "../../common/CommonButton";
-import useSearchHistory from "../furnitureSearch/useSearchHistory";
+} from "./css/SearchInput.styled";
+import { Text } from "@/common/Typography";
+import CommonIconButton from "@/common/CommonIconButton"
+import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
+import CommonButton from "@/common/CommonButton";
+import useSearchHistory from "@/hooks/search/useSearchHistory";
 
 function SearchTerm() {
     const dispatch = useDispatch();
