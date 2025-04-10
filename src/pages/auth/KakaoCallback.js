@@ -30,7 +30,13 @@ const KakaoCallback = () => {
         withCredentials: true, // ✅ 쿠키를 서버에서 받을 수 있게 설정
       })
       .then((res) => {
-        console.log('백엔드 응답:',res);
+           console.log("전체 응답 객체:", res);
+           console.log(
+             " 쿠키가 응답에 포함되었는지? (headers):",
+             res.headers
+           );
+           console.log(" 서버 응답 데이터:", res.data);
+
         const { nickname } = res.data;
 
         if (nickname) {

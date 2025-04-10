@@ -15,7 +15,7 @@ const useAuth = () => {
 
   useEffect(() => {
     const cookie = document.cookie;
-    const nicknameMatch = cookie.match(/nickname=([^;]+)/);
+    const nicknameMatch = cookie.match(/nickname=([^;]+)/); //닉네임 확인
 
     if (nicknameMatch) {
       setIsLoggedIn(true);
