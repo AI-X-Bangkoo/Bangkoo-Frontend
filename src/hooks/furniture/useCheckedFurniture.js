@@ -3,7 +3,7 @@ import {
     toggleItem,
     setItemChecked,
     clearAllSelections,
-} from "../../features/furniture/selectionSlice";
+} from "@/features/furniture/selectionSlice";
 
 export default function useCheckedFurniture() {
     const dispatch = useDispatch();

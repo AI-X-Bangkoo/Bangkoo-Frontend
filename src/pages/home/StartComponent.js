@@ -1,6 +1,6 @@
 import React from "react";
-import {StartRoot} from "./Home.styled"
-import CommonButton from '../../common/CommonButton';
+import {StartRoot} from "./css/Home.styled"
+import CommonButton from '@/common/CommonButton';
 import {useNavigate} from "react-router-dom";
 
 function StartComponent() {

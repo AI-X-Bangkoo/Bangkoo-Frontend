@@ -7,15 +7,14 @@ import {
 } from "./css/AiRecommended.styled";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import {Text} from "../../../common/Typography";
-import { useDispatch, useSelector } from "react-redux";
-import { startAnalysis, endAnalysis } from "../../../features/ai/aiSlice";
+import {Text} from "@/common/Typography";
+import { useDispatch } from "react-redux";
+import { startAnalysis, endAnalysis } from "@/features/ai/aiSlice";
 
 import TestImage from "../../../assets/images/TestImage.png";
 
 function AiRecommended() {
     const dispatch = useDispatch();
-    const isAnalyzing = useSelector((state) => state.ai.isAnalyzing);
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {

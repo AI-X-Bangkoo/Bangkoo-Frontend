@@ -1,9 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MyFurnitureList from "./MyFurnitureList";
-import { toggleFurniture } from "../../features/furniture/furnitureSlice";
-import useCheckedFurniture from "./useCheckedFurniture";
-import { setItemChecked } from "../../features/furniture/selectionSlice";
+import { toggleFurniture } from "@/features/furniture/furnitureSlice";
+import useCheckedFurniture from "@/hooks/furniture/useCheckedFurniture";
 import {Text} from "../../common/Typography";
 import {EmptyBox} from "./css/MyRoom.styled";
 
@@ -35,8 +34,6 @@ export default function MyFurnitureTab({ onCustomRemove }) {
                 :
                 <MyFurnitureList furnitureList={furnitureList} onPlusMinus={handleClick} />
             }
-
         </>
-
     );
 }

@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUploadedImage } from "../../features/search/searchSlice";
+import { setUploadedImage } from "@/features/search/searchSlice";
 import SearchInputComponent from "./SearchInputComponent";
 import SearchExplanation from "./SearchExplanation";
 import SearchTerm from "./SearchTerm";

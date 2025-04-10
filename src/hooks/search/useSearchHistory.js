@@ -5,7 +5,7 @@ import {
     removeRecentKeyword,
     clearRecentKeywords,
     toggleAutoSave,
-} from "../../features/search/searchSlice";
+} from "@/features/search/searchSlice";
 
 export default function useSearchHistory() {
     const dispatch = useDispatch();

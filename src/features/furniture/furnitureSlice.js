@@ -27,5 +27,10 @@ const furnitureSlice = createSlice({
     },
 });
 
-export const { addFurniture, removeFurniture, toggleFurniture, setInitialFurniture } = furnitureSlice.actions;
+export const {
+    addFurniture,
+    removeFurniture,
+    toggleFurniture,
+    setInitialFurniture
+} = furnitureSlice.actions;
 export default furnitureSlice.reducer;

@@ -7,25 +7,21 @@ import {
     SearchBox,
     TextBox
 } from "./css/SearchDrawer.styled";
-import {Text} from "../../common/Typography";
+import {Text} from "@/common/Typography";
 import AISearchComponent from "../search/AISearchComponent";
-import CommonImageBox from "../../common/CommonImageBox";
-import TestImage from "../../assets/images/TestImage.png";
-import CommonButton from "../../common/CommonButton";
-import { ReactComponent as CloseIcon } from "../../assets/images/CloseIcon.svg";
+import CommonImageBox from "@/common/CommonImageBox";
+import TestImage from "@/assets/images/TestImage.png";
+import CommonButton from "@/common/CommonButton";
+import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
 
-import { addFurniture } from "../../features/furniture/furnitureSlice";
+import { addFurniture } from "@/features/furniture/furnitureSlice";
 import { useSelector, useDispatch } from "react-redux";
-import useCheckedFurniture from "./useCheckedFurniture";
-import {
-    toggleItem,
-    clearAllSelections,
-} from "../../features/furniture/selectionSlice";
+import useCheckedFurniture from "@/hooks/furniture/useCheckedFurniture";
+import { toggleItem } from "@/features/furniture/selectionSlice";
 
 const SearchDrawer = ({ onClose }) => {
     const [isOpen, setIsOpen] = useState(false); // 애니메이션 제어용
     const dispatch = useDispatch();
-    // const checkedItems = useSelector((state) => state.selection.checkedItems);
     const myFurniture = useSelector((state) => state.furniture.list);
 
     const {
@@ -43,9 +39,6 @@ const SearchDrawer = ({ onClose }) => {
     const isInMyFurniture = (itemId) =>
         myFurniture.some((f) => f.originalId === itemId);
 
-    const handleCheck = (id) => {
-        dispatch(toggleItem(id));
-    };
 
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {

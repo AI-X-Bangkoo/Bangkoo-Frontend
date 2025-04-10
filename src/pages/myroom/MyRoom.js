@@ -3,32 +3,31 @@ import { useDispatch } from "react-redux";
 import { GridBox, LeftPanel, MainLayout, RightPanel, TabBox } from "./css/MyRoom.styled";
 import FurnitureController from "./FurnitureController";
 import FurnitureAIController from "./FurnitureAIController";
-import CommonTabs from "../../common/CommonTabs";
-import { Text } from "../../common/Typography";
-import CommonDialog from "../../common/CommonDialog";
-
+import CommonTabs from "@/common/CommonTabs";
+import { Text } from "@/common/Typography";
+import CommonDialog from "@/common/CommonDialog";
 import MyFurnitureTab from "./MyFurnitureTab";
 import AIFurnitureTab from "./AIFurnitureTab";
 import InteriorTab from "./InteriorTab";
-
 import {
     useAIDialog,
     useFurnitureDialog,
     useInteriorDialog,
     useInteriorSaveDialog,
     useSettingDialog
-} from "./useFurnitureDialog";
-import { useAddFurnitureWithToast } from "./useAddFurnitureWithToast";
-import { useMyRoomLogic } from "./useMyRoomLogic";
-import { setInitialFurniture } from "../../features/furniture/furnitureSlice";
-import { setInterior } from "../../features/furniture/interiorSlice";
-import { setRecommendedFurniture } from "../../features/furniture/recommendedSlice";
-import TestImage from "../../assets/images/TestImage.png";
+} from "@/hooks/dialog/useFurnitureDialog";
+import { useAddFurnitureWithToast } from "@/hooks/furniture/useAddFurnitureWithToast";
+import { useMyRoomLogic } from "@/hooks/furniture/useMyRoomLogic";
+import { setInitialFurniture } from "@/features/furniture/furnitureSlice";
+import { setInterior } from "@/features/furniture/interiorSlice";
+import { setRecommendedFurniture } from "@/features/furniture/recommendedSlice";
+import TestImage from "@/assets/images/TestImage.png";
 import InteriorSave from "./dialog/InteriorSave";
 import Setting from "./dialog/Setting";
 import AiRecommended from "./dialog/AiRecommended";
 import SearchDrawer from "./SearchDrawer";
 import ImageUploader from "./ImageUploader";
+import { useGlobalInertEffect } from "@/hooks/dialog/useGlobalInertEffect";
 
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
@@ -45,6 +44,14 @@ function MyRoom() {
     const aiDialog = useAIDialog();
     const addFurniture = useAddFurnitureWithToast();
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
+
+    useGlobalInertEffect([
+        furnitureDialog.open,
+        interiorDialog.open,
+        interiorSaveDialog.open,
+        settingDialog.open,
+        aiDialog.open,
+    ]);
 
     useEffect(() => {
         dispatch(setInitialFurniture([
