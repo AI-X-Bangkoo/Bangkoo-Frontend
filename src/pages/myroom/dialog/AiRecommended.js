@@ -8,19 +8,34 @@ import {
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {Text} from "../../../common/Typography";
+import { useDispatch, useSelector } from "react-redux";
+import { startAnalysis, endAnalysis } from "../../../features/ai/aiSlice";
 
 import TestImage from "../../../assets/images/TestImage.png";
 
 function AiRecommended() {
-        const [progress, setProgress] = useState(10);
+    const dispatch = useDispatch();
+    const isAnalyzing = useSelector((state) => state.ai.isAnalyzing);
+    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
+        dispatch(startAnalysis()); // 분석 시작 상태로 진입
+
         const timer = setInterval(() => {
-            setProgress((prev) => (prev >= 100 ? 100 : prev + 5));
+            setProgress((prev) => {
+                const next = prev + 5;
+                if (next >= 100) {
+                    clearInterval(timer);
+                    dispatch(endAnalysis()); // 분석 종료
+                    return 100;
+                }
+                return next;
+            });
         }, 500);
 
         return () => clearInterval(timer);
-    }, []);
+
+    }, [dispatch]);
 
     const sliderSettings = {
         dots: false,

@@ -1,11 +1,23 @@
-import React, {useState} from "react";
+import React  from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setExplanation } from "../../../features/furniture/interiorSlice";
+
 import {InteriorImageBox, InteriorRoot} from "./css/InteriorSave.styled";
 import TestMyRoom from "../../../assets/images/TestMyRoom.jpg"
 import {Text} from "../../../common/Typography";
 import CommonTextField from "../../../common/CommonTextField";
 
 function InteriorSave() {
-    const [explanation, setExplanation] = useState("");
+    const dispatch = useDispatch();
+    const explanation = useSelector((state) => state.interior.explanation);
+
+    const handleChange = (e) => {
+        dispatch(setExplanation(e.target.value));
+    };
+
+    const handleClear = () => {
+        dispatch(setExplanation(""));
+    };
 
     return(
         <InteriorRoot>
@@ -18,13 +30,11 @@ function InteriorSave() {
                 placeholder="내방 인테리어 설명을 간단하게 작성해 주세요."
                 height="34px"
                 value={explanation}
-                onChange={(e) => setExplanation(e.target.value)}
+                onChange={handleChange}
                 custom="outline"
                 line="grey"
                 fontSize="xxs"
-                onClearAll={() => {
-                    setExplanation("");
-                }}
+                onClearAll={handleClear}
             />
         </InteriorRoot>
     )

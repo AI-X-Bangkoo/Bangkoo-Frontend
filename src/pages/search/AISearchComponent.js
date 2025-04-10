@@ -1,4 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUploadedImage } from "../../features/search/searchSlice";
 import SearchInputComponent from "./SearchInputComponent";
 import SearchExplanation from "./SearchExplanation";
 import SearchTerm from "./SearchTerm";
@@ -6,10 +8,12 @@ import Category from "./Category";
 import ImageSearchBox from "./ImageSearchBox";
 
 function AISearchComponent() {
+    const dispatch = useDispatch();
+    const uploadedImage = useSelector((state) => state.search.uploadedImage); // 전역 상태
+
     const [isHover, setIsHover] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [category, setCategory] = useState(false);
-    const [uploadedImage, setUploadedImage] = useState(null);
     const [showImageSearchBox, setShowImageSearchBox] = useState(false);
 
     const containerRef = useRef(null); // 전체 검색 영역 감싸는 div
@@ -52,7 +56,7 @@ function AISearchComponent() {
     }, []);
 
     const handleClearImage = () => {
-        setUploadedImage(null); // 이미지 미리보기 제거
+        dispatch(setUploadedImage(null)); // Redux 상태 초기화
     };
 
     return (
@@ -66,7 +70,7 @@ function AISearchComponent() {
                     onFocus={handleClickIsFocused}
                     handleClickCategory={handleClickCategory}
                     onClickImage={handleClickImageSearch}
-                    imagePreviewUrl={uploadedImage}
+                    imagePreviewUrl={uploadedImage} // Redux 상태 전달
                     onClearImage={handleClearImage}
                 />
             </div>
@@ -80,11 +84,12 @@ function AISearchComponent() {
 
             {/* 이미지 검색 */}
             {showImageSearchBox && (
-                <ImageSearchBox onSearchComplete={(imageUrl) => {
-                    setUploadedImage(imageUrl);
-                    setShowImageSearchBox(false);
-
-                }} />
+                <ImageSearchBox
+                    onSearchComplete={(imageUrl) => {
+                        dispatch(setUploadedImage(imageUrl)); // Redux로 이미지 저장
+                        setShowImageSearchBox(false);
+                    }}
+                />
             )}
         </div>
     );
