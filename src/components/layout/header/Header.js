@@ -1,11 +1,11 @@
 import React from "react";
 import {HeaderRoot, LoginBox} from "./Header.styled";
-import { Text } from "../../common/Typography";
-import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
-import { ReactComponent as KaKao } from "../../assets/images/KaKao.svg";
+import { Text } from "../../../common/Typography";
+import { ReactComponent as Logo } from "../../../assets/images/Logo.svg";
+import { ReactComponent as KaKao } from "../../../assets/images/KaKao.svg";
 import { useNavigate } from "react-router-dom";
-import useAuth from "../../hooks/login/useAuth";
-import CommonDialog from "../../common/CommonDialog";
+import useAuth from "../../../hooks/login/useAuth";
+import CommonDialog from "../../../common/CommonDialog";
 
 const Header = () => {
   const navigate = useNavigate();

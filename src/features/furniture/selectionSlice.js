@@ -22,5 +22,9 @@ const selectionSlice = createSlice({
     },
 });
 
-export const { toggleItem, setItemChecked, clearAllSelections } = selectionSlice.actions;
+export const {
+    toggleItem,
+    setItemChecked,
+    clearAllSelections
+} = selectionSlice.actions;
 export default selectionSlice.reducer;

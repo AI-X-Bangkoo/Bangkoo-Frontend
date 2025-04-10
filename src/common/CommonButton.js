@@ -1,3 +1,4 @@
+// common/CommonButton.js
 import React from "react";
 import {StyledButton} from "./css/Button.styled"
 

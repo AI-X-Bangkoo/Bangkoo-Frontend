@@ -1,7 +1,6 @@
 import React from "react";
 import { FurnitureGrid } from "./css/MyRoom.styled";
-import CommonImageBox from "../../common/CommonImageBox";
-
+import CommonImageBox from "@/common/CommonImageBox";
 
 function MyFurnitureList({ furnitureList = [], onPlusMinus }) {
     return (

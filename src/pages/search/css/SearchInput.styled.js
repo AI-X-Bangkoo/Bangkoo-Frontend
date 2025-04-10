@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { media } from "../../common/css/media"
+import { media } from "@/common/css/media"
 
 // 검색박스
 export const SearchRoot = styled.div`

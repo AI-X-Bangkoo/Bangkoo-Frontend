@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import {AIControllerBox, AISearchButton, SearchTooltip} from "./css/MyRoom.styled";
-import CommonButton from "../../common/CommonButton";
-import { ReactComponent as SearchIcon } from "../../assets/images/SearchIcon.svg";
-import { ReactComponent as CloseIcon } from "../../assets/images/CloseIcon.svg";
-import {Text} from "../../common/Typography";
-import CommonIconButton from "../../common/CommonIconButton";
+import CommonButton from "@/common/CommonButton";
+import { ReactComponent as SearchIcon } from "@/assets/images/SearchIcon.svg";
+import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
+import {Text} from "@/common/Typography";
+import CommonIconButton from "@/common/CommonIconButton";
 
 function FurnitureAIController({settingClick, onSearchClick}) {
     const [isTooltipVisible, setIsTooltipVisible] = useState(true);

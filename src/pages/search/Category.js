@@ -1,6 +1,6 @@
 import React from "react";
-import {CategoryBox} from "./SearchInput.styled";
-import {Text} from "../../common/Typography";
+import {CategoryBox} from "./css/SearchInput.styled";
+import {Text} from "@/common/Typography";
 
 function Category() {
     const items = [

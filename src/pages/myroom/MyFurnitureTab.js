@@ -1,14 +1,16 @@
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MyFurnitureList from "./MyFurnitureList";
-import { toggleFurniture } from "../../features/furniture/furnitureSlice";
-import { setItemChecked } from "../../features/furniture/selectionSlice";
+import { toggleFurniture } from "@/features/furniture/furnitureSlice";
+import useCheckedFurniture from "@/hooks/furniture/useCheckedFurniture";
 import {Text} from "../../common/Typography";
-import React from "react";
 import {EmptyBox} from "./css/MyRoom.styled";
 
 export default function MyFurnitureTab({ onCustomRemove }) {
     const dispatch = useDispatch();
     const furnitureList = useSelector((state) => state.furniture.list);
+
+    const { uncheck } = useCheckedFurniture();
 
     const handleClick = (item) => {
         if (item.isCustom) {
@@ -17,9 +19,9 @@ export default function MyFurnitureTab({ onCustomRemove }) {
             dispatch(toggleFurniture(item.id));
         }
 
-        // SearchDrawer 체크 해제
+        // originalId 기준 -> SearchDrawer 체크 해제
         if (item.originalId !== undefined) {
-            dispatch(setItemChecked({ id: item.originalId, checked: false }));
+            uncheck(item.originalId);
         }
     };
 
@@ -32,8 +34,6 @@ export default function MyFurnitureTab({ onCustomRemove }) {
                 :
                 <MyFurnitureList furnitureList={furnitureList} onPlusMinus={handleClick} />
             }
-
         </>
-
     );
 }

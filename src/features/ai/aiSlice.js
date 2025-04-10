@@ -25,10 +25,6 @@ const aiSlice = createSlice({
         setSelectedStyles(state, action) {
             state.selectedStyles = action.payload; // ["모던", "북유럽"]
         },
-        resetAISettings(state) {
-            state.budget = { min: '', max: '' };
-            state.selectedStyles = [];
-        },
     },
 });
 
@@ -37,7 +33,6 @@ export const {
     endAnalysis,
     setBudget,
     setSelectedStyles,
-    resetAISettings,
 } = aiSlice.actions;
 
 export default aiSlice.reducer;

@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import MyInterior from "./MyInterior";
-import {Text} from "../../common/Typography";
+import {Text} from "@/common/Typography";
 import {EmptyBox} from "./css/MyRoom.styled";
 import React from "react";
 

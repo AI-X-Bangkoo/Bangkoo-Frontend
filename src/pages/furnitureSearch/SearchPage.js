@@ -1,10 +1,10 @@
 import React from "react";
 import AISearchComponent from "../search/AISearchComponent";
-import {GridBox, SearchRoot, SearchTermBox} from "./SearchPage.styled";
-import {Text} from "../../common/Typography";
-import CommonButton from "../../common/CommonButton";
-import CommonImageBox from "../../common/CommonImageBox";
-import TestImage from "../../assets/images/TestImage.png";
+import {GridBox, SearchRoot, SearchTermBox} from "./css/SearchPage.styled";
+import {Text} from "@/common/Typography";
+import CommonButton from "@/common/CommonButton";
+import CommonImageBox from "@/common/CommonImageBox";
+import TestImage from "@/assets/images/TestImage.png";
 import {useNavigate} from "react-router-dom";
 
 function SearchPage() {

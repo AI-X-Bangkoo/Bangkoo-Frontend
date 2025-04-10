@@ -1,14 +1,14 @@
 import React from "react";
-import { HomeRoot } from "./Home.styled";
+import { HomeRoot } from "./css/Home.styled";
 import Banner from "./Banner";
-import Header from "../header/Header";
+import Header from "@/components/layout/header/Header";
 import StepComponent from "./StepComponent";
 import StartComponent from "./StartComponent";
-import Step1 from "../../assets/images/Step1.png";
-import Step2 from "../../assets/images/Step2.png";
-import Step3 from "../../assets/images/Step3.png";
-import Step4 from "../../assets/images/Step4.png";
-import Step5 from "../../assets/images/Step5.png";
+import Step1 from "@/assets/images/Step1.png";
+import Step2 from "@/assets/images/Step2.png";
+import Step3 from "@/assets/images/Step3.png";
+import Step4 from "@/assets/images/Step4.png";
+import Step5 from "@/assets/images/Step5.png";
 
 function Home() {
   return (

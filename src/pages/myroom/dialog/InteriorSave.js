@@ -1,11 +1,10 @@
 import React  from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setExplanation } from "../../../features/furniture/interiorSlice";
-
+import { setExplanation } from "@/features/furniture/interiorSlice";
 import {InteriorImageBox, InteriorRoot} from "./css/InteriorSave.styled";
-import TestMyRoom from "../../../assets/images/TestMyRoom.jpg"
-import {Text} from "../../../common/Typography";
-import CommonTextField from "../../../common/CommonTextField";
+import TestMyRoom from "@/assets/images/TestMyRoom.jpg"
+import {Text} from "@/common/Typography";
+import CommonTextField from "@/common/CommonTextField";
 
 function InteriorSave() {
     const dispatch = useDispatch();

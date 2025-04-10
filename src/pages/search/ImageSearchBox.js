@@ -5,10 +5,10 @@ import {
     ImageLinkBox,
     LineStyle,
     DropZone
-} from "./SearchInput.styled";
-import CommonButton from "../../common/CommonButton";
-import {Text} from "../../common/Typography";
-import CommonTextField from "../../common/CommonTextField";
+} from "./css/SearchInput.styled";
+import CommonButton from "@/common/CommonButton";
+import {Text} from "@/common/Typography";
+import CommonTextField from "@/common/CommonTextField";
 
 function ImageSearchBox({ onSearchComplete }) {
     const [imageUrl, setImageUrl] = useState("");

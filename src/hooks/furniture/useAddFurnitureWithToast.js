@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
-import CustomToast from "../../common/CustomToast";
+import CustomToast from "@/common/CustomToast";
 import { useDispatch } from "react-redux";
-import { addFurniture as addFurnitureAction } from "../../features/furniture/furnitureSlice";
+import { addFurniture as addFurnitureAction } from "@/features/furniture/furnitureSlice";
 
 // 토스트 포함 추가 로직
 export function useAddFurnitureWithToast() {
