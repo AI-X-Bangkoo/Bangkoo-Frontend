@@ -16,6 +16,7 @@ import { ReactComponent as CloseIcon } from "../../assets/images/CloseIcon.svg";
 
 import { addFurniture } from "../../features/furniture/furnitureSlice";
 import { useSelector, useDispatch } from "react-redux";
+import useCheckedFurniture from "./useCheckedFurniture";
 import {
     toggleItem,
     clearAllSelections,
@@ -24,8 +25,15 @@ import {
 const SearchDrawer = ({ onClose }) => {
     const [isOpen, setIsOpen] = useState(false); // 애니메이션 제어용
     const dispatch = useDispatch();
-    const checkedItems = useSelector((state) => state.selection.checkedItems);
+    // const checkedItems = useSelector((state) => state.selection.checkedItems);
     const myFurniture = useSelector((state) => state.furniture.list);
+
+    const {
+        checkedItems,
+        toggle,
+        clearAll,
+        getCheckedIds,
+    } = useCheckedFurniture();
 
     // mount 후 슬라이드 인
     useEffect(() => {
@@ -130,7 +138,7 @@ const SearchDrawer = ({ onClose }) => {
                                 type={item.isCheckable ? "checkbox" : "basic"}
                                 isChecked={!!checkedItems[item.id] || isInMyFurniture(item.id)}
                                 onLink={item.link}
-                                onCheck={() => handleCheck(item.id)}
+                                onCheck={() => toggle(item.id)}
                             />
                             <Text size="base" $weight={800}>{item.title}</Text>
                             <Text size="xs" $weight={600}>{item.text}</Text>
@@ -148,24 +156,22 @@ const SearchDrawer = ({ onClose }) => {
                         radius="sm"
                         type="fill"
                         onClick={() => {
-                            const selectedIds = Object.entries(checkedItems)
-                                .filter(([_, checked]) => checked)
-                                .map(([id]) => Number(id));
+                            const selectedIds = getCheckedIds();
+                            const selectedFurniture = list.filter(item =>
+                                selectedIds.includes(item.id)
+                            );
 
-                            const selectedFurniture = list.filter(item => selectedIds.includes(item.id));
-
-                            // 내 가구 목록에 추가
                             selectedFurniture.forEach((item) => {
                                 dispatch(addFurniture({
                                     ...item,
-                                    id: Date.now() + Math.random(), // 고유 ID 부여
+                                    id: Date.now() + Math.random(),
                                     originalId: item.id,
                                     type: "hoverMinus",
                                     isCustom: true,
                                 }));
                             });
 
-                            dispatch(clearAllSelections()); // 체크 초기화
+                            clearAll();
                             onClose();
                         }}
                     >
