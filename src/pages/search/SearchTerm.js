@@ -17,16 +17,12 @@ import { Text } from "../../common/Typography";
 import CommonIconButton from "../../common/CommonIconButton"
 import { ReactComponent as CloseIcon } from "../../assets/images/CloseIcon.svg";
 import CommonButton from "../../common/CommonButton";
+import useSearchHistory from "../furnitureSearch/useSearchHistory";
 
 function SearchTerm() {
     const dispatch = useDispatch();
     const recentKeywords = useSelector((state) => state.search.recentKeywords);
-
-    const items = [
-        {id: 1, value: "빨간색 원형 탁자"},
-        {id: 2, value: "북유럽 스타일의 침대 북유럽 스타일의 침대 북유럽 스타일의 북유럽 스타일의 침대 북유럽 스타일의 침대"},
-        {id: 3, value: "컴퓨터 의자"},
-    ]
+    const { autoSave, toggleAuto, clearAll } = useSearchHistory();
 
     const keyword = [
         {id: 1, value: "의자"},
@@ -40,7 +36,15 @@ function SearchTerm() {
             <RecentBox>
                 <RecentTitleBox>
                     <Text size="sm" $weight={800}>최근 검색어</Text>
-                    <Text size="xxs" $weight={600} color="grey">전체 삭제</Text>
+                    <Text
+                        size="xxs"
+                        onClick={clearAll}
+                        $weight={600}
+                        color="grey"
+                        style={{ cursor: 'pointer' }}
+                    >
+                        전체 삭제
+                    </Text>
                 </RecentTitleBox>
 
                 <SearchScrollBox>
@@ -60,8 +64,8 @@ function SearchTerm() {
                 </SearchScrollBox>
 
 
-                <RecentBottomBox>
-                    <Text size="xxs" $weight={600}>자동저장 끄기</Text>
+                <RecentBottomBox >
+                    <Text onClick={toggleAuto} size="xxs" $weight={600}>자동저장 {autoSave ? '끄기' : '켜기'}</Text>
                 </RecentBottomBox>
 
             </RecentBox>

@@ -4,6 +4,7 @@ const initialState = {
     keyword: '',         // 사용자가 입력한 검색어
     uploadedImage: null, // 업로드한 이미지 (URL or File)
     recentKeywords: [], // 검색 히스토리 추가
+    autoSave: true // 자동 저장 on/off
 };
 
 const searchSlice = createSlice({
@@ -40,6 +41,9 @@ const searchSlice = createSlice({
             state.keyword = '';
             state.uploadedImage = null;
         },
+        toggleAutoSave: (state) => {
+            state.autoSave = !state.autoSave;
+        },
     },
 });
 
@@ -50,5 +54,6 @@ export const {
     addRecentKeyword,
     removeRecentKeyword,
     clearRecentKeywords,
+    toggleAutoSave
 } = searchSlice.actions;
 export default searchSlice.reducer;
