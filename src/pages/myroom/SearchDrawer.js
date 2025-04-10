@@ -14,22 +14,38 @@ import TestImage from "../../assets/images/TestImage.png";
 import CommonButton from "../../common/CommonButton";
 import { ReactComponent as CloseIcon } from "../../assets/images/CloseIcon.svg";
 
+import { addFurniture } from "../../features/furniture/furnitureSlice";
+import { useSelector, useDispatch } from "react-redux";
+import useCheckedFurniture from "./useCheckedFurniture";
+import {
+    toggleItem,
+    clearAllSelections,
+} from "../../features/furniture/selectionSlice";
+
 const SearchDrawer = ({ onClose }) => {
-    const [checkedItems, setCheckedItems] = useState({}); // key: item.id, value: boolean
-
-    const handleCheck = (id) => {
-        setCheckedItems((prev) => ({
-            ...prev,
-            [id]: !prev[id],
-        }));
-    };
-
     const [isOpen, setIsOpen] = useState(false); // 애니메이션 제어용
+    const dispatch = useDispatch();
+    // const checkedItems = useSelector((state) => state.selection.checkedItems);
+    const myFurniture = useSelector((state) => state.furniture.list);
+
+    const {
+        checkedItems,
+        toggle,
+        clearAll,
+        getCheckedIds,
+    } = useCheckedFurniture();
 
     // mount 후 슬라이드 인
     useEffect(() => {
         requestAnimationFrame(() => setIsOpen(true));
     }, []);
+
+    const isInMyFurniture = (itemId) =>
+        myFurniture.some((f) => f.originalId === itemId);
+
+    const handleCheck = (id) => {
+        dispatch(toggleItem(id));
+    };
 
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
@@ -115,14 +131,14 @@ const SearchDrawer = ({ onClose }) => {
 
 
                 <Content>
-                    {list?.map((item) => (
+                    {list.map((item) => (
                         <div key={item.id}>
                             <CommonImageBox
                                 image={item.image}
                                 type={item.isCheckable ? "checkbox" : "basic"}
-                                isChecked={!!checkedItems[item.id]}
+                                isChecked={!!checkedItems[item.id] || isInMyFurniture(item.id)}
                                 onLink={item.link}
-                                onCheck={() => handleCheck(item.id)}
+                                onCheck={() => toggle(item.id)}
                             />
                             <Text size="base" $weight={800}>{item.title}</Text>
                             <Text size="xs" $weight={600}>{item.text}</Text>
@@ -139,6 +155,25 @@ const SearchDrawer = ({ onClose }) => {
                         fontWeight={800}
                         radius="sm"
                         type="fill"
+                        onClick={() => {
+                            const selectedIds = getCheckedIds();
+                            const selectedFurniture = list.filter(item =>
+                                selectedIds.includes(item.id)
+                            );
+
+                            selectedFurniture.forEach((item) => {
+                                dispatch(addFurniture({
+                                    ...item,
+                                    id: Date.now() + Math.random(),
+                                    originalId: item.id,
+                                    type: "hoverMinus",
+                                    isCustom: true,
+                                }));
+                            });
+
+                            clearAll();
+                            onClose();
+                        }}
                     >
                         배치
                     </CommonButton>

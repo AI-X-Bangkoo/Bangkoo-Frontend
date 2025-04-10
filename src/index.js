@@ -7,7 +7,7 @@ import theme from "./theme/theme";
 import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import { ThemeProvider as MUIThemeProvider } from "@mui/material/styles";
 import { Provider } from "react-redux";
-import { store } from "./app/store";
+import { store } from "./redux/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

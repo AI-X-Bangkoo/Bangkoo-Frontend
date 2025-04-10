@@ -58,8 +58,8 @@ export const StyleButton = styled.button`
   padding: 6px 10px;
   border-radius: 20px;
   border: 1px solid ${({ theme, $active }) => ($active ? theme.colors.orange : theme.colors.grey)};
-  background-color: ${({ theme, $active }) => ($active ? theme.colors.orange : theme.colors.white)};
-  color: ${({ theme, $active }) => ($active ? theme.colors.white : theme.colors.dark)};
+  background-color: ${({ theme, $active }) => ($active ? theme.colors.lightOrange : theme.colors.white)};
+  color: ${({ theme, $active }) => ($active ? theme.colors.orange : theme.colors.dark)};
   font-weight: ${({ $active }) => ($active ? 700 : 500)};
   cursor: pointer;
   font-size: 13px;
