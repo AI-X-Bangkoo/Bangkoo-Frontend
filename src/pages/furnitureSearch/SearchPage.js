@@ -6,8 +6,22 @@ import CommonButton from "@/common/CommonButton";
 import CommonImageBox from "@/common/CommonImageBox";
 import TestImage from "@/assets/images/TestImage.png";
 import {useNavigate} from "react-router-dom";
+import useAuth from "@/hooks/login/useAuth";
 
 function SearchPage() {
+    const navigate = useNavigate();
+    const { isLoggedIn, login } = useAuth(); // 로그인 상태, 로그인 함수
+
+    const goToRoom = () => {
+        if (isLoggedIn) {
+            navigate("/myroom");  // 홈 화면으로 리다이렉트
+        } else {
+            // 로그인 후 돌아올 경로 기억
+            sessionStorage.setItem("redirectAfterLogin", "/myroom");
+            login(); // 카카오 로그인 페이지로 이동
+        }
+    };
+    
     const list = [
         {
             id: 0,
@@ -50,12 +64,6 @@ function SearchPage() {
             price: 699000,
         },
     ]
-
-    const navigate = useNavigate();
-
-    const goToRoom = () => {
-        navigate("/myroom"); // 홈 화면으로 리다이렉트
-    };
 
     return (
         <SearchRoot>
