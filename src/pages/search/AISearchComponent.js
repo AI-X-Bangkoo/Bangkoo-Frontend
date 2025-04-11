@@ -7,7 +7,7 @@ import SearchTerm from "./SearchTerm";
 import Category from "./Category";
 import ImageSearchBox from "./ImageSearchBox";
 
-function AISearchComponent() {
+function AISearchComponent({setSearchResults}) {
     const dispatch = useDispatch();
     const uploadedImage = useSelector((state) => state.search.uploadedImage); // 전역 상태
 
@@ -72,6 +72,7 @@ function AISearchComponent() {
                     onClickImage={handleClickImageSearch}
                     imagePreviewUrl={uploadedImage} // Redux 상태 전달
                     onClearImage={handleClearImage}
+                    setSearchResults={setSearchResults}
                 />
             </div>
 

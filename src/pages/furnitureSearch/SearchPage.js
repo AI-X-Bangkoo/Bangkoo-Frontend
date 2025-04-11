@@ -1,16 +1,19 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import AISearchComponent from "../search/AISearchComponent";
 import {GridBox, SearchRoot, SearchTermBox} from "./css/SearchPage.styled";
 import {Text} from "@/common/Typography";
 import CommonButton from "@/common/CommonButton";
 import CommonImageBox from "@/common/CommonImageBox";
-import TestImage from "@/assets/images/TestImage.png";
 import {useNavigate} from "react-router-dom";
 import useAuth from "@/hooks/login/useAuth";
 
 function SearchPage() {
     const navigate = useNavigate();
     const { isLoggedIn, login } = useAuth(); // 로그인 상태, 로그인 함수
+
+    const searchResults = useSelector((state) => state.search.resultList); // 검색 결과 불러오기
+    const keyword = useSelector((state) => state.search.keyword); // Redux에서 검색어 가져오기
 
     const goToRoom = () => {
         if (isLoggedIn) {
@@ -21,65 +24,25 @@ function SearchPage() {
             login(); // 카카오 로그인 페이지로 이동
         }
     };
-    
-    const list = [
-        {
-            id: 0,
-            image: TestImage,
-            link: 'https://www.ikea.com/kr/ko/p/lagan-integrated-dishwasher-40568019/',
-            title: 'LAGAN 라간',
-            text: '빌트인 식기세척기, 60 cm',
-            price: 699000,
-        },
-        {
-            id: 1,
-            image: TestImage,
-            link: 'https://www.ikea.com/kr/ko/p/lagan-integrated-dishwasher-40568019/',
-            title: 'LAGAN 라간',
-            text: '빌트인 식기세척기, 60 cm',
-            price: 699000,
-        },
-        {
-            id: 2,
-            image: TestImage,
-            link: 'https://www.ikea.com/kr/ko/p/lagan-integrated-dishwasher-40568019/',
-            title: 'LAGAN 라간',
-            text: '빌트인 식기세척기, 60 cm',
-            price: 699000,
-        },
-        {
-            id: 3,
-            image: TestImage,
-            link: 'https://www.ikea.com/kr/ko/p/lagan-integrated-dishwasher-40568019/',
-            title: 'LAGAN 라간',
-            text: '빌트인 식기세척기, 60 cm',
-            price: 699000,
-        },
-        {
-            id: 4,
-            image: TestImage,
-            link: 'https://www.ikea.com/kr/ko/p/lagan-integrated-dishwasher-40568019/',
-            title: 'LAGAN 라간',
-            text: '빌트인 식기세척기, 60 cm',
-            price: 699000,
-        },
-    ]
 
     return (
         <SearchRoot>
             <AISearchComponent/>
 
             <SearchTermBox>
-                <Text size="base" $weight={800}>의자 <span style={{fontWeight: 500}}>(10,500)</span></Text>
+                <Text size="base" $weight={800}>
+                    {keyword || "검색 결과"}{" "}
+                    <span style={{fontWeight: 500}}>({searchResults.length})</span>
+                </Text>
             </SearchTermBox>
 
             <GridBox>
-                {list?.map((item) => (
-                    <div key={item.id}>
-                        <CommonImageBox image={item.image} type={"basic"} onLink={item.link}/>
-                        <Text size="xs" $weight={800}>{item.title}</Text>
-                        <Text size="xs" $weight={600}>{item.text}</Text>
-                        <Text size="md" $weight={800}>₩ {item.price.toLocaleString()}</Text>
+                {searchResults.map((item, index) => (
+                    <div key={index}>
+                        <CommonImageBox image={item.이미지} type={"basic"} onLink={item.링크}/>
+                        <Text size="xs" $weight={800}>{item.이름}</Text>
+                        <Text size="xs" $weight={600}>{item.설명}</Text>
+                        <Text size="md" $weight={800}>₩ {item.할인가.toLocaleString()}</Text>
                         <CommonButton
                             width="100%"
                             height="44px"
