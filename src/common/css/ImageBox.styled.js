@@ -41,6 +41,41 @@ export const AiChip = styled.div`
   padding: 4px 6px;
   box-sizing: border-box;
 `;
+// eyeOn 과 eyeClosed 사용 AI Chip과 유사 (김범석)
+export const EyeOnChip = styled.div`
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: ${({ theme }) => theme.colors.orange};
+  border-radius: 0;
+  color: #fff;
+  // font-size:  ${({ theme }) => theme.fontSizes.xxs};
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+`;
+export const EyeClosedChip = styled.div`
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: ${({ theme }) => theme.colors.darkGrey};
+  border-radius: 0;
+  color: #fff;
+  font-size:  ${({ theme }) => theme.fontSizes.xxs};
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+`;
 
 export const CenterBox = styled.div.attrs(() => ({
     className: "center-box"

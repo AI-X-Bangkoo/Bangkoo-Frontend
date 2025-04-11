@@ -36,6 +36,12 @@ function MyRoom() {
     const openDrawer = () => setIsDrawerOpen(true);
     const closeDrawer = () => setIsDrawerOpen(false);
 
+    // 이미지 등록 시 상태 값 체크용도 "김범석"
+    const [isImageUploaded, setIsImageUploaded] = useState(false);
+    const handleImageUploaded = (uploaded) => {
+        setIsImageUploaded(uploaded);
+    };
+    //  여기까지
     const dispatch = useDispatch();
     const furnitureDialog = useFurnitureDialog();
     const interiorDialog = useInteriorDialog();
@@ -55,10 +61,10 @@ function MyRoom() {
 
     useEffect(() => {
         dispatch(setInitialFurniture([
-            { id: 1, image: TestImage, type: "hoverMinus", isCustom: false },
-            { id: 2, image: TestImage, type: "hoverMinus", isCustom: false },
-            { id: 3, image: TestImage, type: "hoverMinus", isCustom: false },
-            { id: 4, image: TestImage, type: "hoverMinus", isCustom: false },
+            { id: 1, image: TestImage, type: "eyeOn", isCustom: false },
+            { id: 2, image: TestImage, type: "eyeOn", isCustom: false },
+            { id: 3, image: TestImage, type: "eyeOn", isCustom: false },
+            { id: 4, image: TestImage, type: "eyeOn", isCustom: false },
         ]));
 
         dispatch(setInterior([
@@ -88,12 +94,20 @@ function MyRoom() {
                     saveClick={interiorSaveDialog.openDialog}
                     aiClick={aiDialog.openDialog}
                 />
-                <ImageUploader/>
+                <ImageUploader onImageUploaded={handleImageUploaded} />
+                {!isImageUploaded ? (
+                    <Text size="sm" $weight={600} >
+                        이미지 등록 시
+                        <span style={{fontWeight:800}}> 반드시 "가로 사진"</span>
+                        으로 등록해주세요.
+                    </Text>
+                    ) : (
                 <Text size="sm" $weight={600} >
                     가구 추가, 이동, 제거가 완료되면
                     <span style={{fontWeight:800}}> 배치 결과 보기</span>
                     버튼을 눌러주세요
                 </Text>
+                )}
             </LeftPanel>
             <RightPanel>
                 <FurnitureAIController

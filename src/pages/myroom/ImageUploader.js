@@ -2,14 +2,15 @@ import React, { useRef, useState } from "react";
 import { ReactComponent as ImageUploaderIcon } from "@/assets/images/ImageUploaderIcon.svg";
 import {Text} from "@/common/Typography";
 import {
-    DeleteBox,
+    BlurredBackgroundContainer, BlurredImage, BlurredWrapper,
+    DeleteBox, MainImage,
     PreviewImage, UploadBox,
     UploadContainer,
     UploadInput,
 } from "./css/ImageUploader.styled";
 import CommonButton from "@/common/CommonButton";
 
-function ImageUploader() {
+function ImageUploader({onImageUploaded}) {
     const [imageUrl, setImageUrl] = useState(null);
     const inputRef = useRef();
 
@@ -20,6 +21,7 @@ function ImageUploader() {
         const reader = new FileReader();
         reader.onload = () => {
             setImageUrl(reader.result);
+            onImageUploaded(true);
         };
         reader.readAsDataURL(file);
 
@@ -44,6 +46,7 @@ function ImageUploader() {
     const handleDeleteImage = (e) => {
         e.stopPropagation(); // 업로드 박스 클릭 이벤트 방지
         setImageUrl(null);
+        onImageUploaded(false);
     };
 
     return (
@@ -75,7 +78,14 @@ function ImageUploader() {
                         <Text size="sm" $weight={600} color="grey">업로드 버튼을 눌러 이미지 파일을 선택하거나<br />마우스로 끌어오세요.</Text>
                     </UploadBox>
                 ) : (
-                    <PreviewImage src={imageUrl} alt="미리보기" />
+                    <>
+                        <BlurredWrapper>
+                            <BlurredImage src={imageUrl} alt="blur" />
+                        </BlurredWrapper>
+
+                        <MainImage src={imageUrl} alt="main" />
+                    </>
+                    // <PreviewImage src={imageUrl} alt="미리보기" />
                 )}
 
                 <UploadInput
@@ -88,6 +98,7 @@ function ImageUploader() {
         </>
 
     );
+
 }
 
 export default ImageUploader;
