@@ -3,20 +3,20 @@
  * 오른쪽 영역의 합친 컴포넌트
  */
 
-import React from "react";
-import Header from "../header/Header";
+import React, { useState } from "react";
 import AdminLeftArea from "./AdminLeftArea";
 import AdminRightArea from "./AdminRightArea";
+import { AdminContainer } from "./css/Admin.styled";
 
+function AdminDashBoard() {
+  const [selectedMenu, setSelectedMenu] = useState("gagu");
 
-function AdminDashBoard(){
-return(
-    <HomeRoot>
-        <Header/>
-        <AdminLeftArea/>
-        <AdminRightArea/>
-    </HomeRoot>
-)
+  return (
+    <AdminContainer>
+      <AdminLeftArea onMenuSelect={setSelectedMenu} />
+      <AdminRightArea selectedMenu={selectedMenu} />
+    </AdminContainer>
+  );
 }
 
 export default AdminDashBoard;

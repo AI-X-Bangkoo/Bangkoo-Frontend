@@ -48,7 +48,7 @@ const theme = {
         dark: '#4C4851',
         lightGrey: '#EEEEEE',
         grey: '#C2C2C2',
-        darkGrey: '#999999',
+        darkGrey: '#999999'
     },
 
     spacing: {
