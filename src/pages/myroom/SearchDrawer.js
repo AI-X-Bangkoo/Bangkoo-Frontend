@@ -17,7 +17,6 @@ import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
 import { addFurniture } from "@/features/furniture/furnitureSlice";
 import { useSelector, useDispatch } from "react-redux";
 import useCheckedFurniture from "@/hooks/furniture/useCheckedFurniture";
-import { toggleItem } from "@/features/furniture/selectionSlice";
 
 const SearchDrawer = ({ onClose }) => {
     const [isOpen, setIsOpen] = useState(false); // 애니메이션 제어용
