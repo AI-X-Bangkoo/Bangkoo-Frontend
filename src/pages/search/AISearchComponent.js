@@ -73,6 +73,7 @@ function AISearchComponent({setSearchResults}) {
                     imagePreviewUrl={uploadedImage} // Redux 상태 전달
                     onClearImage={handleClearImage}
                     setSearchResults={setSearchResults}
+                    onCloseSearchTerm={() => setIsFocused(false)} // 최근 검색어 닫기
                 />
             </div>
 
