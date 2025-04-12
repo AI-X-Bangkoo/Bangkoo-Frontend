@@ -2,9 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     keyword: '',         // 사용자가 입력한 검색어
+    confirmedKeyword: '',
     uploadedImage: null, // 업로드한 이미지 (URL or File)
     recentKeywords: [], // 검색 히스토리 추가
-    autoSave: true // 자동 저장 on/off
+    autoSave: true, // 자동 저장 on/off
+    resultList: [],
 };
 
 const searchSlice = createSlice({
@@ -29,6 +31,9 @@ const searchSlice = createSlice({
             if (state.recentKeywords.length > 10) {
                 state.recentKeywords.pop();
             }
+
+            // localStorage에도 저장
+            localStorage.setItem("recentKeywords", JSON.stringify(state.recentKeywords));
         },
         removeRecentKeyword: (state, action) => {
             const keyword = action.payload;
@@ -44,6 +49,12 @@ const searchSlice = createSlice({
         toggleAutoSave: (state) => {
             state.autoSave = !state.autoSave;
         },
+        setSearchResults: (state, action) => {
+            state.resultList = action.payload; // 검색 결과 저장
+        },
+        setConfirmedKeyword: (state, action) => {
+            state.confirmedKeyword = action.payload;
+        },
     },
 });
 
@@ -54,6 +65,8 @@ export const {
     addRecentKeyword,
     removeRecentKeyword,
     clearRecentKeywords,
-    toggleAutoSave
+    toggleAutoSave,
+    setSearchResults,
+    setConfirmedKeyword,
 } = searchSlice.actions;
 export default searchSlice.reducer;

@@ -19,18 +19,8 @@ const CommonTextField = ({
                              imagePreviewUrl,
                              onClearAll,
                              onEnter,
+                             onKeyDown,
                          }) => {
-
-    const handleKeyDown = (e) => {
-        // 1. 백스페이스 + 이미지 있는 경우 → 이미지 제거
-        if (e.key === "Backspace" && value === "" && imagePreviewUrl && onClearAll) {
-            onClearAll();
-        }
-
-        if (e.key === "Enter" && typeof onEnter === "function") {
-            onEnter();
-        }
-    };
 
     const shouldShowClear = value !== "" || imagePreviewUrl;
 
@@ -43,11 +33,19 @@ const CommonTextField = ({
                 onChange={onChange}
                 disabled={disabled}
                 name={name}
-
-
                 fontSize={fontSize}
                 onFocus={onFocus}
-                onKeyDown={handleKeyDown}
+                onKeyDown={(e) => {
+                    // 백스페이스 이미지 제거
+                    if (e.key === "Backspace" && value === "" && imagePreviewUrl && onClearAll) {
+                        onClearAll();
+                    }
+
+                    // 외부 onKeyDown도 호출
+                    if (typeof onKeyDown === "function") {
+                        onKeyDown(e);
+                    }
+                }}
             />
             {shouldShowClear && (
                 <ClearAllBox onClick={onClearAll}>

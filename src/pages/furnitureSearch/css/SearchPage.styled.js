@@ -26,19 +26,25 @@ export const GridBox = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 40px 24px;
   margin-top: 32px;
+  
+  & button {
+    margin-top: ${({ theme }) => theme.spacing.md};
+  }
+` ;
 
-  & > div > p:nth-child(2){
-    margin-top: ${({ theme }) => theme.spacing.md};
+export const TextBox = styled.div`
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  & p:nth-child(1){
+     margin-top: ${({ theme }) => theme.spacing.md};
+     margin-bottom: ${({ theme }) => theme.spacing.xs};
+  }
+  & p:nth-child(2){
+    
   }
   
-  & > div > p:nth-child(3){
-    margin-top: ${({ theme }) => theme.spacing.xs};
-    margin-bottom: ${({ theme }) => theme.spacing.sm};
-  }
-  
-  & > div > button {
-    margin-top: ${({ theme }) => theme.spacing.md};
-  }
 ` ;
 
 export const SearchTermBox = styled.div`
