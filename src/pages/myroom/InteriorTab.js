@@ -1,10 +1,15 @@
+// pages/myroom/InteriorTab.js
 import { useSelector } from "react-redux";
 import MyInterior from "./MyInterior";
 import {Text} from "@/common/Typography";
 import {EmptyBox} from "./css/MyRoom.styled";
 import React from "react";
+import { useLoadInteriorResults } from "../../hooks/useLoadInteriorResults";
 
 export default function InteriorTab({ onDelete, onDeleteAll }) {
+
+    useLoadInteriorResults();
+
     const interiorList = useSelector((state) => state.interior.list);
 
     return (

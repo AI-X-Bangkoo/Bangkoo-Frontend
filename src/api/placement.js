@@ -53,3 +53,16 @@ export async function requestPlacementSave(formData) {
 
   return response.data;
 }
+
+/**
+ * 📂 저장된 배치 결과 목록 조회
+ *
+ * 백엔드에서 해당 유저의 저장된 인테리어 배치 결과들을 가져온다.
+ * - JWT에서 userId를 자동으로 추출하므로 별도 파라미터 필요 없음
+ *
+ * @returns {Promise<Array>} 배치 결과 리스트
+ */
+export async function requestPlacementResults() {
+  const response = await api.get("/api/placement/results");
+  return response.data; // [{ imageUrl, explanation, createdAt, userId }, ...]
+}
