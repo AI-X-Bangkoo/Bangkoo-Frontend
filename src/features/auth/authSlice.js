@@ -23,7 +23,6 @@ const authSlice = createSlice({
     reducers: {
         checkLoginFromCookie: (state) => {
             const match = document.cookie.match(/nickname=([^;]+)/);
-
             const nickname = match ? decodeURIComponent(match[1]) : null;
 
             // 상태가 바뀔 필요 없으면 그냥 리턴
@@ -39,10 +38,10 @@ const authSlice = createSlice({
             }
         },
         setLoginInfo: (state, action) => {
-            const { nickname} = action.payload;
+            const { nickname } = action.payload;
             document.cookie = `nickname=${encodeURIComponent(nickname)}; path=/;`;
             state.isLoggedIn = true;
-            state.user = { nickname};
+            state.user = { nickname };
         },
         setAlertMessage: (state, action) => {
             state.alertMessage = action.payload;

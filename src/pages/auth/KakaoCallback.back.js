@@ -37,11 +37,11 @@ const KakaoCallback = () => {
            );
            console.log(" 서버 응답 데이터:", res.data);
 
-        const { nickname} = res.data;
+        const { nickname } = res.data;
 
         if (nickname) {
           // JWT는 쿠키로 받고, nickname은 직접 전달받음
-          setLoginInfo({nickname}); // token은 쿠키로 처리하므로 null
+          setLoginInfo(nickname); // token은 쿠키로 처리하므로 null
           // alert("✅ 로그인 성공");
           navigate("/", { replace: true });
         } else {
