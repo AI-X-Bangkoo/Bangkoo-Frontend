@@ -28,6 +28,7 @@ import AiRecommended from "./dialog/AiRecommended";
 import SearchDrawer from "./SearchDrawer";
 import ImageUploader from "./ImageUploader";
 import { useGlobalInertEffect } from "@/hooks/dialog/useGlobalInertEffect";
+import { useSaveInterior } from "@/hooks/useSaveInterior";
 
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
@@ -44,7 +45,8 @@ function MyRoom() {
     const aiDialog = useAIDialog();
     const addFurniture = useAddFurnitureWithToast();
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
-
+    const handleSave = useSaveInterior(interiorSaveDialog.closeDialog);
+    
     useGlobalInertEffect([
         furnitureDialog.open,
         interiorDialog.open,
@@ -142,7 +144,7 @@ function MyRoom() {
                 title="인테리어 저장"
                 submitText="저장"
                 onClose={interiorSaveDialog.closeDialog}
-                onClick={() => {}}
+                onClick={handleSave}
             >
                 <InteriorSave/>
             </CommonDialog>
