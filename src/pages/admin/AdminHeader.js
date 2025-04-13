@@ -70,6 +70,8 @@ function AdminHeader() {
         {/* 버튼 영역 */}
         <div style={{ display: "flex", gap: "8px" }}>
           <CommonButton
+          type="fill"
+          bgColor="green"
             style={{ height: "32px", padding: "0 12px", fontSize: "14px" }}
           >
             CSV 파일 불러오기

@@ -7,6 +7,7 @@ const initialState = {
     autoSave: true // 자동 저장 on/off
 };
 
+
 const searchSlice = createSlice({
     name: 'search',
     initialState,
