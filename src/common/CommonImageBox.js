@@ -1,6 +1,17 @@
+// common/CommonImageBox.js
 import React from "react";
-import {ImageBoxStyle, AiChip, BottomRightBox, CheckboxArea, CenterBox} from "./css/ImageBox.styled"
+import {
+    ImageBoxStyle,
+    AiChip,
+    BottomRightBox,
+    CheckboxArea,
+    CenterBox,
+    EyeOnChip,
+    EyeClosedChip
+} from "./css/ImageBox.styled"
 import CommonIconButton from "../common/CommonIconButton"
+import { ReactComponent as EyeOnIcon } from "../assets/images/Eye.svg";
+import { ReactComponent as EyeClosedIcon } from "../assets/images/EyeClosed.svg";
 import { ReactComponent as AiIcon } from "../assets/images/AiIcon.svg";
 import { ReactComponent as PlusIcon } from "../assets/images/PlusIcon.svg";
 import { ReactComponent as MinusIcon } from "../assets/images/MinusIcon.svg";
@@ -15,9 +26,11 @@ function CommonImageBox({
             showDelete = false,
             onLink,
             onPlus,
+            onMinus,
             onPlusMinus,
             onDelete,
             onCheck,
+            onClick
         }) {
 
     if (type === "basic" && onLink) {
@@ -37,7 +50,7 @@ function CommonImageBox({
     };
 
     return (
-        <ImageBoxStyle >
+        <ImageBoxStyle onClick={onClick} >
             <img src={image} alt="가구 이미지" />
 
             {/* AI Chip */}
@@ -46,6 +59,18 @@ function CommonImageBox({
                     <AiIcon />
                     <span>AI</span>
                 </AiChip>
+            )}
+            {/* Eye On */}
+            {type === "eyeOn" && (
+                <EyeOnChip>
+                    <EyeOnIcon />
+                </EyeOnChip>
+            )}
+            {/* Eye Closed */}
+            {type === "eyeClosed" && (
+                <EyeClosedChip>
+                    <EyeClosedIcon />
+                </EyeClosedChip>
             )}
 
             {type === "hoverPlus" && (
@@ -72,6 +97,18 @@ function CommonImageBox({
 
             {/* 하단 플러스 버튼 (aiPlus) */}
             {type === "aiPlus" && (
+                <BottomRightBox>
+                    <CommonIconButton onClick={onPlus} color="orange" icon={<PlusIcon />} {...buttonProps}/>
+                </BottomRightBox>
+            )}
+            {/* 하단 마이너스 버튼 (eyeOn) */}
+            {type === "eyeOn" && (
+                <BottomRightBox>
+                    <CommonIconButton onClick={onMinus} color="red" icon={<MinusIcon />} {...buttonProps}/>
+                </BottomRightBox>
+            )}
+            {/* 하단 플러스 버튼 (eyeClosed) */}
+            {type === "eyeClosed" && (
                 <BottomRightBox>
                     <CommonIconButton onClick={onPlus} color="orange" icon={<PlusIcon />} {...buttonProps}/>
                 </BottomRightBox>

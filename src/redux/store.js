@@ -1,4 +1,4 @@
-// app/store.js
+// redux/store.js
 import { configureStore } from '@reduxjs/toolkit';
 import furnitureReducer from '../features/furniture/furnitureSlice';
 import recommendedReducer from "../features/furniture/recommendedSlice";
@@ -6,6 +6,7 @@ import interiorReducer from '../features/furniture/interiorSlice';
 import searchReducer from '../features/search/searchSlice';
 import aiReducer from '../features/ai/aiSlice';
 import selectionReducer from '../features/furniture/selectionSlice';
+import authReducer from "../features/auth/authSlice";
 
 export const store = configureStore({
     reducer: {
@@ -15,5 +16,6 @@ export const store = configureStore({
         search: searchReducer,
         ai: aiReducer,
         selection: selectionReducer,
+        auth: authReducer
     },
 });

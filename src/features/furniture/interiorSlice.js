@@ -1,3 +1,4 @@
+// features/furniture/interiorSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {

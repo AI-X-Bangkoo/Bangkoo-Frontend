@@ -1,3 +1,4 @@
+// pages/myroom/MyInterior.js
 import React, { useState, useEffect } from "react";
 import {InteriorBox, InteriorControllerBox} from "./css/MyRoom.styled";
 import MyInteriorList from "./MyInteriorList";

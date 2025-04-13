@@ -2,7 +2,7 @@ import React from "react";
 import { FurnitureGrid } from "./css/MyRoom.styled";
 import CommonImageBox from "@/common/CommonImageBox";
 
-function MyFurnitureList({ furnitureList = [], onPlusMinus }) {
+function MyFurnitureList({ furnitureList = [], onPlus, onMinus }) {
     return (
         <FurnitureGrid>
             {furnitureList.map((item) => (
@@ -10,7 +10,8 @@ function MyFurnitureList({ furnitureList = [], onPlusMinus }) {
                     key={item.id}
                     image={item.image}
                     type={item.type}
-                    onPlusMinus={() => onPlusMinus(item)}
+                    onPlus={() => onPlus(item)}
+                    onMinus={() => onMinus(item)}
                 />
             ))}
         </FurnitureGrid>

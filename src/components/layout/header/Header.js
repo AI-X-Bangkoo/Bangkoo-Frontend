@@ -22,16 +22,15 @@ const Header = () => {
   return (
     <HeaderRoot>
       <Logo onClick={goToMain} />
-        <LoginBox>
+        <LoginBox onClick={toggleLogin} >
             <KaKao/>
             <Text
                 size="sm"
                 $weight={600}
                 style={{ cursor: "pointer" }}
-                onClick={toggleLogin} // 로그인/로그아웃 토글
+                // 로그인/로그아웃 토글
             >
                 {isLoggedIn ? "로그아웃" : "로그인"}
-                {/* 로그인 상태에 따라 텍스트 변경 */}
             </Text>
         </LoginBox>
 
