@@ -1,17 +1,27 @@
 import styled from "styled-components";
 
+// 리스트 전체 컨테이너: 전체 높이 고정 + 내부 레이아웃 정렬
 export const GaguListContainer = styled.div`
+  height: 80vh;  // 전체 화면 높이에서 헤더, 여백 제외
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   padding: 20px;
-  overflow-x: auto; // 작은 화면에서 테이블이 넘어가지 않도록 처리
+  box-sizing: border-box;
+`;
+
+// 테이블 영역을 꽉 채우게
+export const GaguTableWrapper = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 `;
 
 // 테이블 스타일
 export const GaguTable = styled.table`
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
-  margin-top: 20px;
-  box-sizing: border-box;
-  table-layout: fixed;  // 고정 레이아웃으로 열 너비를 일정하게 설정
 `;
 
 // 테이블 헤드
@@ -22,54 +32,60 @@ export const GaguListHeader = styled.thead`
 export const GaguListHeaderRow = styled.tr``;
 
 export const GaguListHeaderItem = styled.th`
-  padding: 12px 10px;
+  padding: 8px;
   text-align: center;
   font-weight: bold;
   border-bottom: 2px solid #ddd;
-  box-sizing: border-box;  // padding을 포함하여 크기 계산
-  &:nth-child(1) { width: 5%; text-align: left; padding-left: 4px; }  // 체크박스
-  &:nth-child(2) { width: 10%; text-align: center; padding-left: 10px; } // 번호
-  &:nth-child(3) { width: 20%; text-align: center; padding-left: 10px; } // 이미지
-  &:nth-child(4) { width: 25%; text-align: center; padding-left: 10px; } // 가구명
-  &:nth-child(5) { width: 30%; } // Description
-  &:nth-child(6) { width: 10%; } // 등록일
-  &:nth-child(7) { width: 10%; } // 수정일
-  &:nth-child(8) { width: 10%; } // 수정 버튼
+
+  &:nth-child(1) { width: 5%; }
+  &:nth-child(2) { width: 10%; }
+  &:nth-child(3) { width: 15%; }
+  &:nth-child(4) { width: 20%; }
+  &:nth-child(5) { width: 20%; }
+  &:nth-child(6) { width: 10%; }
+  &:nth-child(7) { width: 10%; }
+  &:nth-child(8) { width: 10%; }
 `;
 
 // 테이블 바디
-export const GaguListBody = styled.tbody``;
+export const GaguListBody = styled.tbody`
+  display: table-row-group;
+`;
 
 // 리스트 아이템 (행)
 export const GaguItem = styled.tr`
   background-color: #fff;
   border-bottom: 1px solid #eee;
+  height: 15px;  // 행 높이 줄임
 
   &:hover {
-    background-color: #f9f9f9;
+    background-color: #f0f0f0;
   }
 `;
 
-// 테이블 데이터 셀
+// 셀 스타일 (td)
 export const GaguListItem = styled.td`
-  padding: 10px;
+  padding:0.7px 4px;
+  font-size: 12px;
   text-align: center;
-  box-sizing: border-box;  // padding을 포함하여 크기 계산
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
-  &:nth-child(1) { padding-left: 4px; } // 체크박스
-  &:nth-child(2) { padding-left: 8px; } // 번호
-  &:nth-child(3) { text-align: center; padding-left: 10px; } // 이미지
-  &:nth-child(4) { text-align: center; padding-left: 10px; } // 가구명
-  &:nth-child(5) { padding-left: 10px; } // Description
-  &:nth-child(6) { padding-left: 10px; } // 등록일
-  &:nth-child(7) { padding-left: 10px; } // 수정일
-  &:nth-child(8) { padding-left: 10px; } // 수정 버튼
+  img {
+    height: 20px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+  }
 `;
 
-// 페이지네이션 컨테이너
+// 페이지네이션 컨테이너 (항상 아래에 있도록)
 export const PaginationContainer = styled.div`
-  margin-top: 20px;
+  padding: 10px 0;
   text-align: center;
+  background-color: #f9f9f9;
+  flex-shrink: 0;
 `;
 
 // 페이지네이션 버튼
@@ -89,5 +105,9 @@ export const PaginationButton = styled.button`
 
   &:hover:not(:disabled) {
     background-color: #1976d2;
+  }
+
+  &:focus {
+    outline: none;
   }
 `;

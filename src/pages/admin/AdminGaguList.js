@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   GaguListContainer,
   GaguTable,
@@ -13,56 +13,20 @@ import {
 } from "./css/AdminGaguList.style";
 import CommonImageBox from "../../common/CommonImageBox";
 import CommonButton from "../../common/CommonButton";
-
-// 목업 데이터
-const mockData = [
-  {
-    id: 1,
-    imageUrl: "https://via.placeholder.com/150",
-    name: "모던 소파",
-    description: "편안하고 세련된 모던 소파",
-    createdAt: "2025-03-01",
-    updatedAt: "2025-03-05",
-  },
-  {
-    id: 2,
-    imageUrl: "https://via.placeholder.com/150",
-    name: "북유럽 스타일 테이블",
-    description: "심플한 디자인의 북유럽 스타일 테이블",
-    createdAt: "2025-03-03",
-    updatedAt: "2025-03-07",
-  },
-  {
-    id: 3,
-    imageUrl: "https://via.placeholder.com/150",
-    name: "빈티지 책장",
-    description: "빈티지 스타일의 책장",
-    createdAt: "2025-03-02",
-    updatedAt: "2025-03-06",
-  },
-  {
-    id: 4,
-    imageUrl: "https://via.placeholder.com/150",
-    name: "러블리 침대",
-    description: "아늑하고 사랑스러운 러블리 침대",
-    createdAt: "2025-03-01",
-    updatedAt: "2025-03-04",
-  },
-  // 추가 데이터
-  {
-    id: 5,
-    imageUrl: "https://via.placeholder.com/150",
-    name: "미니멀 의자",
-    description: "단순하고 깔끔한 디자인의 의자",
-    createdAt: "2025-03-10",
-    updatedAt: "2025-03-12",
-  },
-];
+import { fontSize } from "@mui/system";
 
 const AdminGaguList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [checkedItems, setCheckedItems] = useState([]);
-  const [products, setProducts] = useState(mockData);
+
+  const products = new Array(30).fill(null).map((_, index) => ({
+    id: index + 1,
+    name: `가구 ${index + 1}`,
+    imageUrl: "https://via.placeholder.com/100",
+    description: `설명 ${index + 1}`,
+    createdAt: "2025-04-01",
+    updatedAt: "2025-04-01",
+  }));
 
   const itemsPerPage = 10;
   const totalPages = Math.ceil(products.length / itemsPerPage);
@@ -115,7 +79,6 @@ const AdminGaguList = () => {
   return (
     <GaguListContainer>
       <GaguTable>
-        {/* 헤더 */}
         <GaguListHeader>
           <GaguListHeaderRow>
             <GaguListHeaderItem>
@@ -138,7 +101,6 @@ const AdminGaguList = () => {
           </GaguListHeaderRow>
         </GaguListHeader>
 
-        {/* 바디 */}
         <GaguListBody>
           {currentItems.map((item, index) => (
             <GaguItem key={item.id}>
@@ -153,18 +115,17 @@ const AdminGaguList = () => {
                 {(currentPage - 1) * itemsPerPage + index + 1}
               </GaguListItem>
               <GaguListItem>
-                <CommonImageBox image={item.imageUrl} type="basic" />
+              <GaguListItem>
+  <CommonImageBox style={{height:"20px"}} image={item.imageUrl} type="basic" onLink={item.imageUrl} />
+</GaguListItem>
+
               </GaguListItem>
               <GaguListItem>{item.name}</GaguListItem>
               <GaguListItem>{item.description}</GaguListItem>
               <GaguListItem>{item.createdAt}</GaguListItem>
               <GaguListItem>{item.updatedAt}</GaguListItem>
               <GaguListItem>
-                <CommonButton
-                  height="90%"
-                  fontSize="base"
-                  onClick={() => console.log("수정", item.id)}
-                >
+                <CommonButton style={{height:"20px" }}fontSize="xxs" type="edit" onClick={() => console.log("수정")}>
                   수정
                 </CommonButton>
               </GaguListItem>
@@ -173,7 +134,6 @@ const AdminGaguList = () => {
         </GaguListBody>
       </GaguTable>
 
-      {/* 페이지네이션 */}
       <PaginationContainer>{renderPagination()}</PaginationContainer>
     </GaguListContainer>
   );
