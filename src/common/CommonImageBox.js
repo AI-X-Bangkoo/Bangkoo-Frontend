@@ -1,3 +1,4 @@
+// common/CommonImageBox.js
 import React from "react";
 import {
     ImageBoxStyle,
@@ -29,6 +30,7 @@ function CommonImageBox({
             onPlusMinus,
             onDelete,
             onCheck,
+            onClick
         }) {
 
     if (type === "basic" && onLink) {
@@ -48,7 +50,7 @@ function CommonImageBox({
     };
 
     return (
-        <ImageBoxStyle >
+        <ImageBoxStyle onClick={onClick} >
             <img src={image} alt="가구 이미지" />
 
             {/* AI Chip */}
