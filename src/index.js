@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import theme from "./theme/theme";
 import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import { ThemeProvider as MUIThemeProvider } from "@mui/material/styles";
@@ -19,5 +18,3 @@ root.render(
     </MUIThemeProvider>
   </Provider>
 );
-
-reportWebVitals();
