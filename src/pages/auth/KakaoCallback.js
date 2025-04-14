@@ -33,9 +33,10 @@ const KakaoCallback = () => {
           console.log("headers:", res.headers);
           console.log("data:", res.data);
 
-          const { nickname } = res.data;
+          const { nickname, token } = res.data;
 
-          if (nickname) {
+          if (nickname && token) {
+            localStorage.setItem("accesssToken",token); //로컬스토리지에 토큰 저장(JWT)
             handleLoginSuccess(nickname); // Redux에 로그인 상태 저장
             setAlertMessage("로그인 되었습니다.");
             // navigate("/", { replace: true });

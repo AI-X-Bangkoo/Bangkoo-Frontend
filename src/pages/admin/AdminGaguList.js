@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
 import {
   GaguListContainer,
   GaguTable,
@@ -27,7 +28,13 @@ const AdminGaguList = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("/api/products"); // 실제 API 경로로 교체
+        console.log("API BASE URL:", process.env.REACT_APP_API_BASE_URL);
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/api/product`, // 실제 API 경로로 교체
+          {
+            withCredentials: true,
+          }
+        );
         setProducts(res.data);
       } catch (err) {
         console.error("가구 데이터 불러오기 실패:", err);
