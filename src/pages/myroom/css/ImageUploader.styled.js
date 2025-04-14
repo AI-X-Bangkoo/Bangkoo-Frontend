@@ -47,34 +47,65 @@ export const UploadInput = styled.input`
 //
 // `;
 // 이미지 양 여백 blur 처리 용 스타일 추가 (김범석)
+// export const BlurredWrapper = styled.div`
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   pointer-events: none; // 클릭 방지
+//   z-index: 0;
+//   overflow: hidden; // 이 부분이 중요
+//   border-radius: ${({ theme }) => theme.borderRadius.md };
+// `;
+//
+// export const BlurredImage = styled.img`
+//     position: absolute;
+//     top: 50%;
+//     left: 50%;
+//     width: 120%;
+//     height: 120%;
+//     transform: translate(-50%, -50%) scale(1.2); // 완전한 중앙 + 확대
+//     object-fit: cover;
+//     filter: blur(30px) brightness(0.7);
+//     pointer-events: none;center center; // 중심 기준으로 확대
+// `;
+//
+// export const MainImage = styled.img`
+//   position: relative;
+//   width: 100%;
+//   height: 100%;
+//   object-fit: contain; // 원본 비율 유지
+//   z-index: 1;
+// `;
+export const MainCanvas = styled.canvas`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+`;
+
 export const BlurredWrapper = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  pointer-events: none; // 클릭 방지
+  pointer-events: none;
   z-index: 0;
-  overflow: hidden; // 이 부분이 중요
+  overflow: hidden;
   border-radius: ${({ theme }) => theme.borderRadius.md };
 `;
 
-export const BlurredImage = styled.img`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 120%;
-    height: 120%;
-    transform: translate(-50%, -50%) scale(1.2); // 완전한 중앙 + 확대
-    object-fit: cover;
-    filter: blur(30px) brightness(0.7);
-    pointer-events: none;center center; // 중심 기준으로 확대
-`;
-
-export const MainImage = styled.img`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  object-fit: contain; // 원본 비율 유지
-  z-index: 1;
+export const BlurredCanvas = styled.canvas`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  transform: translate(-50%, -50%) scale(1.2);
+  object-fit: cover;
+  filter: blur(30px) brightness(0.7);
+  pointer-events: none;
 `;
