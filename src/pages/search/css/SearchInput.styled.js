@@ -121,8 +121,8 @@ export const ImageBox = styled.div`
 
 export const TypingText = styled.p`
   position: absolute;
-  top: -4px;
-  left: 110px;
+  top: -3px;
+  left: 50px;
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 600;
   color: ${({ theme }) => theme.colors.black};
@@ -134,8 +134,8 @@ export const TypingText = styled.p`
 
   ${media.tablet`
     font-size: ${({ theme }) => theme.fontSizes.xxs};
-    top: -3px;
-    left: 80px;
+    top: -8px;
+    left: 30px;
   `}
 `;
 
