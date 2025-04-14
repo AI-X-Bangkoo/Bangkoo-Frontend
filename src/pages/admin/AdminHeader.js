@@ -43,6 +43,7 @@ function AdminHeader() {
               alignItems: "center",
               backgroundColor: "#fff",
               borderRadius: "8px",
+              border: "1px solid #000"
             }}
           >
             <SearchIcon />
@@ -55,7 +56,6 @@ function AdminHeader() {
               onEnter={handleSearch}
               onClearAll={handleClearAll}
               custom="none"
-              line="grey"
               fontSize="sx"
             />
           </div>

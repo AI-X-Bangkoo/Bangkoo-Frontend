@@ -23,7 +23,7 @@ export const RightArea = styled.div`
   flex: 1;
   height: calc(100vh - 86px);
   box-sizing: border-box;
-  background-color: lightGrey;
+  background-color: white;
   margin-top: 86px;
 `;
 

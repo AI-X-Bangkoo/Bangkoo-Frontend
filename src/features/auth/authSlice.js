@@ -1,5 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
+import { getByRole } from "@testing-library/dom";
+import Cookies from "js-cookie";
+import { useEffect } from "react";
 
 export const logoutThunk = createAsyncThunk(
     "auth/logout",
@@ -27,11 +30,17 @@ const authSlice = createSlice({
         checkLoginFromCookie: (state) => {
             const cookie = document.cookie;
             const nicknameMatch = cookie.match(/nickname=([^;]+)/);
-            const roleMatch = cookie.match(/role=([^;]+)/);  // role 쿠키 추가
+            // const roleMatch = cookie.match(/role=([^;]+)/);  // role 쿠키 추가
+            const roleMatch = Cookies.get("role")
 
             const nickname = nicknameMatch ? decodeURIComponent(nicknameMatch[1]) : null;
             // 쿠키에서 role을 읽어오지 못하면 기본값 'user'를 설정
-            const role = roleMatch ? decodeURIComponent(roleMatch[1]) : 'user';  // 기본값 'user'로 설정
+            // const role = roleMatch ? decodeURIComponent(roleMatch[1]) : 'user';  // 기본값 'user'로 설정
+            const role = roleMatch
+
+            console.log('cookie:', Cookies);
+            console.log('nickname:', nickname);
+            console.log('roleMatch:', roleMatch);
 
             console.log('nickname:', nickname, 'role:', role);
 
@@ -64,7 +73,8 @@ const authSlice = createSlice({
             console.log('쿠키 저장:', document.cookie);
             console.log("***********************");
             state.isLoggedIn = true;
-            state.user = { nickname, role };  // 상태에 role 추가
+            state.user = {    nickname: action.payload.nickname,
+                role: action.payload.role };  // 상태에 role 추가
         },
         setAlertMessage: (state, action) => {
             state.alertMessage = action.payload;

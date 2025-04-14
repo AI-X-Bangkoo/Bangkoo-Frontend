@@ -9,6 +9,17 @@ import {
   clearAlertMessage,
   logoutThunk,
 } from "../../features/auth/authSlice";
+import Cookies from "js-cookie";
+
+// 쿠키에서 값 가져오기 함수 (디코딩 처리 포함)
+const getCookieValue = (name) => {
+  const cookieValue = document.cookie.replace(
+    new RegExp("(?:(?:^|.*;\\s*)(" + name + ")\\s*\\=\\s*([^;]*).*$)|^.*$"),
+    "$2"
+  );
+  console.log("쿠키값이 뭐냐:",cookieValue);
+  return cookieValue ? decodeURIComponent(cookieValue) : "";
+};
 
 const useAuth = () => {
   const dispatch = useDispatch();
@@ -52,8 +63,8 @@ const useAuth = () => {
   // 로그인 성공 후 호출되는 함수
   const handleLoginSuccess = (nickname, role) => {
     console.log('✅ handleLoginSuccess 호출:', nickname, role);
-
-    const userRole = role || 'user'; // 백엔드에서 role이 없으면 'user'로 기본 설정
+    const userRole = Cookies.get("role")
+    // const userRole = role || 'user'; // 백엔드에서 role이 없으면 'user'로 기본 설정
     console.log('📦 최종 userRole:', userRole);
 
     // Redux에 로그인 정보 저장
@@ -63,14 +74,27 @@ const useAuth = () => {
     }));
 
     // 쿠키에 로그인 정보 저장
-    document.cookie = `nickname=${nickname}; path=/`;
-    document.cookie = `role=${userRole}; path=/`;
+    document.cookie = `nickname=${encodeURIComponent(nickname)}; path=/`;
+    document.cookie = `role=${encodeURIComponent(userRole)}; path=/`;
 
     console.log('쿠키 저장:', document.cookie);
   };
 
   // 로그인 상태 초기화 (쿠키에서 상태 확인)
   useEffect(() => {
+    const savedNickname = getCookieValue("nickname");
+    const savedRole = getCookieValue("role");
+
+    console.log("**********************************")
+    console.log("가져오는 롤값:", savedRole);
+    console.log("**********************************")
+
+    if (savedNickname && savedRole) {
+      dispatch(setLoginInfo({
+        nickname: savedNickname,
+        role: savedRole,
+      }));
+    }
     dispatch(checkLoginFromCookie());
   }, [dispatch]);
 
