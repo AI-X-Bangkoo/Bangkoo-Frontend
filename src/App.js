@@ -8,7 +8,7 @@ import AppInitializer from "./AppInitializer";
 function App() {
   return (
     <BrowserRouter>
-        {/* 로그인 상태 초기화 */}
+        {/* 로그인 상태 초기화  */}
         <AppInitializer/>
         <Header />
         <AppRoutes />

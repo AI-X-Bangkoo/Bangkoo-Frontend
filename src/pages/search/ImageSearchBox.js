@@ -1,4 +1,13 @@
 import React, { useState, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+    setUploadedImage,
+    setSearchResults,
+    setConfirmedKeyword,
+    setKeyword
+} from "@/features/search/searchSlice";
+import { searchByImage, searchByImageUrl } from "@/api/search/search";
 import {
     ImageSearchWrapper,
     ImageInputWrapper,
@@ -16,23 +25,52 @@ function ImageSearchBox({ onSearchComplete }) {
     const [dragOver, setDragOver] = useState(false);
     const fileInputRef = useRef();
 
-    const handleSearch = () => {
-        if (imageFile) {
-            const localUrl = URL.createObjectURL(imageFile);
-            onSearchComplete(localUrl);
-        } else if (imageUrl.trim()) {
-            onSearchComplete(imageUrl.trim());
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleSearch = async () => {
+        const trimmedUrl = imageUrl.trim();
+
+        try {
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append("image", imageFile);
+                const result = await searchByImage(formData);
+
+                dispatch(setSearchResults(result));
+                dispatch(setConfirmedKeyword("이미지 검색"));
+                dispatch(setKeyword(""));              // 텍스트 클리어
+                dispatch(setUploadedImage(null));      // 이미지 클리어
+                navigate("/search");
+            } else if (trimmedUrl) {
+                setImageFile(null);  // 기존 파일 제거!
+
+                dispatch(setUploadedImage(trimmedUrl));
+                if (typeof onSearchComplete === "function") onSearchComplete(trimmedUrl);
+
+                // const result = await searchByImageUrl(trimmedUrl);
+                //
+                // dispatch(setSearchResults(result));
+                // dispatch(setConfirmedKeyword("이미지 링크 검색"));
+                // dispatch(setKeyword(""));              // 텍스트 클리어
+                // navigate("/search");
+            } else {
+                console.warn("🚫 검색 조건 없음: 파일도 URL도 없음");
+            }
+        } catch (err) {
+            console.error("이미지 검색 실패:", err);
         }
     };
 
-    const handleDrop = (e) => {
+    const handleDrop = async (e) => {
         e.preventDefault();
         setDragOver(false);
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             const file = e.dataTransfer.files[0];
             setImageFile(file);
             const localUrl = URL.createObjectURL(file);
-            onSearchComplete(localUrl); // 드래그 업로드도 바로 닫기
+            dispatch(setUploadedImage(localUrl));
+            if (onSearchComplete) onSearchComplete(localUrl); // 드래그 업로드도 바로 닫기
         }
     };
 
@@ -49,12 +87,13 @@ function ImageSearchBox({ onSearchComplete }) {
         fileInputRef.current.click();
     };
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
             setImageFile(file);
             const localUrl = URL.createObjectURL(file);
-            onSearchComplete(localUrl); // 업로드 시 바로 창 닫기
+            dispatch(setUploadedImage(localUrl)); // 미리보기 즉시 반영
+            if (onSearchComplete) onSearchComplete(localUrl);
         }
     };
 

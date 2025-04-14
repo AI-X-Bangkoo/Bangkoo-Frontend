@@ -1,6 +1,12 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { removeRecentKeyword } from "@/features/search/searchSlice";
+import {
+    setSearchResults,
+    setConfirmedKeyword,
+    setKeyword,
+    removeRecentKeyword,
+    setUploadedImage,
+} from "@/features/search/searchSlice";
 import {
     SearchTermBox,
     RecentBox,
@@ -15,18 +21,45 @@ import CommonIconButton from "@/common/CommonIconButton"
 import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
 import CommonButton from "@/common/CommonButton";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
+import { useNavigate } from "react-router-dom";
+import { searchByImage } from "@/api/search/search";
 
-function SearchTerm() {
+function SearchTerm({onClose}) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const recentKeywords = useSelector((state) => state.search.recentKeywords);
-    const { autoSave, toggleAuto, clearAll } = useSearchHistory();
+    const { autoSave, toggleAuto, clearAll, addKeyword } = useSearchHistory();
 
-    const keyword = [
+    const popularKeywords = [
         {id: 1, value: "의자"},
         {id: 2, value: "침대"},
         {id: 3, value: "책상"},
         {id: 4, value: "쇼파"},
     ]
+
+    const handleSearch = async (keyword) => {
+        try {
+            const trimmed = keyword.trim();
+            if (!trimmed) return;
+
+            dispatch(setKeyword(trimmed));           // input에 키워드 반영
+            addKeyword(trimmed);                     // 최근 검색어 추가
+
+            const formData = new FormData();
+            formData.append("query", trimmed);
+
+            const result = await searchByImage(formData);
+            dispatch(setSearchResults(result));
+            dispatch(setConfirmedKeyword(trimmed));
+            dispatch(setUploadedImage(null));
+            dispatch(setKeyword(""));                // 검색 완료 후 input 초기화
+
+            if (onClose) onClose();
+            navigate("/search");
+        } catch (err) {
+            console.error("검색 실패:", err);
+        }
+    };
 
     return (
         <SearchTermBox>
@@ -47,7 +80,15 @@ function SearchTerm() {
                 <SearchScrollBox>
                     {recentKeywords.map((item) => (
                         <RecentTextBox key={item}>
-                            <Text size="xs" $weight={500}>{item}</Text>
+                            <Text
+                                size="xs"
+                                $weight={500}
+                                onClick={() => handleSearch(item)}
+                                style={{ cursor: 'pointer' }}
+
+                            >
+                                {item}
+                            </Text>
                             <CommonIconButton
                                 width="20px"
                                 height="20px"
@@ -62,7 +103,13 @@ function SearchTerm() {
 
 
                 <RecentBottomBox >
-                    <Text onClick={toggleAuto} size="xxs" $weight={600}>자동저장 {autoSave ? '끄기' : '켜기'}</Text>
+                    <Text
+                        onClick={toggleAuto}
+                        size="xxs"
+                        $weight={600}
+                    >
+                        자동저장 {autoSave ? '끄기' : '켜기'}
+                    </Text>
                 </RecentBottomBox>
 
             </RecentBox>
@@ -70,7 +117,7 @@ function SearchTerm() {
             <PopularityBox>
                 <Text size="sm" $weight={800}>인기 검색어</Text>
                 <KeywordBox>
-                    {keyword.map((item) => (
+                    {popularKeywords.map((item) => (
                         <CommonButton
                             key={item.id}
                             width="90px"
@@ -79,6 +126,7 @@ function SearchTerm() {
                             fontWeight={900}
                             radius="full"
                             type="outline"
+                            onClick={() => handleSearch(item.value)}
                         >
                             {item.value}
                         </CommonButton>

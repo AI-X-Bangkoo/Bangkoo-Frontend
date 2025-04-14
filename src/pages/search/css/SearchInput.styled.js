@@ -12,7 +12,7 @@ export const SearchRoot = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.full};
   box-shadow: ${({ $shadow }) => $shadow ? '0 4px 4px rgba(0,0,0,0.25)': 'none'};
   border: ${({ theme, $border }) => $border === 'orange' ? `3px solid ${theme.colors.orange}`: `1px solid ${theme.colors.grey}`};
-
+  
   ${media.tablet`
     width: 100%;
     
@@ -41,6 +41,15 @@ export const SearchRoot = styled.div`
     
   `}
 `;
+
+export const VoiceBox = styled.div`
+  & svg {
+    & path {
+      stroke: ${({ theme, $active }) => ($active ? theme.colors.red : theme.colors.black)};
+    }
+  }
+` ;
+
 
 export const InputBox = styled.div`
   width: calc(100% - 34px - 34px - 34px - 34px);
