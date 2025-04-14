@@ -10,7 +10,7 @@ import {
 export default function useSearchHistory() {
     const dispatch = useDispatch();
     const keyword = useSelector((state) => state.search.keyword);
-    const recent = useSelector((state) => state.search.recent);
+    const recent = useSelector((state) => state.search.recentKeywords);
     const autoSave = useSelector((state) => state.search.autoSave);
 
     const updateKeyword = (value) => {
