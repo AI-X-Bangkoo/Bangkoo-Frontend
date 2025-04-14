@@ -36,6 +36,11 @@ const CommonTextField = ({
                 fontSize={fontSize}
                 onFocus={onFocus}
                 onKeyDown={(e) => {
+                    // 엔터키 입력
+                    if (e.key === "Enter" && typeof onEnter === "function") {
+                        onEnter();
+                    }
+                    
                     // 백스페이스 이미지 제거
                     if (e.key === "Backspace" && value === "" && imagePreviewUrl && onClearAll) {
                         onClearAll();

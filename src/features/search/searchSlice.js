@@ -1,10 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const storedKeywords = JSON.parse(localStorage.getItem("recentKeywords") || "[]");
+
 const initialState = {
     keyword: '',         // 사용자가 입력한 검색어
     confirmedKeyword: '',
     uploadedImage: null, // 업로드한 이미지 (URL or File)
-    recentKeywords: [], // 검색 히스토리 추가
+    recentKeywords: storedKeywords, // 검색 히스토리 추가
     autoSave: true, // 자동 저장 on/off
     resultList: [],
 };
@@ -41,6 +43,7 @@ const searchSlice = createSlice({
         },
         clearRecentKeywords: (state) => {
             state.recentKeywords = [];
+            localStorage.removeItem("recentKeywords"); // localStorage도 삭제
         },
         clearSearch: (state) => {
             state.keyword = '';

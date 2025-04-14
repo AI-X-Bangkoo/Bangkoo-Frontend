@@ -1,14 +1,19 @@
 import React, {useEffect, useRef, useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUploadedImage } from "@/features/search/searchSlice";
+import { setUploadedImage, setSearchResults, setConfirmedKeyword, setKeyword } from "@/features/search/searchSlice";
 import SearchInputComponent from "./SearchInputComponent";
 import SearchExplanation from "./SearchExplanation";
 import SearchTerm from "./SearchTerm";
 import Category from "./Category";
 import ImageSearchBox from "./ImageSearchBox";
+import { useNavigate } from "react-router-dom";
+import { searchByImage } from "@/api/search/search";
+import useSearchHistory from "@/hooks/search/useSearchHistory";
 
-function AISearchComponent({setSearchResults}) {
+function AISearchComponent() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { addKeyword } = useSearchHistory();
     const uploadedImage = useSelector((state) => state.search.uploadedImage); // 전역 상태
 
     const [isHover, setIsHover] = useState(false);
@@ -37,6 +42,35 @@ function AISearchComponent({setSearchResults}) {
         setIsHover(false);
         setIsFocused(false);
         setCategory(false)
+    };
+
+    // 카테고리 클릭시 검색
+    const handleSearchByCategory = async (categoryName) => {
+        try {
+            const trimmed = categoryName.trim();
+            if (!trimmed) return;
+
+            dispatch(setKeyword(trimmed));
+            addKeyword(trimmed);
+
+            const formData = new FormData();
+            formData.append("query", trimmed);
+
+            const result = await searchByImage(formData);
+
+            dispatch(setSearchResults(result));
+            dispatch(setConfirmedKeyword(trimmed));
+            dispatch(setKeyword(""));
+            dispatch(setUploadedImage(null));
+
+            setCategory(false);
+            setIsFocused(false);
+            setShowImageSearchBox(false);
+
+            navigate("/search");
+        } catch (err) {
+            console.error("카테고리 검색 실패:", err);
+        }
     };
 
     useEffect(() => {
@@ -80,9 +114,9 @@ function AISearchComponent({setSearchResults}) {
             {/* 검색창 마우스 hover시 */}
             <SearchExplanation visible={isHover}/>
             {/* 검색창 클릭시 */}
-            {isFocused && <SearchTerm />}
+            {isFocused && <SearchTerm onClose={() => setIsFocused(false)} />}
             {/* 카테고리 */}
-            {category && <Category/>}
+            {category && <Category onSearch={handleSearchByCategory} />}
 
             {/* 이미지 검색 */}
             {showImageSearchBox && (

@@ -46,7 +46,9 @@ function SearchPage() {
                         <TextBox>
                             <Text size="xs" $weight={800}>{item.이름}</Text>
                             <Text size="xs" $weight={600}>{item.설명}</Text>
-                            <Text size="md" $weight={800}>₩ {item.할인가.toLocaleString()}</Text>
+                            <Text size="md" $weight={800}>
+                                ₩ {item.할인가 != null ? item.할인가.toLocaleString() : "-"}
+                            </Text>
                         </TextBox>
 
                         <CommonButton
