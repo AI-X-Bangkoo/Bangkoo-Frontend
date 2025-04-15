@@ -59,6 +59,7 @@ const AdminGaguList = () => {
     if (!newName || newName === item.name) return;
 
     const updateData = { ...item, name: newName };
+    console.log("수정 데이터:" , updateData);
     try {
       const updated = await updateAdminProducts(item._id, updateData);
       setProducts((prev) =>
@@ -138,7 +139,7 @@ const AdminGaguList = () => {
               </GaguListItem>
               <GaguListItem>
                 <CommonImageBox
-                  style={{ height: "20px" }}
+                  style={{ height: "50px" }}
                   image={item.imageUrl}
                   type="basic"
                   onLink={item.imageUrl}

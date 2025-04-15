@@ -56,7 +56,7 @@ export const GaguListBody = styled.tbody`
 export const GaguItem = styled.tr`
   background-color: #fff;
   border-bottom: 1px solid #eee;
-  height: 15px;  // 행 높이 줄임
+  height: auto;  // 행 높이 
 
   &:hover {
     background-color: #f0f0f0;
@@ -65,17 +65,20 @@ export const GaguItem = styled.tr`
 
 // 셀 스타일 (td)
 export const GaguListItem = styled.td`
-  padding:0.7px 4px;
+  padding: 4px 8px;
   font-size: 12px;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex-shrink: 0;  /* flex 요소가 크기를 줄이지 않도록 설정 */
+  height: 1px;
+  box-sizing: border-box;  /* padding을 포함한 크기 계산 */
 
   img {
-    height: 20px;
+    height: 50px;
+    max-width:50%
     object-fit: contain;
-    display: block;
     margin: 0 auto;
   }
 `;
@@ -86,6 +89,7 @@ export const PaginationContainer = styled.div`
   text-align: center;
   background-color: #f9f9f9;
   flex-shrink: 0;
+  margin-top: 10px;
 `;
 
 // 페이지네이션 버튼
