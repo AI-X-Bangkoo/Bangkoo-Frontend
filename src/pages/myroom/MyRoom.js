@@ -33,7 +33,7 @@ import { useSaveInterior } from "@/hooks/useSaveInterior";
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
+    const [selectedIndices, setSelectedIndices] = useState([]);
     const openDrawer = () => setIsDrawerOpen(true);
     const closeDrawer = () => setIsDrawerOpen(false);
 
@@ -96,7 +96,18 @@ function MyRoom() {
                     saveClick={interiorSaveDialog.openDialog}
                     aiClick={aiDialog.openDialog}
                 />
-                <ImageUploader onImageUploaded={handleImageUploaded} />
+                <ImageUploader
+                    onImageUploaded={handleImageUploaded}
+                    onObjectSelect={(index) =>
+                        setSelectedIndices((prev) =>
+                            prev.includes(index)
+                                ? prev.filter((i) => i !== index)
+                                : [...prev, index]
+                        )
+                    }
+                    selectedIndices={selectedIndices}        // ✅ 이거 꼭 추가!
+                    setSelectedIndices={setSelectedIndices}  // ✅ 이것도 함께!
+                />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >
                         이미지 등록 시
@@ -123,7 +134,18 @@ function MyRoom() {
                     <CommonTabs tabs={tabList} current={currentTab} onChange={setCurrentTab} />
                 </TabBox>
                 <GridBox>
-                    {currentTab === "my" && <MyFurnitureTab onCustomRemove={furnitureDialog.openDialog} />}
+                    {currentTab === "my" && <MyFurnitureTab
+                        onCustomRemove={furnitureDialog.openDialog}
+                        onSelect={(index) => {
+                        setSelectedIndices(prev => {
+                        const updated = prev.includes(index)
+                        ? prev.filter(i => i !== index)
+                        : [...prev, index];
+                        console.log("🎯 setSelectedIndices 호출됨!", updated);
+                        return updated;
+                    });
+                    }}
+                    />}
                     {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} />}
                     {currentTab === "interior" && <InteriorTab onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}
                 </GridBox>
