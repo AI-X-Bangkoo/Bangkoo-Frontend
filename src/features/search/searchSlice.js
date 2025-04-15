@@ -11,6 +11,7 @@ const initialState = {
     resultList: [],
 };
 
+
 const searchSlice = createSlice({
     name: 'search',
     initialState,

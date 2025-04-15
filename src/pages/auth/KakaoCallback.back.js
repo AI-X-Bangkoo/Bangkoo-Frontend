@@ -27,34 +27,25 @@ const KakaoCallback = () => {
 
     axios
       .post(`http://localhost:8080/auth/callback/kakao?code=${code}`, null, {
-        withCredentials: true, // ✅ 쿠키를 서버에서 받을 수 있게 설정
+        withCredentials: true,
       })
       .then((res) => {
-           console.log("전체 응답 객체:", res);
-           console.log(
-             " 쿠키가 응답에 포함되었는지? (headers):",
-             res.headers
-           );
-           console.log(" 서버 응답 데이터:", res.data);
-           
-        const { nickname } = res.data;
+        console.log("전체 응답 객체:", res);
+        console.log("서버 응답 데이터:", res.data);
 
-        if (nickname) {
-          // JWT는 쿠키로 받고, nickname은 직접 전달받음
-          setLoginInfo(nickname); // token은 쿠키로 처리하므로 null
-          // alert("✅ 로그인 성공");
+        const { nickname, role } = res.data; // ✅ role도 함께 구조분해
+
+        if (nickname, role) {
+          handleLoginSuccess(nickname, role); // ✅ role 포함해서 전달
           navigate("/", { replace: true });
         } else {
-          console.error("서버 응답 문제:", res.data);
           setAlertMessage("로그인 실패: 서버 응답 오류");
-          // alert("로그인 실패: 서버 응답 오류");
           navigate("/", { replace: true });
         }
       })
       .catch((err) => {
         console.error("로그인 실패:", err);
         setAlertMessage("로그인 실패. 다시 시도해주세요.");
-        // alert("로그인 실패. 다시 시도해주세요.");
         navigate("/", { replace: true });
       })
       .finally(() => setIsProcessing(false));
