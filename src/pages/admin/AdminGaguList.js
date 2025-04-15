@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   GaguListContainer,
   GaguTable,
@@ -14,37 +13,35 @@ import {
 } from "./css/AdminGaguList.style";
 import CommonImageBox from "../../common/CommonImageBox";
 import CommonButton from "../../common/CommonButton";
+import { fetchProducts, updateAdminProducts } from "../../api/Admin";
 
 const AdminGaguList = () => {
   const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1); // 1부터 시작
   const [checkedItems, setCheckedItems] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
 
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(products.length / itemsPerPage);
 
-  // ✅ MongoDB 데이터 가져오기
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get("/api/products"); // 실제 API 경로로 교체
-        setProducts(res.data);
+        const page = currentPage - 1;
+        const res = await fetchProducts(page, itemsPerPage);
+        console.log("📦 서버 응답:", res);
+        setProducts(res.content || []); // 방어 처리
+        setTotalPages(res.totalPages || 1); // 방어 처리
       } catch (err) {
-        console.error("가구 데이터 불러오기 실패:", err);
+        console.error("❌ 가구 데이터 불러오기 실패:", err);
       }
     };
 
-    fetchProducts();
-  }, []);
-
-  const currentItems = products.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+    fetchData();
+  }, [currentPage]);
 
   const handleCheckAll = (e) => {
     if (e.target.checked) {
-      const ids = currentItems.map((item) => item.id);
+      const ids = products.map((item) => item._id);
       setCheckedItems(ids);
     } else {
       setCheckedItems([]);
@@ -57,7 +54,26 @@ const AdminGaguList = () => {
     );
   };
 
+  const handleUpdate = async (item) => {
+    const newName = prompt("새 이름을 입력하세요", item.name);
+    if (!newName || newName === item.name) return;
+
+    const updateData = { ...item, name: newName };
+    try {
+      const updated = await updateAdminProducts(item._id, updateData);
+      setProducts((prev) =>
+        prev.map((p) => (p._id === item._id ? updated : p))
+      );
+      alert("수정 성공");
+    } catch (err) {
+      console.error("수정 실패:", err);
+      alert("수정 실패");
+    }
+  };
+
   const renderPagination = () => {
+    if (!totalPages || isNaN(totalPages)) return null;
+
     const paginationNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
       if (
@@ -91,8 +107,8 @@ const AdminGaguList = () => {
               <input
                 type="checkbox"
                 checked={
-                  currentItems.length > 0 &&
-                  currentItems.every((item) => checkedItems.includes(item.id))
+                  products.length > 0 &&
+                  products.every((item) => checkedItems.includes(item._id))
                 }
                 onChange={handleCheckAll}
               />
@@ -108,13 +124,13 @@ const AdminGaguList = () => {
         </GaguListHeader>
 
         <GaguListBody>
-          {currentItems.map((item, index) => (
-            <GaguItem key={item.id}>
+          {products.map((item, index) => (
+            <GaguItem key={item._id}>
               <GaguListItem>
                 <input
                   type="checkbox"
-                  checked={checkedItems.includes(item.id)}
-                  onChange={() => handleCheck(item.id)}
+                  checked={checkedItems.includes(item._id)}
+                  onChange={() => handleCheck(item._id)}
                 />
               </GaguListItem>
               <GaguListItem>
@@ -137,7 +153,7 @@ const AdminGaguList = () => {
                   style={{ height: "20px" }}
                   fontSize="xxs"
                   type="edit"
-                  onClick={() => console.log("수정", item.id)}
+                  onClick={() => handleUpdate(item)}
                 >
                   수정
                 </CommonButton>
