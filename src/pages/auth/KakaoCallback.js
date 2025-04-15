@@ -33,10 +33,10 @@ const KakaoCallback = () => {
           console.log("headers:", res.headers);
           console.log("data:", res.data);
 
-          const { nickname } = res.data;
+          const { nickname, email } = res.data;
 
-          if (nickname) {
-            handleLoginSuccess(nickname); // Redux에 로그인 상태 저장
+          if (nickname && email) {
+            handleLoginSuccess(nickname, email); // Redux에 로그인 상태 저장
             setAlertMessage("로그인 되었습니다.");
             // navigate("/", { replace: true });
 

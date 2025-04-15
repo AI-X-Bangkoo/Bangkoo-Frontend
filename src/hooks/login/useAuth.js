@@ -47,6 +47,7 @@ const useAuth = () => {
       // 쿠키 삭제
       document.cookie = "nickname=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
       document.cookie = "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+      document.cookie = "userId=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
 
       // 페이지 이동 처리
       navigate("/", { replace: true });
@@ -61,21 +62,26 @@ const useAuth = () => {
   };
 
   // 로그인 성공 후 호출되는 함수
-  const handleLoginSuccess = (nickname, role) => {
-    console.log('✅ handleLoginSuccess 호출:', nickname, role);
-    const userRole = Cookies.get("role")
+  const handleLoginSuccess = (nickname, email) => {
+
+    const userId = email.split("@")[0];          // email에서 userId 파싱
+    const role = Cookies.get("role");  // 쿠키에서 role 읽기
     // const userRole = role || 'user'; // 백엔드에서 role이 없으면 'user'로 기본 설정
-    console.log('📦 최종 userRole:', userRole);
+    // console.log('📦 최종 userRole:', userRole);
+
+    console.log("✅ 로그인 성공:", { nickname, email, userId, role });
 
     // Redux에 로그인 정보 저장
     dispatch(setLoginInfo({
-      nickname: nickname,
-      role: userRole,
+      nickname,
+      userId,
+      role,
     }));
 
     // 쿠키에 로그인 정보 저장
     document.cookie = `nickname=${encodeURIComponent(nickname)}; path=/`;
-    document.cookie = `role=${encodeURIComponent(userRole)}; path=/`;
+    document.cookie = `role=${encodeURIComponent(role)}; path=/`;
+    document.cookie = `userId=${encodeURIComponent(userId)}; path=/`;
 
     console.log('쿠키 저장:', document.cookie);
   };
@@ -84,15 +90,17 @@ const useAuth = () => {
   useEffect(() => {
     const savedNickname = getCookieValue("nickname");
     const savedRole = getCookieValue("role");
+    const savedUserId = getCookieValue("userId");
 
     console.log("**********************************")
     console.log("가져오는 롤값:", savedRole);
     console.log("**********************************")
 
-    if (savedNickname && savedRole) {
+    if (savedNickname && savedRole && savedUserId) {
       dispatch(setLoginInfo({
         nickname: savedNickname,
         role: savedRole,
+        userId: savedUserId,
       }));
     }
     dispatch(checkLoginFromCookie());
