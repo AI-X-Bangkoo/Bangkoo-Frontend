@@ -36,7 +36,7 @@ const KakaoCallback = () => {
              res.headers
            );
            console.log(" 서버 응답 데이터:", res.data);
-
+           
         const { nickname } = res.data;
 
         if (nickname) {
