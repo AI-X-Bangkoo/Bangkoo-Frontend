@@ -23,7 +23,11 @@ const authSlice = createSlice({
     name: "auth",
     initialState: {
         isLoggedIn: false,
-        user: null,
+        user: {
+            nickname: null,
+            role: null,
+            userId: null,
+        },
         alertMessage: null,
     },
     reducers: {
@@ -32,11 +36,13 @@ const authSlice = createSlice({
             const nicknameMatch = cookie.match(/nickname=([^;]+)/);
             // const roleMatch = cookie.match(/role=([^;]+)/);  // role 쿠키 추가
             const roleMatch = Cookies.get("role")
+            const userIdMatch = cookie.match(/userId=([^;]+)/);
 
             const nickname = nicknameMatch ? decodeURIComponent(nicknameMatch[1]) : null;
             // 쿠키에서 role을 읽어오지 못하면 기본값 'user'를 설정
             // const role = roleMatch ? decodeURIComponent(roleMatch[1]) : 'user';  // 기본값 'user'로 설정
             const role = roleMatch
+            const userId = userIdMatch ? decodeURIComponent(userIdMatch[1]) : null;
 
             console.log('cookie:', Cookies);
             console.log('nickname:', nickname);
@@ -48,33 +54,37 @@ const authSlice = createSlice({
             if (nickname && role && state.user?.nickname === nickname && state.user?.role === role) return;
             if (!nickname && !state.user) return;
 
-            if (nickname && role) {
+            if (nickname && role && userId) {
                 state.isLoggedIn = true;
-                state.user = { nickname, role };  // 상태에 role 추가
+                state.user = { nickname, role, userId };  // 상태에 role 추가
             } else {
                 state.isLoggedIn = false;
                 state.user = null;
             }
         },
         setLoginInfo: (state, action) => {
-            const { nickname, role } = action.payload;
-            console.log('setLoginInfo 호출:', { nickname, role });
+            const { nickname, role, userId } = action.payload;
+            console.log('setLoginInfo 호출:', { nickname, role, userId });
 
             // nickname 또는 role이 누락되었을 경우 로그를 출력하고 처리
-            if (!nickname || !role) {
-                console.warn("🚨 nickname 또는 role이 누락되었습니다:", { nickname, role });
+            if (!nickname || !role || !userId) {
+                console.warn("🚨 nickname 또는 role이 누락되었습니다:", { nickname, role, userId });
                 return;
             }
 
             // 쿠키에 nickname과 role을 저장
             document.cookie = `nickname=${encodeURIComponent(nickname)}; path=/;`;
             document.cookie = `role=${encodeURIComponent(role)}; path=/;`;  // role 쿠키 저장 추가
+            document.cookie = `userId=${encodeURIComponent(userId)}; path=/;`;
+
             console.log("*******************");
             console.log('쿠키 저장:', document.cookie);
             console.log("***********************");
             state.isLoggedIn = true;
-            state.user = {    nickname: action.payload.nickname,
-                role: action.payload.role };  // 상태에 role 추가
+
+            state.user = { nickname, role, userId };
+            // state.user = {    nickname: action.payload.nickname,
+            //     role: action.payload.role };  // 상태에 role 추가
         },
         setAlertMessage: (state, action) => {
             state.alertMessage = action.payload;
