@@ -18,20 +18,21 @@ import { fetchProducts, updateAdminProducts } from "../../api/Admin";
 
 const AdminGaguList = () => {
   const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1); // 1부터 시작
+  const [currentPage, setCurrentPage] = useState(1);
   const [checkedItems, setCheckedItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
 
   const itemsPerPage = 10;
 
+  //페이징 관련
   useEffect(() => {
     const fetchData = async () => {
       try {
         const page = currentPage - 1;
         const res = await fetchProducts(page, itemsPerPage);
         console.log("📦 서버 응답:", res);
-        setProducts(res.content || []); // 방어 처리
-        setTotalPages(res.totalPages || 1); // 방어 처리
+        setProducts(res); // 전체 응답 객체를 상태로 저장
+        setTotalPages(res.totalPages || 1); // totalPages를 설정
       } catch (err) {
         console.error("❌ 가구 데이터 불러오기 실패:", err);
       }
@@ -40,9 +41,13 @@ const AdminGaguList = () => {
     fetchData();
   }, [currentPage]);
 
+  // products.content.content가 실제 배열인지 확인
+  const isContentArray = Array.isArray(products.content?.content);
+
+  // 전체 선택
   const handleCheckAll = (e) => {
     if (e.target.checked) {
-      const ids = products.map((item) => item._id);
+      const ids = products.map((item) => String(item._id));
       setCheckedItems(ids);
     } else {
       setCheckedItems([]);
@@ -50,9 +55,16 @@ const AdminGaguList = () => {
   };
 
   const handleCheck = (id) => {
-    setCheckedItems((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+    const stringId = String(id);
+    console.log("👉 체크 클릭됨:", stringId);
+
+    setCheckedItems((prev) => {
+      const updated = prev.includes(stringId)
+        ? prev.filter((item) => item !== stringId)
+        : [...prev, stringId];
+      console.log("✅ 업데이트된 checkedItems:", updated);
+      return updated;
+    });
   };
 
   const handleUpdate = async (item) => {
@@ -60,7 +72,6 @@ const AdminGaguList = () => {
     if (!newName || newName === item.name) return;
 
     const updateData = { ...item, name: newName };
-    console.log("수정 데이터:", updateData);
     try {
       const updated = await updateAdminProducts(item._id, updateData);
       setProducts((prev) =>
@@ -72,6 +83,11 @@ const AdminGaguList = () => {
       alert("수정 실패");
     }
   };
+
+  // 전체 선택 체크 여부
+  const isAllChecked =
+    products.length > 0 &&
+    products.every((item) => checkedItems.includes(String(item._id)));
 
   const renderPagination = () => {
     if (!totalPages || isNaN(totalPages)) return null;
@@ -108,10 +124,7 @@ const AdminGaguList = () => {
             <GaguListHeaderItem>
               <input
                 type="checkbox"
-                checked={
-                  products.length > 0 &&
-                  products.every((item) => checkedItems.includes(item._id))
-                }
+                checked={isAllChecked}
                 onChange={handleCheckAll}
               />
             </GaguListHeaderItem>
@@ -125,43 +138,48 @@ const AdminGaguList = () => {
           </GaguListHeaderRow>
         </GaguListHeader>
 
+        {/* // 렌더링할 때, products.content.content가 배열일 경우에만 map을 사용 */}
         <GaguListBody>
-          {products.map((item, index) => (
-            <GaguItem key={item._id}>
-              <GaguListItem>
-                <input
-                  type="checkbox"
-                  checked={checkedItems.includes(item._id)}
-                  onChange={() => handleCheck(item._id)}
-                />
-              </GaguListItem>
-              <GaguListItem>
-                {(currentPage - 1) * itemsPerPage + index + 1}
-              </GaguListItem>
-              <GaguListItem>
-                <GaguImageWrapper
-                  style={{ height: "20px" }}
-                  image={item.imageUrl}
-                  type="basic"
-                  onLink={item.imageUrl}
-                />
-              </GaguListItem>
-              <GaguListItem>{item.name}</GaguListItem>
-              <GaguListItem>{item.description}</GaguListItem>
-              <GaguListItem>{item.createdAt}</GaguListItem>
-              <GaguListItem>{item.updatedAt}</GaguListItem>
-              <GaguListItem>
-                <CommonButton
-                  style={{ height: "20px" }}
-                  fontSize="xxs"
-                  type="edit"
-                  onClick={() => handleUpdate(item)}
-                >
-                  수정
-                </CommonButton>
-              </GaguListItem>
-            </GaguItem>
-          ))}
+          {isContentArray && products.content.content.length > 0 ? (
+            products.content.content.map((item, index) => (
+              <GaguItem key={item._id}>
+                <GaguListItem>
+                  <input
+                    type="checkbox"
+                    checked={checkedItems.includes(item._id)}
+                    onChange={() => handleCheck(item._id)}
+                  />
+                </GaguListItem>
+                <GaguListItem>
+                  {(currentPage - 1) * itemsPerPage + index + 1}
+                </GaguListItem>
+                <GaguListItem>
+                  <GaguImageWrapper
+                    style={{ height: "20px" }}
+                    image={item.imageUrl}
+                    type="basic"
+                    onLink={item.imageUrl}
+                  />
+                </GaguListItem>
+                <GaguListItem>{item.name}</GaguListItem>
+                <GaguListItem>{item.description}</GaguListItem>
+                <GaguListItem>{item.createdAt}</GaguListItem>
+                <GaguListItem>{item.updatedAt}</GaguListItem>
+                <GaguListItem>
+                  <CommonButton
+                    style={{ height: "20px" }}
+                    fontSize="xxs"
+                    type="edit"
+                    onClick={() => handleUpdate(item)}
+                  >
+                    수정
+                  </CommonButton>
+                </GaguListItem>
+              </GaguItem>
+            ))
+          ) : (
+            <div>데이터가 없습니다.</div>
+          )}
         </GaguListBody>
       </GaguTable>
 
