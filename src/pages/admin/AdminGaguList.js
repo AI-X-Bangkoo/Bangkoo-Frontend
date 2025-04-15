@@ -10,8 +10,9 @@ import {
   GaguListItem,
   PaginationContainer,
   PaginationButton,
+  GaguImageWrapper,
 } from "./css/AdminGaguList.style";
-import CommonImageBox from "../../common/CommonImageBox";
+
 import CommonButton from "../../common/CommonButton";
 import { fetchProducts, updateAdminProducts } from "../../api/Admin";
 
@@ -59,7 +60,7 @@ const AdminGaguList = () => {
     if (!newName || newName === item.name) return;
 
     const updateData = { ...item, name: newName };
-    console.log("수정 데이터:" , updateData);
+    console.log("수정 데이터:", updateData);
     try {
       const updated = await updateAdminProducts(item._id, updateData);
       setProducts((prev) =>
@@ -138,8 +139,8 @@ const AdminGaguList = () => {
                 {(currentPage - 1) * itemsPerPage + index + 1}
               </GaguListItem>
               <GaguListItem>
-                <CommonImageBox
-                  style={{ height: "50px" }}
+                <GaguImageWrapper
+                  style={{ height: "20px" }}
                   image={item.imageUrl}
                   type="basic"
                   onLink={item.imageUrl}
