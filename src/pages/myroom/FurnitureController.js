@@ -1,3 +1,5 @@
+// pages/myroom/FurnitureController.js
+
 import React from "react";
 import {ControllerBox, FlexBox} from "./css/MyRoom.styled";
 import CommonButton from "@/common/CommonButton";
@@ -32,10 +34,10 @@ function MyRoom({saveClick, aiClick}) {
                 <CommonButton
                     width="135px"
                     type="outline"
-                    onClick={aiClick}
+                    onClick={aiClick} // mode 값을 
                     {...buttonProps}
                 >
-                    배치 결과 보기
+                    배치 결과 보기  
                 </CommonButton>
                 <CommonButton
                     width="80px"

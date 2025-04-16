@@ -23,7 +23,6 @@ import CommonIconButton from "@/common/CommonIconButton"
 import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
 import CommonButton from "@/common/CommonButton";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
-import useAuth from "@/hooks/login/useAuth";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -38,19 +37,11 @@ function SearchTerm({onClose}) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { autoSave, toggleAuto } = useSearchHistory();
-    const { user } = useAuth();
-    const userId = user?.userId;
+    const userId = useSelector((state) => state.auth.user?.userId || "anonymous");
 
     const [recentKeywords, setRecentKeywords] = useState([]);
     const [popularKeywords, setPopularKeywords] = useState([]);
-
-    // const popularKeywords = [
-    //     {id: 1, value: "의자"},
-    //     {id: 2, value: "침대"},
-    //     {id: 3, value: "책상"},
-    //     {id: 4, value: "쇼파"},
-    // ]
-
+    
     // 검색 실행
     const handleSearch = async (keyword) => {
         try {
@@ -61,7 +52,6 @@ function SearchTerm({onClose}) {
 
             const formData = new FormData();
             formData.append("query", trimmed);
-            if (userId) formData.append("userId", userId);
 
             const result = await searchByImage(formData);
             dispatch(setSearchResults(result));
