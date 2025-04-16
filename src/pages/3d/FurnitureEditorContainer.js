@@ -1,7 +1,7 @@
 // FurnitureEditorContainer.js
 import React, { useState } from 'react';
 import BackgroundSection from './BackgroundSection';
-import Canvas3DSection from '@/components/canvas/Canvas3DSection';
+import Canvas3DSection from '@/pages/3d/Canvas3DSection';
 import ActionSection from './ActionSection';
 
 export default function FurnitureEditorContainer() {
@@ -9,6 +9,7 @@ export default function FurnitureEditorContainer() {
   const [modelUrl, setModelUrl] = useState(null);
   const [canvasSize, setCanvasSize] = useState({ width: 1024, height: 768 });
   const [showMask, setShowMask] = useState(false);
+  const [showHelper, setShowHelper] = useState(true);
 
   return (
     <>
@@ -23,6 +24,7 @@ export default function FurnitureEditorContainer() {
         modelUrl={modelUrl}
         canvasSize={canvasSize}
         showMask={showMask}
+        showHelper={showHelper}
       />
 
       <ActionSection
@@ -30,6 +32,7 @@ export default function FurnitureEditorContainer() {
         modelUrl={modelUrl}
         canvasSize={canvasSize}
         setShowMask={setShowMask}
+        setShowHelper={setShowHelper}
       />
     </>
   );

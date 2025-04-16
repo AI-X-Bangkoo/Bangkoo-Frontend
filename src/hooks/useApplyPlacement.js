@@ -11,9 +11,10 @@ import { requestPlacement } from '@/api/placement';
  * @param {Object} canvasSize - 캔버스 사이즈 정보
  * @param {Function} setShowMask - 마스킹 UI 표시 함수
  */
-export const useApplyPlacement = ({ mode, background, reference, canvasSize, setShowMask }) => {
+export const useApplyPlacement = ({ mode, background, reference, canvasSize, setShowMask, setShowHelper }) => {
   return async () => {
     setShowMask(true);
+    setShowHelper(false);
     await new Promise(resolve => setTimeout(resolve, 200));
 
     const canvas3D = document.querySelector('canvas');

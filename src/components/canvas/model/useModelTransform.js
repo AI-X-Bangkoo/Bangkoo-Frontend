@@ -1,3 +1,4 @@
+// components/canvas/model/useModelTransform.js
 import { useEffect } from 'react';
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -7,6 +8,8 @@ export function useModelTransform(scene) {
   const { camera, controls } = useThree();
 
   useEffect(() => {
+    if (!scene) return;
+
     const realWidth = 0.82;
     const box = new THREE.Box3().setFromObject(scene);
     const modelSize = new THREE.Vector3();
