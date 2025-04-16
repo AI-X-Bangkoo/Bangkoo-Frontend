@@ -99,10 +99,21 @@ function SearchPage() {
                             <CommonImageBox image={item.이미지} type={"basic"} onLink={item.링크}/>
 
                             <TextBox>
-                                <Text size="xs" $weight={800}>{item.이름}</Text>
-                                <Text size="xs" $weight={600}>{item.설명}</Text>
+                                <div>
+                                    <Text size="xs" $weight={800}>{item.이름}</Text>
+                                    <Text size="xs" $weight={600}>{item.설명}</Text>
+                                </div>
+                                
                                 <Text size="md" $weight={800}>
-                                    ₩ {item.할인가 != null ? item.할인가.toLocaleString() : "-"}
+                                    ₩
+                                    {item.할인가 != null ?
+                                        item.할인가.toLocaleString()
+                                        :
+                                        item.정상가 != null ?
+                                            item.정상가.toLocaleString()
+                                            :
+                                            "-"
+                                    }
                                 </Text>
                             </TextBox>
 
