@@ -23,7 +23,6 @@ import useSearchHistory from "@/hooks/search/useSearchHistory";
 import { searchByImage } from "../../api/search/search";
 import useSearchDialog from "@/hooks/dialog/useSearchDialog";
 import CommonDialog from "@/common/CommonDialog";
-import useAuthUserId from "@/hooks/useAuthUserId";
 
 const SearchInputComponent = ({
                                   shadow,
@@ -43,7 +42,7 @@ const SearchInputComponent = ({
     const { keyword, updateKeyword } = useSearchHistory();
     const uploadedImage = useSelector((state) => state.search.uploadedImage);
     const [isListening, setIsListening] = useState(false); // 음성
-    const userId = useAuthUserId();
+    const userId = useSelector((state) => state.auth.user?.userId || "anonymous");
 
     const {
         dialogOpen,
@@ -98,13 +97,11 @@ const SearchInputComponent = ({
         try {
             const formData = new FormData();
 
+            const finalUserId = userId ? userId : "anonymous";
+            formData.append("userId", finalUserId);
+
             if (searchText) {
                 formData.append("query", searchText);
-                formData.append("userId", userId);
-
-                if (userId && userId !== "anonymous") {
-       
-                }
             }
 
             if (uploadedImage) {

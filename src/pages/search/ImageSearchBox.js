@@ -18,7 +18,7 @@ import {
 import CommonButton from "@/common/CommonButton";
 import {Text} from "@/common/Typography";
 import CommonTextField from "@/common/CommonTextField";
-import useAuth from "@/hooks/login/useAuth";
+import { useSelector } from "react-redux";
 
 function ImageSearchBox({ onSearchComplete }) {
     const [imageUrl, setImageUrl] = useState("");
@@ -28,8 +28,7 @@ function ImageSearchBox({ onSearchComplete }) {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { user } = useAuth();
-    const userId = user?.userId;
+    const userId = useSelector((state) => state.auth.user?.userId || "anonymous");
 
     const handleSearch = async () => {
         const trimmedUrl = imageUrl.trim();
@@ -38,7 +37,8 @@ function ImageSearchBox({ onSearchComplete }) {
             if (imageFile) {
                 const formData = new FormData();
                 formData.append("image", imageFile);
-                if (userId) formData.append("userId", userId);
+                const finalUserId = userId ? userId : "anonymous";
+                formData.append("userId", finalUserId);
 
                 const result = await searchByImage(formData);
 

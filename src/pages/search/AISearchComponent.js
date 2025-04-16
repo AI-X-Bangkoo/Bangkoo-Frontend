@@ -58,7 +58,8 @@ function AISearchComponent() {
 
             const formData = new FormData();
             formData.append("query", trimmed);
-            if (userId) formData.append("userId", userId); // 로그인 시 userId 추가
+            const finalUserId = userId ? userId : "anonymous";
+            formData.append("userId", finalUserId);
             
             const result = await searchByImage(formData);
 
