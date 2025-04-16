@@ -22,7 +22,6 @@ const AdminGaguList = () => {
   const [checkedItems, setCheckedItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
 
-
   const itemsPerPage = 10;
 
   //페이징 관련
@@ -67,19 +66,49 @@ const AdminGaguList = () => {
       return updated;
     });
   };
-  
 
-
+  // 수정 버튼 실행행
   const handleUpdate = async (item) => {
     const newName = prompt("새 이름을 입력하세요", item.name);
-    if (!newName || newName === item.name) return;
+    const newdescription = prompt("새 설명을 입력하세요", item.description);
 
-    const updateData = { ...item, name: newName };
+    if (
+      (!newName || newName === item.name) &&
+      (!newdescription || newdescription === item.description)
+    )
+      return;
+
+    // _id를 id로 변환하여 updateData에 넣어줌
+    const updateData = {
+      ...item,
+      name: newName,
+      description: newdescription,
+      id: item.id || item._id,
+    };
+
     try {
-      const updated = await updateAdminProducts(item._id, updateData);
-      setProducts((prev) =>
-        prev.map((p) => (p._id === item._id ? updated : p))
-      );
+      const updated = await updateAdminProducts(updateData.id, updateData); // id 사용
+
+      console.log("✅ 업데이트된 객체:", updated);
+
+      // ✨ 수정된 부분: products.content.content 배열에서 해당 항목만 교체
+      setProducts((prev) => {
+        const updatedId = updated._id || updated.id;
+
+        const updatedContent = prev.content.content.map((p) => {
+          const pId = p._id || p.id;
+          return pId === updatedId ? { ...p, ...updated } : p;
+        });
+
+        return {
+          ...prev,
+          content: {
+            ...prev.content,
+            content: updatedContent,
+          },
+        };
+      });
+
       alert("수정 성공");
     } catch (err) {
       console.error("수정 실패:", err);
@@ -158,9 +187,11 @@ const AdminGaguList = () => {
                 </GaguListItem>
                 <GaguListItem>
                   <a href={item.link} target="_blank">
-                  <GaguImageWrapper
-                    style={{ height: "20px" , cursor:"pointer"}}
-                  ><img src={item.imageUrl} alt="가구"/></GaguImageWrapper>
+                    <GaguImageWrapper
+                      style={{ height: "20px", cursor: "pointer" }}
+                    >
+                      <img src={item.imageUrl} alt="가구" />
+                    </GaguImageWrapper>
                   </a>
                 </GaguListItem>
                 <GaguListItem>{item.name}</GaguListItem>

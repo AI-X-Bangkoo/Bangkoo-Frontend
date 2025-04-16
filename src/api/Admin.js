@@ -48,6 +48,8 @@ export async function updateAdminProducts(id, updateData) {
     const response = await api.put(`/api/admin/product/${id}`, updateData, {
       headers: { "Content-Type": "application/json" },
     });
+    console.log("업데이트된 객체:", JSON.stringify(updateData, null, 2));
+    console.log("*******",updateData);
     return response.data;
   } catch (error) {
     console.error("가구 수정 실패:", error);
