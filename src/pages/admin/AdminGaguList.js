@@ -16,24 +16,33 @@ import {
 import CommonButton from "../../common/CommonButton";
 import { fetchProducts, updateAdminProducts } from "../../api/Admin";
 
-const AdminGaguList = ({ checkedItems = [], setCheckedItems, refreshFlag, searchTerm }) => {
+const AdminGaguList = ({ checkedItems = [], setCheckedItems, refreshFlag, searchTerm, searchResults }) => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   const itemsPerPage = 10;
 
-  // ✅ 검색어가 바뀔 때 페이지를 1로 초기화
+  // 검색어가 바뀔 때 페이지를 1로 초기화
   useEffect(() => {
     setCurrentPage(1); // 검색어 바뀔 때 페이지를 1로 리셋
   }, [searchTerm]);
 
-  
-  // ✅ 페이지, 검색어, 새로고침 신호 있을 때 데이터 불러오기
+  /**
+   * 검색 결과가 바뀔 때 이를 products로 설정
+   */
+  useEffect(()=>{
+    setProducts(searchResults);
+  },[searchResults])
+
+  // 페이지, 검색어, 새로고침 신호 있을 때 데이터 불러오기
   useEffect(() => {
     console.log("검색어의 값:", searchTerm);
+
     const fetchData = async () => {
+
       try {
+
         const page = currentPage > 0 ? currentPage - 1 : 0;
         const res = await fetchProducts(page, itemsPerPage, searchTerm);
 
@@ -68,6 +77,7 @@ const AdminGaguList = ({ checkedItems = [], setCheckedItems, refreshFlag, search
     const stringId = String(item._id || item.id);
     if (!stringId) return;
 
+
     setCheckedItems((prev) =>
       prev.includes(stringId)
         ? prev.filter((id) => id !== stringId)
@@ -75,6 +85,11 @@ const AdminGaguList = ({ checkedItems = [], setCheckedItems, refreshFlag, search
     );
   };
 
+  /**
+   * 가구 수정 호출출
+   * @param {*} item 
+   * @returns 
+   */
   const handleUpdate = async (item) => {
     const newName = prompt("새 이름을 입력하세요", item.name);
     const newDesc = prompt("새 설명을 입력하세요", item.description);
@@ -124,6 +139,10 @@ const AdminGaguList = ({ checkedItems = [], setCheckedItems, refreshFlag, search
       checkedItems.includes(String(item._id || item.id))
     );
 
+    /**
+     * 페이지선택 기능능
+     * @returns 
+     */
   const renderPagination = () => {
     if (!totalPages || isNaN(totalPages)) return null;
 

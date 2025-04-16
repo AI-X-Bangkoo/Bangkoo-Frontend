@@ -3,14 +3,11 @@ import CommonButton from "../../common/CommonButton";
 import { GaguListHeader } from "./css/Admin.styled";
 import CommonTextField from "../../common/CommonTextField";
 import SearchIcon from "@mui/icons-material/Search";
-import GaguRegisterModal from "./ItemRegister"; // 가구 등록 모달 컴포넌트 import
+import GaguRegisterModal from "./ItemRegister";
 import { searchProducts, deleteAdminProducts } from "../../api/Admin";
-import AdminGaguList from "./AdminGaguList"; // AdminGaguList 컴포넌트 import
 
-function AdminHeader({ checkedItems, onRefresh }) {
-  const [searchTerm, setSearchTerm] = useState("");
+function AdminHeader({ checkedItems, onRefresh, onSearchResults, searchTerm, setSearchTerm }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchResults, setSearchResults] = useState([]); // 검색 결과 상태
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => {
@@ -18,14 +15,12 @@ function AdminHeader({ checkedItems, onRefresh }) {
     onRefresh();
   };
 
-  //검색 관련
   const handleSearch = async () => {
     console.log("검색어:", searchTerm);
     try {
-      // searchProducts 함수를 호출하여 검색 결과를 가져옴
-      const results = await searchProducts(searchTerm, "", ""); // name만 검색
-      setSearchResults(results); // 결과 상태 업데이트
+      const results = await searchProducts(searchTerm, "", "");
       console.log("검색 결과:", results);
+      onSearchResults(results); // 부모 컴포넌트로 전달
     } catch (error) {
       console.error("검색 오류:", error);
     }
@@ -36,18 +31,22 @@ function AdminHeader({ checkedItems, onRefresh }) {
     onRefresh();
   };
 
-  //삭제 기능 구현
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   const handleDelete = async () => {
     if (!checkedItems || checkedItems.length === 0) {
       alert("삭제할 항목을 선택해 주세요.");
       return;
     }
 
-    if (!window.confirm(`${checkedItems.length}개 항목을 삭제하시겠습니까?`))
-      return;
+    if (!window.confirm(`${checkedItems.length}개 항목을 삭제하시겠습니까?`)) return;
 
     try {
-      await deleteAdminProducts(checkedItems); //배열로 삭제 요청
+      await deleteAdminProducts(checkedItems);
       alert("삭제가 완료 되었습니다.");
       onRefresh();
     } catch (error) {
@@ -69,7 +68,6 @@ function AdminHeader({ checkedItems, onRefresh }) {
           gap: "8px",
         }}
       >
-        {/* 검색 영역 */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <div
             style={{
@@ -88,7 +86,7 @@ function AdminHeader({ checkedItems, onRefresh }) {
               placeholder="가구명을 입력하세요."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onEnter={handleSearch}
+              onKeyDown={handleKeyDown} // 엔터 감지
               onClearAll={handleClearAll}
               custom="none"
               fontSize="sx"
@@ -97,13 +95,12 @@ function AdminHeader({ checkedItems, onRefresh }) {
 
           <CommonButton
             style={{ height: "32px", padding: "0 12px", fontSize: "14px" }}
-            onClick={handleSearch} // 검색 버튼 클릭 시 검색
+            onClick={handleSearch}
           >
             검색
           </CommonButton>
         </div>
 
-        {/* 버튼 영역 */}
         <div style={{ display: "flex", gap: "8px" }}>
           <CommonButton
             type="fill"
@@ -129,11 +126,7 @@ function AdminHeader({ checkedItems, onRefresh }) {
         </div>
       </GaguListHeader>
 
-      {/* 가구 등록 모달 */}
       {isModalOpen && <GaguRegisterModal handleClose={handleCloseModal} />}
-
-      {/* 검색 결과를 AdminGaguList에 전달하여 가구 리스트 렌더링 */}
-      <AdminGaguList searchResults={searchResults} />
     </>
   );
 }

@@ -3,32 +3,33 @@ import AdminGaguList from "./AdminGaguList";
 import AdminHeader from "./AdminHeader";
 import { RightArea } from "./css/Admin.styled";
 
-function AdminRightArea({ selectedMenu }) {
-
+function AdminRightArea() {
   const [checkedItems, setCheckedItems] = useState([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]); // ✅ 검색 결과 상태 추가
 
   const handleRefresh = () => {
-    setRefreshFlag((prev) => !prev); // 새로고침 트리거용
+    setRefreshFlag((prev) => !prev);
+    setSearchResults([]); // ✅ 새로고침 시 검색결과 초기화
   };
 
   return (
     <RightArea>
-     <AdminHeader
-      checkedItems={checkedItems}
-      onRefresh={handleRefresh}
-      searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
-        />
-      {/* {selectedMenu === "gagu" && ( */}
-        <AdminGaguList
-          checkedItems={checkedItems}
-          setCheckedItems={setCheckedItems}
-          refreshFlag={refreshFlag}
-          searchTerm={searchTerm}
-        />
-      {/* )} */}
+      <AdminHeader
+        checkedItems={checkedItems}
+        onRefresh={handleRefresh}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        onSearchResults={setSearchResults} // ✅ props로 전달
+      />
+      <AdminGaguList
+        checkedItems={checkedItems}
+        setCheckedItems={setCheckedItems}
+        refreshFlag={refreshFlag}
+        searchTerm={searchTerm}
+        searchResults={searchResults} // ✅ AdminGaguList에도 전달
+      />
     </RightArea>
   );
 }
