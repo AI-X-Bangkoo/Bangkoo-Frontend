@@ -3,8 +3,8 @@ import api from "../axios";
 export const searchByText = async (query, userId = null) => {
     const formData = new FormData();
     formData.append("query", query);
-    if (userId) formData.append("userId", userId);
-  
+    formData.append("userId", userId ? userId : "anonymous");
+
     const response = await api.post("/api/search", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -15,9 +15,6 @@ export const searchByText = async (query, userId = null) => {
   };
 
 export const searchByImage = async (formData, userId = null, query = "") => {
-    if (userId) formData.append("userId", userId);
-    if (query) formData.append("query", query);
-  
     const res = await api.post("/api/search", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
@@ -28,9 +25,9 @@ export const searchByImage = async (formData, userId = null, query = "") => {
 export const searchByImageUrl = async (imageUrl, userId = null, query = "") => {
     const formData = new FormData();
     formData.append("image_url", imageUrl);
-    if (userId) formData.append("userId", userId);
+    formData.append("userId", userId ? userId : "anonymous");
     if (query) formData.append("query", query);
-  
+
     const res = await api.post("/api/search", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
