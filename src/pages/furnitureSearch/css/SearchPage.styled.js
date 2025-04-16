@@ -20,6 +20,10 @@ export const SearchRoot = styled.div`
   `}
 ` ;
 
+export const LoadingBox = styled.div`
+  padding: 100px 0 0;
+` ;
+
 export const GridBox = styled.div`
   width: 100%;
   display: grid;
