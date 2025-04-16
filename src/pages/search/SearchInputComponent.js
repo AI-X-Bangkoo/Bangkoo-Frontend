@@ -1,8 +1,18 @@
 import React, {useState, useRef} from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { setUploadedImage, setSearchResults, setConfirmedKeyword, setKeyword } from "@/features/search/searchSlice";
-import {SearchRoot, PreviewImage, InputBox, VoiceBox} from "./css/SearchInput.styled"
+import {
+    setUploadedImage,
+    setSearchResults,
+    setConfirmedKeyword,
+    setKeyword
+} from "@/features/search/searchSlice";
+import {
+    SearchRoot,
+    PreviewImage,
+    InputBox,
+    VoiceBox
+} from "./css/SearchInput.styled"
 import CommonIconButton from "@/common/CommonIconButton";
 import { ReactComponent as VoiceIcon } from "@/assets/images/VoiceIcon.svg";
 import { ReactComponent as SearchIcon } from "@/assets/images/SearchIcon.svg";
@@ -13,6 +23,7 @@ import useSearchHistory from "@/hooks/search/useSearchHistory";
 import { searchByImage } from "../../api/search/search";
 import useSearchDialog from "@/hooks/dialog/useSearchDialog";
 import CommonDialog from "@/common/CommonDialog";
+import useAuthUserId from "@/hooks/useAuthUserId";
 
 const SearchInputComponent = ({
                                   shadow,
@@ -27,11 +38,12 @@ const SearchInputComponent = ({
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const recognitionRef = useRef(null); // 음성 인식 인스턴스 저장
+    const isSubmittingRef = useRef(false); // 중복 방지용 ref
 
-    const { keyword, updateKeyword, addKeyword } = useSearchHistory();
+    const { keyword, updateKeyword } = useSearchHistory();
     const uploadedImage = useSelector((state) => state.search.uploadedImage);
-    // const text = useSelector((state) => state.search.keyword); // Redux 상태 사용
     const [isListening, setIsListening] = useState(false); // 음성
+    const userId = useAuthUserId();
 
     const {
         dialogOpen,
@@ -64,15 +76,22 @@ const SearchInputComponent = ({
     };
 
     const goToSearch = async (inputKeyword) => {
-        const searchText = typeof inputKeyword === "string"
-            ? inputKeyword.trim()
-            : (typeof keyword === "string" ? keyword.trim() : "");
+
+        if (isSubmittingRef.current) return; // 중복 호출 방지
+        isSubmittingRef.current = true;
+
+        const searchText =
+            typeof inputKeyword === "string"
+                ? inputKeyword.trim()
+                : typeof keyword === "string"
+                    ? keyword.trim()
+                    : "";
+
         // 이미지가 'File 객체'가 아니고 URL일 경우, URL 넘기기
         const isUrl = typeof uploadedImage === "string" && uploadedImage.startsWith("http");
 
-        // 아무 조건도 없으면 중단
         if (!searchText && !uploadedImage) {
-            console.warn("검색 조건 없음: 텍스트도 이미지도 없음");
+            isSubmittingRef.current = false;
             return;
         }
 
@@ -81,7 +100,11 @@ const SearchInputComponent = ({
 
             if (searchText) {
                 formData.append("query", searchText);
-                addKeyword(searchText);
+                formData.append("userId", userId);
+
+                if (userId && userId !== "anonymous") {
+       
+                }
             }
 
             if (uploadedImage) {
@@ -98,11 +121,13 @@ const SearchInputComponent = ({
             }
 
             const result = await searchByImage(formData);
+
             dispatch(setSearchResults(result));
             dispatch(setConfirmedKeyword(searchText || "이미지 검색"));
             dispatch(setKeyword(""));
             dispatch(setUploadedImage(null));
             if (typeof onCloseSearchTerm === "function") onCloseSearchTerm();
+
             navigate("/search");
 
         } catch (error) {
@@ -112,6 +137,7 @@ const SearchInputComponent = ({
 
     const startVoiceSearch = () => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
         if (!SpeechRecognition) {
             openDialog("이 브라우저는 음성 인식을 지원하지 않습니다.\n크롬을 사용해주세요.");
             return;
@@ -134,16 +160,17 @@ const SearchInputComponent = ({
         recognition.onresult = (event) => {
             finalTranscript = event.results[0][0].transcript;
         };
-        recognition.onend = () => {
+        recognition.onend = async () => {
             setIsListening(false);
             if (finalTranscript.trim()) {
                 updateKeyword(finalTranscript);
                 dispatch(setKeyword(finalTranscript));
-                goToSearch(finalTranscript);
+                await goToSearch(finalTranscript); // 음성 입력도 검색 저장과 함께 실행
             } else {
                 console.warn("🎤 음성 결과 없음");
             }
         };
+        
         recognition.onerror = (event) => {
             console.error("음성 인식 오류:", event.error);
             openDialog(
@@ -198,7 +225,7 @@ const SearchInputComponent = ({
             <CommonIconButton
                 type={"none"}
                 icon={<SearchIcon />}
-                onClick={goToSearch}
+                onClick={() => goToSearch()}
             />
 
             {dialogOpen && (

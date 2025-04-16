@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
     setSearchResults,
     setConfirmedKeyword,
     setKeyword,
-    removeRecentKeyword,
     setUploadedImage,
+    removeRecentKeyword,
+    clearRecentKeywords,
 } from "@/features/search/searchSlice";
 import {
     SearchTermBox,
@@ -14,39 +15,53 @@ import {
     RecentTitleBox,
     RecentTextBox,
     RecentBottomBox,
-    SearchScrollBox, KeywordBox,
+    SearchScrollBox,
+    KeywordBox,
 } from "./css/SearchInput.styled";
 import { Text } from "@/common/Typography";
 import CommonIconButton from "@/common/CommonIconButton"
 import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
 import CommonButton from "@/common/CommonButton";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
+import useAuth from "@/hooks/login/useAuth";
 import { useNavigate } from "react-router-dom";
-import { searchByImage } from "@/api/search/search";
+
+import {
+    fetchRecentSearches,
+    deleteSearchItem,
+    deleteAllSearchLogs,
+    searchByImage,
+    fetchPopularSearches
+} from "@/api/search/search";
 
 function SearchTerm({onClose}) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const recentKeywords = useSelector((state) => state.search.recentKeywords);
-    const { autoSave, toggleAuto, clearAll, addKeyword } = useSearchHistory();
+    const { autoSave, toggleAuto } = useSearchHistory();
+    const { user } = useAuth();
+    const userId = user?.userId;
 
-    const popularKeywords = [
-        {id: 1, value: "의자"},
-        {id: 2, value: "침대"},
-        {id: 3, value: "책상"},
-        {id: 4, value: "쇼파"},
-    ]
+    const [recentKeywords, setRecentKeywords] = useState([]);
+    const [popularKeywords, setPopularKeywords] = useState([]);
 
+    // const popularKeywords = [
+    //     {id: 1, value: "의자"},
+    //     {id: 2, value: "침대"},
+    //     {id: 3, value: "책상"},
+    //     {id: 4, value: "쇼파"},
+    // ]
+
+    // 검색 실행
     const handleSearch = async (keyword) => {
         try {
             const trimmed = keyword.trim();
             if (!trimmed) return;
 
             dispatch(setKeyword(trimmed));           // input에 키워드 반영
-            addKeyword(trimmed);                     // 최근 검색어 추가
 
             const formData = new FormData();
             formData.append("query", trimmed);
+            if (userId) formData.append("userId", userId);
 
             const result = await searchByImage(formData);
             dispatch(setSearchResults(result));
@@ -61,6 +76,45 @@ function SearchTerm({onClose}) {
         }
     };
 
+    // 개별 삭제
+    const handleDeleteKeyword = async (keyword) => {
+        if (userId) {
+            await deleteSearchItem(userId, keyword);
+            const updated = recentKeywords.filter((item) => item !== keyword);
+            setRecentKeywords(updated);
+        } else {
+            dispatch(removeRecentKeyword(keyword));
+        }
+    };
+
+    // 전체 삭제
+    const handleClearAll = async () => {
+        if (userId) {
+            await deleteAllSearchLogs(userId);
+            setRecentKeywords([]);
+        } else {
+            dispatch(clearRecentKeywords());
+        }
+    };
+
+    // 인기/최근 검색어 가져오기
+    useEffect(() => {
+        const loadSearchKeywords = async () => {
+            if (userId) {
+                const recents = await fetchRecentSearches(userId);
+                setRecentKeywords(recents);
+            } else {
+                const stored = JSON.parse(localStorage.getItem("recentKeywords") || "[]");
+                setRecentKeywords(stored);
+            }
+
+            const popular = await fetchPopularSearches();
+            setPopularKeywords(popular.map((item) => item.query));
+        };
+
+        loadSearchKeywords();
+    }, [userId]);
+
     return (
         <SearchTermBox>
             <RecentBox>
@@ -68,7 +122,7 @@ function SearchTerm({onClose}) {
                     <Text size="sm" $weight={800}>최근 검색어</Text>
                     <Text
                         size="xxs"
-                        onClick={clearAll}
+                        onClick={handleClearAll}
                         $weight={600}
                         color="grey"
                         style={{ cursor: 'pointer' }}
@@ -78,29 +132,32 @@ function SearchTerm({onClose}) {
                 </RecentTitleBox>
 
                 <SearchScrollBox>
-                    {recentKeywords.map((item) => (
-                        <RecentTextBox key={item}>
-                            <Text
-                                size="xs"
-                                $weight={500}
-                                onClick={() => handleSearch(item)}
-                                style={{ cursor: 'pointer' }}
+                    {recentKeywords.length === 0 ? (
+                        <Text size="xs" color="grey">최근 검색어가 없습니다.</Text>
+                    ) : (
+                        recentKeywords.map((item) => (
+                            <RecentTextBox key={item}>
+                                <Text
+                                    size="xs"
+                                    $weight={500}
+                                    onClick={() => handleSearch(item)}
+                                    style={{ cursor: 'pointer' }}
 
-                            >
-                                {item}
-                            </Text>
-                            <CommonIconButton
-                                width="20px"
-                                height="20px"
-                                type="full"
-                                color="orange"
-                                icon={<CloseIcon/>}
-                                onClick={() => dispatch(removeRecentKeyword(item))}
-                            />
-                        </RecentTextBox>
-                    ))}
+                                >
+                                    {item}
+                                </Text>
+                                <CommonIconButton
+                                    width="20px"
+                                    height="20px"
+                                    type="full"
+                                    color="orange"
+                                    icon={<CloseIcon/>}
+                                    onClick={() => handleDeleteKeyword(item)}
+                                />
+                            </RecentTextBox>
+                        ))
+                    )}
                 </SearchScrollBox>
-
 
                 <RecentBottomBox >
                     <Text
@@ -117,18 +174,18 @@ function SearchTerm({onClose}) {
             <PopularityBox>
                 <Text size="sm" $weight={800}>인기 검색어</Text>
                 <KeywordBox>
-                    {popularKeywords.map((item) => (
+                    {popularKeywords.map((keyword, index) => (
                         <CommonButton
-                            key={item.id}
+                            key={index}
                             width="90px"
                             height="30px"
                             fontSize="xxs"
                             fontWeight={900}
                             radius="full"
                             type="outline"
-                            onClick={() => handleSearch(item.value)}
+                            onClick={() => handleSearch(keyword)}
                         >
-                            {item.value}
+                            {keyword}
                         </CommonButton>
                     ))}
                 </KeywordBox>
