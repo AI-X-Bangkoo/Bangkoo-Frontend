@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   GaguListContainer,
   GaguTable,
@@ -11,40 +10,45 @@ import {
   GaguListItem,
   PaginationContainer,
   PaginationButton,
+  GaguImageWrapper,
 } from "./css/AdminGaguList.style";
-import CommonImageBox from "../../common/CommonImageBox";
+
 import CommonButton from "../../common/CommonButton";
+import { fetchProducts, updateAdminProducts } from "../../api/Admin";
 
 const AdminGaguList = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [checkedItems, setCheckedItems] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+
 
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(products.length / itemsPerPage);
 
-  // ✅ MongoDB 데이터 가져오기
+  //페이징 관련
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get("/api/products"); // 실제 API 경로로 교체
-        setProducts(res.data);
+        const page = currentPage - 1;
+        const res = await fetchProducts(page, itemsPerPage);
+        console.log("📦 서버 응답:", res);
+        setProducts(res); // 전체 응답 객체를 상태로 저장
+        setTotalPages(res.totalPages || 1); // totalPages를 설정
       } catch (err) {
-        console.error("가구 데이터 불러오기 실패:", err);
+        console.error("❌ 가구 데이터 불러오기 실패:", err);
       }
     };
 
-    fetchProducts();
-  }, []);
+    fetchData();
+  }, [currentPage]);
 
-  const currentItems = products.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  // products.content.content가 실제 배열인지 확인
+  const isContentArray = Array.isArray(products.content?.content);
 
+  // 전체 선택
   const handleCheckAll = (e) => {
     if (e.target.checked) {
-      const ids = currentItems.map((item) => item.id);
+      const ids = products.map((item) => String(item._id));
       setCheckedItems(ids);
     } else {
       setCheckedItems([]);
@@ -52,12 +56,45 @@ const AdminGaguList = () => {
   };
 
   const handleCheck = (id) => {
-    setCheckedItems((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+    const stringId = String(id);
+    console.log("👉 체크 클릭됨:", stringId);
+
+    setCheckedItems((prev) => {
+      const updated = prev.includes(stringId)
+        ? prev.filter((item) => item !== stringId)
+        : [...prev, stringId];
+      console.log("✅ 업데이트된 checkedItems:", updated);
+      return updated;
+    });
+  };
+  
+
+
+  const handleUpdate = async (item) => {
+    const newName = prompt("새 이름을 입력하세요", item.name);
+    if (!newName || newName === item.name) return;
+
+    const updateData = { ...item, name: newName };
+    try {
+      const updated = await updateAdminProducts(item._id, updateData);
+      setProducts((prev) =>
+        prev.map((p) => (p._id === item._id ? updated : p))
+      );
+      alert("수정 성공");
+    } catch (err) {
+      console.error("수정 실패:", err);
+      alert("수정 실패");
+    }
   };
 
+  // 전체 선택 체크 여부
+  const isAllChecked =
+    products.length > 0 &&
+    products.every((item) => checkedItems.includes(String(item._id)));
+
   const renderPagination = () => {
+    if (!totalPages || isNaN(totalPages)) return null;
+
     const paginationNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
       if (
@@ -90,10 +127,7 @@ const AdminGaguList = () => {
             <GaguListHeaderItem>
               <input
                 type="checkbox"
-                checked={
-                  currentItems.length > 0 &&
-                  currentItems.every((item) => checkedItems.includes(item.id))
-                }
+                checked={isAllChecked}
                 onChange={handleCheckAll}
               />
             </GaguListHeaderItem>
@@ -107,43 +141,47 @@ const AdminGaguList = () => {
           </GaguListHeaderRow>
         </GaguListHeader>
 
+        {/* // 렌더링할 때, products.content.content가 배열일 경우에만 map을 사용 */}
         <GaguListBody>
-          {currentItems.map((item, index) => (
-            <GaguItem key={item.id}>
-              <GaguListItem>
-                <input
-                  type="checkbox"
-                  checked={checkedItems.includes(item.id)}
-                  onChange={() => handleCheck(item.id)}
-                />
-              </GaguListItem>
-              <GaguListItem>
-                {(currentPage - 1) * itemsPerPage + index + 1}
-              </GaguListItem>
-              <GaguListItem>
-                <CommonImageBox
-                  style={{ height: "20px" }}
-                  image={item.imageUrl}
-                  type="basic"
-                  onLink={item.imageUrl}
-                />
-              </GaguListItem>
-              <GaguListItem>{item.name}</GaguListItem>
-              <GaguListItem>{item.description}</GaguListItem>
-              <GaguListItem>{item.createdAt}</GaguListItem>
-              <GaguListItem>{item.updatedAt}</GaguListItem>
-              <GaguListItem>
-                <CommonButton
-                  style={{ height: "20px" }}
-                  fontSize="xxs"
-                  type="edit"
-                  onClick={() => console.log("수정", item.id)}
-                >
-                  수정
-                </CommonButton>
-              </GaguListItem>
-            </GaguItem>
-          ))}
+          {isContentArray && products.content.content.length > 0 ? (
+            products.content.content.map((item, index) => (
+              <GaguItem key={item._id}>
+                <GaguListItem>
+                  <input
+                    type="checkbox"
+                    checked={checkedItems.includes(item._id)}
+                    onChange={() => handleCheck(item._id)}
+                  />
+                </GaguListItem>
+                <GaguListItem>
+                  {(currentPage - 1) * itemsPerPage + index + 1}
+                </GaguListItem>
+                <GaguListItem>
+                  <a href={item.link} target="_blank">
+                  <GaguImageWrapper
+                    style={{ height: "20px" , cursor:"pointer"}}
+                  ><img src={item.imageUrl} alt="가구"/></GaguImageWrapper>
+                  </a>
+                </GaguListItem>
+                <GaguListItem>{item.name}</GaguListItem>
+                <GaguListItem>{item.description}</GaguListItem>
+                <GaguListItem>{item.createdAt}</GaguListItem>
+                <GaguListItem>{item.updatedAt}</GaguListItem>
+                <GaguListItem>
+                  <CommonButton
+                    style={{ height: "20px" }}
+                    fontSize="xxs"
+                    type="edit"
+                    onClick={() => handleUpdate(item)}
+                  >
+                    수정
+                  </CommonButton>
+                </GaguListItem>
+              </GaguItem>
+            ))
+          ) : (
+            <div>데이터가 없습니다.</div>
+          )}
         </GaguListBody>
       </GaguTable>
 
