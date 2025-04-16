@@ -52,8 +52,6 @@ function SearchTerm({onClose}) {
 
             const formData = new FormData();
             formData.append("query", trimmed);
-            const finalUserId = userId ? userId : "anonymous";
-            formData.append("userId", finalUserId);
 
             const result = await searchByImage(formData);
             dispatch(setSearchResults(result));

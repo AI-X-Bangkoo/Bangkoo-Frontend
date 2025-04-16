@@ -43,6 +43,7 @@ const SearchInputComponent = ({
     const uploadedImage = useSelector((state) => state.search.uploadedImage);
     const [isListening, setIsListening] = useState(false); // 음성
     const userId = useSelector((state) => state.auth.user?.userId || "anonymous");
+    const [inputValue, setInputValue] = useState("");
 
     const {
         dialogOpen,
@@ -53,6 +54,8 @@ const SearchInputComponent = ({
     } = useSearchDialog();
 
     const handleTextChange = (e) => {
+        const value = e.target.value;
+        setInputValue(value);
         updateKeyword(e.target.value); // 상태 변경
         dispatch(setKeyword(e.target.value));
     };
@@ -67,7 +70,8 @@ const SearchInputComponent = ({
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();            // 폼 제출 방지
-            goToSearch();                  // 검색 실행
+            const inputValue = e.target.value.trim();
+            goToSearch(inputValue); // 최신 입력값 직접 전달
             if (typeof onFocus === "function") {
                 onCloseSearchTerm();              // 최근 검색창 닫기!
             }
@@ -95,40 +99,23 @@ const SearchInputComponent = ({
         }
 
         try {
-            const formData = new FormData();
+            const params = new URLSearchParams();
+            if (searchText) params.append("query", searchText);
+            if (uploadedImage) params.append("image", uploadedImage); // 필요 시만
 
-            const finalUserId = userId ? userId : "anonymous";
-            formData.append("userId", finalUserId);
+            // ✅ 먼저 이동
+            navigate(`/search?${params.toString()}`);
 
-            if (searchText) {
-                formData.append("query", searchText);
-            }
-
-            if (uploadedImage) {
-                if (isUrl) {
-                    // 이미지 URL 전송
-                    formData.append("image_url", uploadedImage);
-                } else {
-                    // 파일 객체라면 변환해서 전송
-                    const file = await fetch(uploadedImage)
-                        .then(res => res.blob())
-                        .then(blob => new File([blob], "uploaded_image.png", { type: blob.type }));
-                    formData.append("image", file);
-                }
-            }
-
-            const result = await searchByImage(formData);
-
-            dispatch(setSearchResults(result));
-            dispatch(setConfirmedKeyword(searchText || "이미지 검색"));
-            dispatch(setKeyword(""));
+            // ✅ 그리고 초기화
+            if (searchText) dispatch(setKeyword(""));
             dispatch(setUploadedImage(null));
             if (typeof onCloseSearchTerm === "function") onCloseSearchTerm();
 
-            navigate("/search");
+            isSubmittingRef.current = false;
 
         } catch (error) {
             console.error("검색 실패:", error);
+            isSubmittingRef.current = false;
         }
     };
 
@@ -197,7 +184,7 @@ const SearchInputComponent = ({
                 <CommonTextField
                     fontSize="base"
                     placeholder="ex) 빨간색 모던한 의자"
-                    value={keyword}
+                    value={inputValue}
                     onChange={handleTextChange}
                     onFocus={onFocus}
                     imagePreviewUrl={imagePreviewUrl}
@@ -222,7 +209,7 @@ const SearchInputComponent = ({
             <CommonIconButton
                 type={"none"}
                 icon={<SearchIcon />}
-                onClick={() => goToSearch()}
+                onClick={() => goToSearch(inputValue)}
             />
 
             {dialogOpen && (

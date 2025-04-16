@@ -37,10 +37,8 @@ function ImageSearchBox({ onSearchComplete }) {
             if (imageFile) {
                 const formData = new FormData();
                 formData.append("image", imageFile);
-                const finalUserId = userId ? userId : "anonymous";
-                formData.append("userId", finalUserId);
 
-                const result = await searchByImage(formData);
+                const result = await searchByImage(formData, userId);
 
                 dispatch(setSearchResults(result));
                 dispatch(setConfirmedKeyword("이미지 검색"));
