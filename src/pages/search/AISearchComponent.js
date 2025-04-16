@@ -9,11 +9,15 @@ import ImageSearchBox from "./ImageSearchBox";
 import { useNavigate } from "react-router-dom";
 import { searchByImage } from "@/api/search/search";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
+import useAuth from "@/hooks/login/useAuth";
 
 function AISearchComponent() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { addKeyword } = useSearchHistory();
+    const { user } = useAuth();
+    const userId = user?.userId;
+
     const uploadedImage = useSelector((state) => state.search.uploadedImage); // 전역 상태
 
     const [isHover, setIsHover] = useState(false);
@@ -51,11 +55,11 @@ function AISearchComponent() {
             if (!trimmed) return;
 
             dispatch(setKeyword(trimmed));
-            addKeyword(trimmed);
 
             const formData = new FormData();
             formData.append("query", trimmed);
-
+            if (userId) formData.append("userId", userId); // 로그인 시 userId 추가
+            
             const result = await searchByImage(formData);
 
             dispatch(setSearchResults(result));
@@ -116,7 +120,7 @@ function AISearchComponent() {
             {/* 검색창 클릭시 */}
             {isFocused && <SearchTerm onClose={() => setIsFocused(false)} />}
             {/* 카테고리 */}
-            {category && <Category onSearch={handleSearchByCategory} />}
+            {category && <Category onSearch={handleSearchByCategory} setCategory={setCategory} />}
 
             {/* 이미지 검색 */}
             {showImageSearchBox && (

@@ -18,6 +18,7 @@ import {
 import CommonButton from "@/common/CommonButton";
 import {Text} from "@/common/Typography";
 import CommonTextField from "@/common/CommonTextField";
+import useAuth from "@/hooks/login/useAuth";
 
 function ImageSearchBox({ onSearchComplete }) {
     const [imageUrl, setImageUrl] = useState("");
@@ -27,6 +28,8 @@ function ImageSearchBox({ onSearchComplete }) {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const userId = user?.userId;
 
     const handleSearch = async () => {
         const trimmedUrl = imageUrl.trim();
@@ -35,6 +38,8 @@ function ImageSearchBox({ onSearchComplete }) {
             if (imageFile) {
                 const formData = new FormData();
                 formData.append("image", imageFile);
+                if (userId) formData.append("userId", userId);
+
                 const result = await searchByImage(formData);
 
                 dispatch(setSearchResults(result));
@@ -48,12 +53,12 @@ function ImageSearchBox({ onSearchComplete }) {
                 dispatch(setUploadedImage(trimmedUrl));
                 if (typeof onSearchComplete === "function") onSearchComplete(trimmedUrl);
 
-                // const result = await searchByImageUrl(trimmedUrl);
-                //
-                // dispatch(setSearchResults(result));
-                // dispatch(setConfirmedKeyword("이미지 링크 검색"));
-                // dispatch(setKeyword(""));              // 텍스트 클리어
-                // navigate("/search");
+                // 이미지 URL로 검색도 진행
+                const result = await searchByImageUrl(trimmedUrl, userId);
+                dispatch(setSearchResults(result));
+                dispatch(setConfirmedKeyword("이미지 링크 검색"));
+                dispatch(setKeyword(""));
+                navigate("/search")
             } else {
                 console.warn("🚫 검색 조건 없음: 파일도 URL도 없음");
             }
