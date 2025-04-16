@@ -45,28 +45,41 @@ const AdminGaguList = () => {
   const isContentArray = Array.isArray(products.content?.content);
 
   // 전체 선택
-  const handleCheckAll = (e) => {
-    if (e.target.checked) {
-      const ids = products.map((item) => String(item._id));
-      setCheckedItems(ids);
-    } else {
-      setCheckedItems([]);
+const handleCheckAll = (e) => {
+  if (e.target.checked) {
+    const ids = products.content.content.map((item) => 
+      String(item._id || item.id) // _id 또는 id 사용
+    );
+    setCheckedItems(ids);
+  } else {
+    setCheckedItems([]);
+  }
+};
+
+  const handleCheck = (item) => {
+    const { _id, id } = item;
+    const stringId = String(_id || id);
+  
+    if (!stringId) {
+      console.log("👉 잘못된 아이디:", _id, id);
+      return;
     }
-  };
-
-  const handleCheck = (id) => {
-    const stringId = String(id);
+  
     console.log("👉 체크 클릭됨:", stringId);
-
-    setCheckedItems((prev) => {
-      const updated = prev.includes(stringId)
-        ? prev.filter((item) => item !== stringId)
-        : [...prev, stringId];
-      console.log("✅ 업데이트된 checkedItems:", updated);
-      return updated;
+  
+    // checkedItems 배열에 해당 항목을 추가하거나 제거
+    setCheckedItems((prevCheckedItems) => {
+      // 체크된 항목이면 제거, 아니면 추가
+      const updatedCheckedItems = prevCheckedItems.includes(stringId)
+        ? prevCheckedItems.filter((item) => item !== stringId) // 이미 체크된 항목을 체크 해제
+        : [...prevCheckedItems, stringId]; // 새로운 항목을 체크
+  
+      console.log("✅ 업데이트된 checkedItems:", updatedCheckedItems);
+  
+      return updatedCheckedItems; // 상태 업데이트
     });
   };
-
+  
   // 수정 버튼 실행행
   const handleUpdate = async (item) => {
     const newName = prompt("새 이름을 입력하세요", item.name);
@@ -89,9 +102,6 @@ const AdminGaguList = () => {
     try {
       const updated = await updateAdminProducts(updateData.id, updateData); // id 사용
 
-      console.log("✅ 업데이트된 객체:", updated);
-
-      // ✨ 수정된 부분: products.content.content 배열에서 해당 항목만 교체
       setProducts((prev) => {
         const updatedId = updated._id || updated.id;
 
@@ -118,9 +128,13 @@ const AdminGaguList = () => {
 
   // 전체 선택 체크 여부
   const isAllChecked =
-    products.length > 0 &&
-    products.every((item) => checkedItems.includes(String(item._id)));
+  isContentArray &&
+  products.content.content.length > 0 &&
+  products.content.content.every((item) => 
+    checkedItems.includes(String(item._id)) || checkedItems.includes(String(item.id))
+  );
 
+  
   const renderPagination = () => {
     if (!totalPages || isNaN(totalPages)) return null;
 
@@ -174,19 +188,19 @@ const AdminGaguList = () => {
         <GaguListBody>
           {isContentArray && products.content.content.length > 0 ? (
             products.content.content.map((item, index) => (
-              <GaguItem key={item._id}>
+              <GaguItem key={item.id}>
                 <GaguListItem>
                   <input
                     type="checkbox"
-                    checked={checkedItems.includes(item._id)}
-                    onChange={() => handleCheck(item._id)}
+                    checked={checkedItems.includes(String(item.id))}
+                    onChange={() => handleCheck(item)}
                   />
                 </GaguListItem>
                 <GaguListItem>
                   {(currentPage - 1) * itemsPerPage + index + 1}
                 </GaguListItem>
                 <GaguListItem>
-                  <a href={item.link} target="_blank">
+                  <a href={item.link} target="_blank" rel="noopener noreferrer">
                     <GaguImageWrapper
                       style={{ height: "20px", cursor: "pointer" }}
                     >
