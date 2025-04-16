@@ -1,14 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import AdminGaguList from "./AdminGaguList";
 import AdminHeader from "./AdminHeader";
 import { RightArea } from "./css/Admin.styled";
 
 function AdminRightArea({ selectedMenu }) {
+
+  const [checkedItems, setCheckedItems] = useState([]);
+  const [refreshFlag, setRefreshFlag] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleRefresh = () => {
+    setRefreshFlag((prev) => !prev); // 새로고침 트리거용
+  };
+
   return (
     <RightArea>
-      <AdminHeader />
-      {selectedMenu === "gagu" && <AdminGaguList />}
-      {/* 다른 메뉴가 생기면 여기 조건 추가 가능 */}
+     <AdminHeader
+      checkedItems={checkedItems}
+      onRefresh={handleRefresh}
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+        />
+      {/* {selectedMenu === "gagu" && ( */}
+        <AdminGaguList
+          checkedItems={checkedItems}
+          setCheckedItems={setCheckedItems}
+          refreshFlag={refreshFlag}
+          searchTerm={searchTerm}
+        />
+      {/* )} */}
     </RightArea>
   );
 }

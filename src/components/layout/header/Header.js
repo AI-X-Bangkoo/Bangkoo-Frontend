@@ -25,7 +25,7 @@ const Header = () => {
 
   useEffect(() => {
     // isAdmin이 제대로 반영되는지 콘솔로 확인
-    console.log('isLoggedIn:', isLoggedIn, 'isAdmin:', isAdmin);
+    
   }, [isLoggedIn, isAdmin]);
 
   return (

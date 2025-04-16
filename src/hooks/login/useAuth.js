@@ -17,7 +17,6 @@ const getCookieValue = (name) => {
     new RegExp("(?:(?:^|.*;\\s*)(" + name + ")\\s*\\=\\s*([^;]*).*$)|^.*$"),
     "$2"
   );
-  console.log("쿠키값이 뭐냐:",cookieValue);
   return cookieValue ? decodeURIComponent(cookieValue) : "";
 };
 
@@ -92,9 +91,6 @@ const useAuth = () => {
     const savedRole = getCookieValue("role");
     const savedUserId = getCookieValue("userId");
 
-    console.log("**********************************")
-    console.log("가져오는 롤값:", savedRole);
-    console.log("**********************************")
 
     if (savedNickname && savedRole && savedUserId) {
       dispatch(setLoginInfo({
