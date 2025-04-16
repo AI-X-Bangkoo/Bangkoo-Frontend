@@ -7,7 +7,7 @@ import {Text} from "../../common/Typography";
 import {EmptyBox} from "./css/MyRoom.styled";
 import {addFurniture, removeFurniture} from "../../features/furniture/furnitureSlice";
 
-export default function MyFurnitureTab({ onCustomRemove }) {
+export default function MyFurnitureTab({ onCustomRemove,onSelect }) {
     const dispatch = useDispatch();
     const furnitureList = useSelector((state) => state.furniture.list);
 
@@ -35,7 +35,7 @@ export default function MyFurnitureTab({ onCustomRemove }) {
                     <Text size="sm" $weight={500} color="dark">이동 혹은 삭제할  가구를 클릭해 주세요.</Text>
                 </EmptyBox>
                 :
-                <MyFurnitureList furnitureList={furnitureList} onPlus={handleClick} onMinus={handleClick} />
+                <MyFurnitureList furnitureList={furnitureList} onPlus={handleClick} onMinus={handleClick} onSelect={onSelect} />
             }
         </>
     );

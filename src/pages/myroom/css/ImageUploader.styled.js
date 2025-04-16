@@ -18,6 +18,7 @@ export const UploadContainer = styled.div`
   border: ${({ theme, $hasImage }) => $hasImage ? `1px solid ${theme.colors.grey}` : `2px dashed ${theme.colors.grey}`};
   border-radius: ${({ theme }) => theme.borderRadius.md };
   text-align: center;
+  overflow: hidden;
   background-color: ${({ theme }) => theme.colors.white };
   //cursor: pointer;
   position: relative;
@@ -79,33 +80,38 @@ export const UploadInput = styled.input`
 //   z-index: 1;
 // `;
 export const MainCanvas = styled.canvas`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  z-index: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin: 0 auto;
+    z-index: 1;
 `;
 
 export const BlurredWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-  border-radius: ${({ theme }) => theme.borderRadius.md };
+    position: relative;
+
+    overflow: hidden;    /* ✅ 마스크 넘치는 부분 잘라냄 */
+    border-radius: 15px;
 `;
 
-export const BlurredCanvas = styled.canvas`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 120%;
-  height: 120%;
-  transform: translate(-50%, -50%) scale(1.2);
-  object-fit: cover;
-  filter: blur(30px) brightness(0.7);
-  pointer-events: none;
+export const MaskCanvas = styled.canvas`
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    pointer-events: auto;
+    border-radius: 16px; /* 선택사항 */
 `;
+export const BlurredCanvas = styled.img`
+    width: auto;
+    height: 100%;
+    opacity: 0.6;
+    object-fit: cover;
+`;
+
