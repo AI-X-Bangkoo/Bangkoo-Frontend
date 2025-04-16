@@ -48,7 +48,10 @@ function CommonImageBox({
         height: "34px",
         type: "full",
     };
-
+    const handleClick = (e) => {
+        e.stopPropagation();
+        if (onClick) onClick(e);
+    }
     return (
         <ImageBoxStyle onClick={onClick} >
             <img src={image} alt="가구 이미지" />
@@ -77,7 +80,10 @@ function CommonImageBox({
                 <CenterBox>
                     <CommonIconButton
                         color="orange"
-                        onClick={onPlusMinus}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onPlusMinus();
+                        }}
                         icon={<PlusIcon />}
                         {...buttonProps}
                     />
@@ -88,7 +94,10 @@ function CommonImageBox({
                 <CenterBox>
                     <CommonIconButton
                         color="red"
-                        onClick={onPlusMinus}
+                        onClick={(e) => {
+                        e.stopPropagation();
+                        onPlusMinus();
+                        }}
                         icon={<MinusIcon />}
                         {...buttonProps}
                     />
@@ -104,13 +113,23 @@ function CommonImageBox({
             {/* 하단 마이너스 버튼 (eyeOn) */}
             {type === "eyeOn" && (
                 <BottomRightBox>
-                    <CommonIconButton onClick={onMinus} color="red" icon={<MinusIcon />} {...buttonProps}/>
+                    <CommonIconButton // onClick={onMinus}
+                                      onClick={(e) => {
+                                          e.stopPropagation(); // ✅ 공통 처리
+                                          onMinus?.(e);
+                                      }}
+                                      color="red" icon={<MinusIcon />} {...buttonProps}/>
                 </BottomRightBox>
             )}
             {/* 하단 플러스 버튼 (eyeClosed) */}
             {type === "eyeClosed" && (
                 <BottomRightBox>
-                    <CommonIconButton onClick={onPlus} color="orange" icon={<PlusIcon />} {...buttonProps}/>
+                    <CommonIconButton // onClick={onPlus}
+                                      onClick={(e) => {
+                                          e.stopPropagation(); // ✅ 공통 처리
+                                          onPlus?.(e);
+                                      }}
+                                      color="orange" icon={<PlusIcon />} {...buttonProps}/>
                 </BottomRightBox>
             )}
 

@@ -95,19 +95,19 @@ export const BlurredWrapper = styled.div`
     border-radius: 15px;
 `;
 
-export const MaskCanvas = styled.canvas`
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    pointer-events: auto;
-    border-radius: 16px; /* 선택사항 */
-`;
+// export const MaskCanvas = styled.canvas`
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     z-index: 10;
+//     width: 100%;
+//     height: 100%;
+//     max-width: 100%;
+//     max-height: 100%;
+//     object-fit: contain;
+//     pointer-events: auto;
+//     border-radius: 16px; /* 선택사항 */
+// `;
 export const BlurredCanvas = styled.img`
     width: auto;
     height: 100%;

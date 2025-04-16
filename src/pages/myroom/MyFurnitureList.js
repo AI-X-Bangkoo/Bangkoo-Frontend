@@ -10,8 +10,8 @@ function MyFurnitureList({ furnitureList = [], onPlus, onMinus, onSelect}) {
                     key={item.id}
                     image={item.image}
                     type={item.type}
-                    onPlus={() => onPlus(item)}
-                    onMinus={() => onMinus(item)}
+                    onPlus={(e) => onPlus(e,item)}
+                    onMinus={(e) => onMinus(e,item)}
                     onClick={() =>  {
                         console.log("클릭한 가구 index",index);
                         onSelect(index);

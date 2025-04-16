@@ -13,7 +13,8 @@ export default function MyFurnitureTab({ onCustomRemove,onSelect }) {
 
     const { uncheck } = useCheckedFurniture();
 
-    const handleClick = (item) => {
+    const handleClick = (e,item) => {
+        e.stopPropagation();
         if (item.isCustom) {
             console.log(item.type)
             onCustomRemove(item);

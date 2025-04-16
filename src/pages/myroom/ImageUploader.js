@@ -11,9 +11,10 @@ import {
     UploadInput,
 } from "./css/ImageUploader.styled";
 import CommonButton from "@/common/CommonButton";
+import ImageRenderer from "./ImageRenderer";
 import axios from "axios";
 
-function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSelectedIndices}) {
+function ImageUploader({onImageUploaded, onObjectSelect, selectedIndex, setselectedIndex}) {
     const [imageUrl, setImageUrl] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const inputRef = useRef();
@@ -92,87 +93,131 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSel
         }, "image/jpeg", 0.95);
     };
 
-    const drawBox = (ctx, bbox) => {
-        const [ox, oy, ow, oh] = bbox;
-        const x = ox;
-        const y = oy;
-        const w = ow;
-        const h = oh;
+    // const drawBox = (ctx, bbox) => {
+    //     const [x, y, w, h] = bbox;
+    //     ctx.strokeStyle = "red";
+    //     ctx.lineWidth = 2;
+    //     ctx.strokeRect(x, y, w, h);
+    // };
 
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, w, h);
-    };
-
-
-    const drawMask = (ctx, obj) => {
+    const drawMaskBorder = (ctx, obj) => {
         const [x, y, w, h] = obj.bbox;
         const mask = obj.mask;
-        // console.log("🧠 mask size:", mask.length, mask[0]?.length);
-        // console.log("🧪 첫 줄 값:", mask[0]?.slice(0, 10)); // 마스크 값 일부 확인
+        if (!mask || mask.length === 0 || mask[0].length === 0) return;
 
-        if (!mask || mask.length === 0 || mask[0].length === 0) {
-            // console.warn("❗ 마스크가 비어있습니다.");
-            return;
-        }
-        const maskCanvas = document.createElement("canvas");
-        maskCanvas.width = mask[0].length;
-        maskCanvas.height = mask.length;
+        const rows = mask.length;
+        const cols = mask[0].length;
+        const dx = w / cols;
+        const dy = h / rows;
 
-        const maskCtx = maskCanvas.getContext("2d");
-        const imageData = maskCtx.createImageData(maskCanvas.width, maskCanvas.height);
+        ctx.beginPath();
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 1;
 
-        for (let j = 0; j < maskCanvas.height; j++) {
-            for (let i = 0; i < maskCanvas.width; i++) {
-                const idx = (j * maskCanvas.width + i) * 4;
-                const value = mask[j]?.[i] || 0;
-                imageData.data[idx] = 255;
-                imageData.data[idx + 1] = 0;
-                imageData.data[idx + 2] = 0;
-                imageData.data[idx + 3] = value ? 150 : 0;
+        for (let j = 0; j < rows; j++) {
+            for (let i = 0; i < cols; i++) {
+                if (!mask[j][i]) continue;
+
+                const px = x + i * dx;
+                const py = y + j * dy;
+
+                // 상단 경계
+                if (j === 0 || !mask[j - 1][i]) {
+                    ctx.moveTo(px, py);
+                    ctx.lineTo(px + dx, py);
+                }
+                // 하단 경계
+                if (j === rows - 1 || !mask[j + 1][i]) {
+                    ctx.moveTo(px, py + dy);
+                    ctx.lineTo(px + dx, py + dy);
+                }
+                // 좌측 경계
+                if (i === 0 || !mask[j][i - 1]) {
+                    ctx.moveTo(px, py);
+                    ctx.lineTo(px, py + dy);
+                }
+                // 우측 경계
+                if (i === cols - 1 || !mask[j][i + 1]) {
+                    ctx.moveTo(px + dx, py);
+                    ctx.lineTo(px + dx, py + dy);
+                }
             }
         }
 
-        maskCtx.putImageData(imageData, 0, 0);
-        ctx.drawImage(maskCanvas, x, y, w, h);
+        ctx.stroke();
     };
+
+
+    useEffect(() => drawScene(), [selectedIndex, imageWidth, imageHeight]);
+
     const isPointInsideBox = (x, y, bbox) => {
         const [bx, by, bw, bh] = bbox;
         return x >= bx && x <= bx + bw && y >= by && y <= by + bh;
     };
 
 
-    const drawScene = () => {
-        const canvas = canvasRef.current;
-        if (!canvas || !bgImageRef.current) return;
+    // const drawScene = (objects = detectedObjects) => {
+    //     if (!canvasRef.current || !bgImageRef.current) return;
+    //     const ctx = canvasRef.current.getContext("2d");
+    //     const bgImg = bgImageRef.current;
+    //     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    //     ctx.drawImage(bgImg, 0, 0, canvasRef.current.width, canvasRef.current.height);
+    //     if (Array.isArray(selectedIndex)) {
+    //         // 여러 개 선택일 경우
+    //         selectedIndex.forEach((index) => {
+    //             const obj = objects[index];
+    //             if (!obj?.bbox || !obj?.mask) return;
+    //             drawMask(ctx, obj);
+    //             drawBox(ctx, obj.bbox);
+    //         });
+    //     } else if (typeof selectedIndex === "number" &&
+    //         selectedIndex >= 0 &&
+    //         selectedIndex < objects.length) {
+    //         // 단일 선택일 경우
+    //         console.log("else if");
+    //         const obj = detectedObjects[selectedIndex];
+    //         drawMask(ctx, obj);
+    //         drawBox(ctx, obj.bbox);
+    //     } else {
+    //         console.log("return됨");
+    //     }
+    // };
+    const drawScene = (objects = detectedObjects) => {
+        console.log("drawScene", objects);
+        if (!canvasRef.current || !bgImageRef.current) return;
+        console.log("여기탐");
+        const ctx = canvasRef.current.getContext("2d");
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        ctx.drawImage(bgImageRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
-        const ctx = canvas.getContext("2d");
-        const bgImg = bgImageRef.current;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+        if (typeof selectedIndex === "number" && objects[selectedIndex]) {
+            const obj = objects[selectedIndex];
+            drawMaskBorder(ctx, obj);
+            // drawBox(ctx, obj.bbox);
+        }
+    }
 
-        selectedIndices.forEach((index) => {
-            const obj = detectedObjects[index];
-            if (!obj?.bbox || !obj?.mask) return;
-            drawMask(ctx, obj); // 마스크는 (x, y, w, h) 기준
-            drawBox(ctx, obj.bbox); // 박스도 동일한 좌표 기준
-        });
-    };
 
 
     useEffect(() => {
-        if (!imageBase64) return;
+        if (!imageBase64 || !canvasRef.current) return;
 
-        const img = new Image();
-        img.onload = () => {
-            bgImageRef.current = img;              // ✅ 여기에서 설정
-            setImageWidth(img.width);
-            setImageHeight(img.height);
-            console.log("🎯 이미지 로드 완료");
-            drawScene();                           // ✅ 여기서 호출하면 안전
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+
+        const image = new Image();
+        image.onload = () => {
+            bgImageRef.current = image;
+            // canvas.width = image.width;
+            // canvas.height = image.height;
+            setImageWidth(image.width);
+            setImageHeight(image.height);
+
+            ctx.drawImage(image, 0, 0, image.width, image.height);
         };
-        img.src = imageBase64;
+        image.src = imageBase64;
     }, [imageBase64]);
+
 
     // const handleMouseDown = (e) => {
     //     const rect = canvasRef.current.getBoundingClientRect();
@@ -182,7 +227,7 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSel
     //     for (let i = detectedObjects.length - 1; i >= 0; i--) {
     //         const [bx, by, bw, bh] = detectedObjects[i].bbox;
     //         if (x >= bx && x <= bx + bw && y >= by && y <= by + bh) {
-    //             if (selectedIndices.includes(i)) {
+    //             if (selectedIndex.includes(i)) {
     //                 setDraggingIndex(i);
     //                 setOffset({ x: x - bx, y: y - by });
     //             }
@@ -191,13 +236,17 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSel
     //     }
     // };
     const handleMouseDown = (e) => {
+        if (!canvasRef.current) {
+            console.warn("⛔ canvasRef.current is null!");
+            return;
+        }
         const rect = canvasRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
         for (let i = detectedObjects.length - 1; i >= 0; i--) {
             const obj = detectedObjects[i];
-            if (selectedIndices.includes(i) && isPointInsideBox(x, y, obj.bbox)) {
+            if (selectedIndex.includes(i) && isPointInsideBox(x, y, obj.bbox)) {
                 setDraggingIndex(i);
                 setOffset({ x: x - obj.bbox[0], y: y - obj.bbox[1] });
                 return;
@@ -224,6 +273,10 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSel
     //     requestAnimationFrame(drawScene);
     // };
     const handleMouseMove = (e) => {
+        if (!canvasRef.current) {
+            console.warn("⛔ canvasRef.current is null!");
+            return;
+        }
         if (draggingIndex === null) return;
         const rect = canvasRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -235,6 +288,7 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSel
             obj.bbox[0] = x - offset.x;
             obj.bbox[1] = y - offset.y;
             updated[draggingIndex] = obj;
+            console.log("📦 드래그 bbox", obj.bbox);
             return updated;
         });
 
@@ -245,6 +299,10 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSel
     //     setDraggingIndex(null);
     // };
     const handleMouseUp = () => {
+        if (!canvasRef.current) {
+            console.warn("⛔ canvasRef.current is null!");
+            return;
+        }
         setDraggingIndex(null);
     };
     const handleDrop = (e) => {
@@ -269,9 +327,9 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSel
     };
 
     useEffect(() => {
-        // console.log("🔥 selectedIndices changed:", selectedIndices);
+        console.log("🔥 selectedIndex changed:", selectedIndex);
         drawScene();
-    }, [selectedIndices]);
+    }, [selectedIndex,imageWidth, imageHeight]);
     useEffect(() => {
         const handleResize = () => {
             drawScene();
@@ -279,7 +337,7 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSel
 
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
-    }, [detectedObjects, selectedIndices]);
+    }, [detectedObjects, selectedIndex]);
     return (
         <>
             <DeleteBox>
@@ -311,13 +369,24 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSel
                 ) : (
                     <>
                         <BlurredWrapper>
-                            <ImageRenderer imageBase64={imageBase64} width={imageWidth} height={imageHeight} />
-                            <MaskCanvas ref={canvasRef}
-                                        width={imageWidth}
-                                        height={imageHeight}
-                                        onMouseDown={handleMouseDown}
-                                        onMouseMove={handleMouseMove}
-                                        onMouseUp={handleMouseUp}/>
+                            {/*<ImageRenderer imageBase64={imageBase64} width={imageWidth} height={imageHeight} />*/}
+                            {/*<MaskCanvas ref={canvasRef}*/}
+                            {/*            width={imageWidth}*/}
+                            {/*            height={imageHeight}*/}
+                            {/*            onMouseDown={handleMouseDown}*/}
+                            {/*            onMouseMove={handleMouseMove}*/}
+                            {/*            onMouseUp={handleMouseUp}/>*/}
+                            <ImageRenderer
+                                imageBase64={imageBase64}
+                                width={imageWidth}
+                                height={imageHeight}
+                                detectedObjects={detectedObjects}
+                                selectedIndices={selectedIndex}
+                                onMouseDown={handleMouseDown}
+                                onMouseMove={handleMouseMove}
+                                onMouseUp={handleMouseUp}
+                                canvasRef={canvasRef}
+                            />
                         </BlurredWrapper>
 
                     </>
@@ -327,9 +396,9 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSel
                     ref={inputRef}
                     type="file"
                     accept="image/*"
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleMouseUp}
+                    // onMouseDown={handleMouseDown}
+                    // onMouseMove={handleMouseMove}
+                    // onMouseUp={handleMouseUp}
                     onChange={handleFileChange}
                 />
             </UploadContainer>
@@ -337,29 +406,32 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndices, setSel
     );
 }
 
-function ImageRenderer({ imageBase64 }) {
-    const canvasRef = useRef(null);
-
-    useEffect(() => {
-        if (!imageBase64 || !canvasRef.current) return;
-
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d");
-        const image = new Image();
-
-        image.onload = () => {
-            canvas.width = image.width;
-            canvas.height = image.height;
-
-            ctx.filter = "blur(20px)";
-            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-        };
-
-        image.src = imageBase64;
-    }, [imageBase64]);
-
-    return <MainCanvas ref={canvasRef} />;
-}
+// function ImageRenderer({ imageBase64 }) {
+//     const canvasRef = useRef(null);
+//
+//     useEffect(() => {
+//         if (!imageBase64 || !canvasRef.current) return;
+//
+//         const canvas = canvasRef.current;
+//         const ctx = canvas.getContext("2d");
+//         const image = new Image();
+//
+//         image.onload = () => {
+//             canvas.width = image.width;
+//             canvas.height = image.height;
+//
+//             // ctx.filter = "blur(20px)";
+//             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+//         };
+//
+//         image.src = imageBase64;
+//     }, [imageBase64]);
+//
+//     return <MainCanvas
+//         ref={canvasRef}
+//     />;
+//
+// }
 
 
 function smartFilterDuplicates(boxes, iouThreshold = 0.5) {
