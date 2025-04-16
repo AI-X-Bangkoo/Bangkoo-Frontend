@@ -22,6 +22,8 @@ const searchSlice = createSlice({
         setUploadedImage: (state, action) => {
             state.uploadedImage = action.payload;
         },
+
+        // 비로그인 사용자만 호출
         addRecentKeyword: (state, action) => {
             const keyword = action.payload.trim();
             if (!keyword) return;
@@ -38,10 +40,13 @@ const searchSlice = createSlice({
             // localStorage에도 저장
             localStorage.setItem("recentKeywords", JSON.stringify(state.recentKeywords));
         },
+
         removeRecentKeyword: (state, action) => {
             const keyword = action.payload;
             state.recentKeywords = state.recentKeywords.filter(k => k !== keyword);
+            localStorage.setItem("recentKeywords", JSON.stringify(state.recentKeywords));
         },
+
         clearRecentKeywords: (state) => {
             state.recentKeywords = [];
             localStorage.removeItem("recentKeywords"); // localStorage도 삭제
