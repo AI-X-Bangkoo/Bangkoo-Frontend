@@ -22,6 +22,7 @@ const AdminGaguList = () => {
   const [checkedItems, setCheckedItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
 
+
   const itemsPerPage = 10;
 
   //페이징 관련
@@ -66,6 +67,8 @@ const AdminGaguList = () => {
       return updated;
     });
   };
+  
+
 
   const handleUpdate = async (item) => {
     const newName = prompt("새 이름을 입력하세요", item.name);
@@ -154,12 +157,11 @@ const AdminGaguList = () => {
                   {(currentPage - 1) * itemsPerPage + index + 1}
                 </GaguListItem>
                 <GaguListItem>
+                  <a href={item.link} target="_blank">
                   <GaguImageWrapper
-                    style={{ height: "20px" }}
-                    image={item.imageUrl}
-                    type="basic"
-                    onLink={item.imageUrl}
-                  />
+                    style={{ height: "20px" , cursor:"pointer"}}
+                  ><img src={item.imageUrl} alt="가구"/></GaguImageWrapper>
+                  </a>
                 </GaguListItem>
                 <GaguListItem>{item.name}</GaguListItem>
                 <GaguListItem>{item.description}</GaguListItem>
