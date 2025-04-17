@@ -104,3 +104,36 @@ export const CheckboxArea = styled.div`
   right: 8px;
   cursor: pointer;
 `;
+
+export const HoverTextBox = styled.div`
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  //justify-content: center;
+  align-items: center;
+  padding: 12px;
+  text-align: center;
+  font-size: ${({ theme }) => theme.fontSizes.xxs};
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+
+  ${ImageBoxStyle}:hover & {
+    opacity: 1;
+  }
+  
+  & > div {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    & p {
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+  }
+`;
