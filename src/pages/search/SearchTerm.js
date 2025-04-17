@@ -32,7 +32,7 @@ import {
     fetchPopularSearches
 } from "@/api/search/search";
 
-function SearchTerm({onClose}) {
+function SearchTerm({onClose, onSearch, setInputValue}) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { autoSave, toggleAuto } = useSearchHistory();
@@ -46,12 +46,18 @@ function SearchTerm({onClose}) {
         const trimmed = keyword.trim();
         if (!trimmed) return;
 
-        dispatch(setKeyword(trimmed));
         dispatch(setConfirmedKeyword(trimmed));
         dispatch(setUploadedImage(null));
 
+        if (typeof setInputValue === "function") {
+            setInputValue(trimmed);
+        }
+
+        if (typeof onSearch === "function") {
+            onSearch(trimmed); // 검색 실행
+        }
+
         if (onClose) onClose();
-        navigate(`/search?query=${encodeURIComponent(trimmed)}`);
     };
 
     // 개별 삭제
