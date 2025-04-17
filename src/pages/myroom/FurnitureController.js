@@ -11,7 +11,7 @@ function FurnitureController({saveClick, aiClick, canvasRef}) {
     const canvasSize = {width: 1024, height: 720} ;
 
     const applyPlacement = useApplyPlacement({
-        mode: "defaulf", // 기본 동작 막아두기
+        mode: "remove", // 기본 동작 막아두기
         background: canvasRef,
         reference,
         canvasSize,

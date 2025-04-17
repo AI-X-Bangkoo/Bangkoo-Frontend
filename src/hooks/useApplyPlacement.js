@@ -36,6 +36,18 @@ export const useApplyPlacement = ({ mode, background, reference, canvasSize, set
     try {
       const base64 = await requestPlacement(mode, blob, reference);
       openImagePreview(`data:image/png;base64,${base64}`);
+
+    // ✅ 🎯 캔버스 업데이트
+    const image = new Image();
+    image.onload = () => {
+      const ctx = canvas.getContext("2d");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    };
+    image.src = `data:image/png;base64,${base64}`;
+
       alert(`AI ${mode} 처리 성공!`);
     } catch (err) {
       console.error(`AI 서버 ${mode} 처리 실패:`, err);
