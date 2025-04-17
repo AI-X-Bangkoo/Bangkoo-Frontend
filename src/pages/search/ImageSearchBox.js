@@ -1,13 +1,7 @@
 import React, { useState, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import {
-    setUploadedImage,
-    setSearchResults,
-    setConfirmedKeyword,
-    setKeyword
-} from "@/features/search/searchSlice";
-import { searchByImage, searchByImageUrl } from "@/api/search/search";
+import { useDispatch, useSelector } from "react-redux";
+import { setUploadedImage}  from "@/features/search/searchSlice";
+import { searchImageUnified } from "@/api/search/search";
 import {
     ImageSearchWrapper,
     ImageInputWrapper,
@@ -18,45 +12,28 @@ import {
 import CommonButton from "@/common/CommonButton";
 import {Text} from "@/common/Typography";
 import CommonTextField from "@/common/CommonTextField";
-import { useSelector } from "react-redux";
 
 function ImageSearchBox({ onSearchComplete }) {
     const [imageUrl, setImageUrl] = useState("");
     const [imageFile, setImageFile] = useState(null);
     const [dragOver, setDragOver] = useState(false);
     const fileInputRef = useRef();
-
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const userId = useSelector((state) => state.auth.user?.userId || "anonymous");
 
     const handleSearch = async () => {
         const trimmedUrl = imageUrl.trim();
 
         try {
             if (imageFile) {
-                const formData = new FormData();
-                formData.append("image", imageFile);
-
-                const result = await searchByImage(formData, userId);
-
-                dispatch(setSearchResults(result));
-                dispatch(setConfirmedKeyword("이미지 검색"));
-                dispatch(setKeyword(""));              // 텍스트 클리어
-                dispatch(setUploadedImage(null));      // 이미지 클리어
-                navigate("/search");
+                const localUrl = URL.createObjectURL(imageFile);
+                if (typeof onSearchComplete === "function") {
+                    onSearchComplete({ previewUrl: localUrl, imageFile }); // ✅ 파일은 콜백으로만 전달
+                }
             } else if (trimmedUrl) {
-                setImageFile(null);  // 기존 파일 제거!
-
-                dispatch(setUploadedImage(trimmedUrl));
-                if (typeof onSearchComplete === "function") onSearchComplete(trimmedUrl);
-
-                // 이미지 URL로 검색도 진행
-                const result = await searchByImageUrl(trimmedUrl, userId);
-                dispatch(setSearchResults(result));
-                dispatch(setConfirmedKeyword("이미지 링크 검색"));
-                dispatch(setKeyword(""));
-                navigate("/search")
+                dispatch(setUploadedImage(trimmedUrl)); // ✅ URL 그대로 저장
+                if (typeof onSearchComplete === "function") {
+                    onSearchComplete(trimmedUrl); // ✅ 미리보기용
+                }
             } else {
                 console.warn("🚫 검색 조건 없음: 파일도 URL도 없음");
             }
@@ -71,8 +48,9 @@ function ImageSearchBox({ onSearchComplete }) {
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             const file = e.dataTransfer.files[0];
             setImageFile(file);
+            dispatch(setUploadedImage(file));
             const localUrl = URL.createObjectURL(file);
-            dispatch(setUploadedImage(localUrl));
+            // dispatch(setUploadedImage(localUrl));
             if (onSearchComplete) onSearchComplete(localUrl); // 드래그 업로드도 바로 닫기
         }
     };
@@ -94,9 +72,9 @@ function ImageSearchBox({ onSearchComplete }) {
         const file = e.target.files[0];
         if (file) {
             setImageFile(file);
+            // dispatch(setUploadedImage(file)); // 미리보기 즉시 반영
             const localUrl = URL.createObjectURL(file);
-            dispatch(setUploadedImage(localUrl)); // 미리보기 즉시 반영
-            if (onSearchComplete) onSearchComplete(localUrl);
+            onSearchComplete?.({ previewUrl: localUrl, imageFile: file });
         }
     };
 
