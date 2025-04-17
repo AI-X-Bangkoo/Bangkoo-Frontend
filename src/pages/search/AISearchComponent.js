@@ -1,23 +1,26 @@
 import React, {useEffect, useRef, useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUploadedImage, setSearchResults, setConfirmedKeyword, setKeyword } from "@/features/search/searchSlice";
+import { setUploadedImage, setSearchResults, setConfirmedKeyword, setKeyword, setLoading } from "@/features/search/searchSlice";
 import SearchInputComponent from "./SearchInputComponent";
 import SearchExplanation from "./SearchExplanation";
 import SearchTerm from "./SearchTerm";
 import Category from "./Category";
 import ImageSearchBox from "./ImageSearchBox";
-import { useNavigate } from "react-router-dom";
-import { searchByText } from "@/api/search/search";
+import { useNavigate, useLocation } from "react-router-dom";
+import { searchByText, searchImageUnified } from "@/api/search/search";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
 import useAuth from "@/hooks/login/useAuth";
-import { setLoading } from "@/features/search/searchSlice";
 
-function AISearchComponent() {
+function AISearchComponent({
+    mode = "redirect", // "redirect" or "inline"
+    onSearchResults // 검색 결과 콜백 (inline 모드 전용)
+}) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const { addKeyword } = useSearchHistory();
     const { user } = useAuth();
-    const userId = user?.userId;
+    const userId = user?.userId || "anonymous";
 
     const [isHover, setIsHover] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -27,6 +30,7 @@ function AISearchComponent() {
     const [imageFile, setImageFile] = useState(null);
 
     const containerRef = useRef(null); // 전체 검색 영역 감싸는 div
+    const isSubmittingRef = useRef(false);
 
     const handleClickCategory = () => {
         setCategory(!category);
@@ -51,24 +55,14 @@ function AISearchComponent() {
 
     // 카테고리 클릭시 검색
     const handleSearchByCategory = async (categoryName) => {
-        try {
-            const trimmed = categoryName.trim();
-            if (!trimmed) return;
+        const trimmed = categoryName.trim();
+        if (!trimmed) return;
 
-            dispatch(setLoading(true));
-            dispatch(setKeyword(trimmed));
+        goToSearch(trimmed); 
 
-            const finalUserId = userId ? userId : "anonymous";
-
-            navigate(`/search?query=${encodeURIComponent(trimmed)}`);
-
-            setCategory(false);
-            setIsFocused(false);
-            setShowImageSearchBox(false);
-
-        } catch (err) {
-            console.error("카테고리 검색 실패:", err);
-        }
+        setCategory(false);
+        setIsFocused(false);
+        setShowImageSearchBox(false);
     };
 
     useEffect(() => {
@@ -106,6 +100,66 @@ function AISearchComponent() {
         setShowImageSearchBox(false);
     };
 
+    const goToSearch = async (inputKeyword) => {
+
+        if (isSubmittingRef.current) return;
+        isSubmittingRef.current = true;
+
+        const searchText = inputKeyword || "";
+        const imageFileFromRef = imageFile;
+        const isFile = imageFile instanceof File;
+        const isUrl = typeof imagePreviewUrl === "string" && (imagePreviewUrl.startsWith("http") || imagePreviewUrl.startsWith("blob:"));
+
+        if (!searchText && !imagePreviewUrl) {
+            isSubmittingRef.current = false;
+            return;
+        }
+
+        try {
+            dispatch(setLoading(true));
+            let result;
+
+            if (imagePreviewUrl) {
+                result = await searchImageUnified({
+                    imageFile: isFile ? imageFileFromRef : null,
+                    imageUrl: isUrl ? imagePreviewUrl : null,
+                    query: searchText,
+                    userId
+                });
+            } else if (searchText) {
+                result = await searchByText(searchText, userId);
+            } else {
+                isSubmittingRef.current = false;
+                return;
+            }
+
+            if (mode === "redirect") {
+                const params = new URLSearchParams();
+                if (searchText) params.append("query", searchText);
+                if (imagePreviewUrl) params.append("image", imagePreviewUrl);
+                navigate(`/search?${params.toString()}`);
+
+                setTimeout(() => {
+                    dispatch(setSearchResults(result));
+                    dispatch(setConfirmedKeyword(searchText));
+                    dispatch(setKeyword(""));
+                    dispatch(setUploadedImage(null));
+                    setImagePreviewUrl("");
+                    setImageFile(null);
+                }, 300);
+            } else if (mode === "inline") {
+                if (typeof onSearchResults === "function") {
+                    onSearchResults(result);
+                }
+            }
+        } catch (error) {
+            console.error("검색 실패:", error);
+        } finally {
+            isSubmittingRef.current = false;
+            dispatch(setLoading(false));
+        }
+    };
+
     return (
         <div ref={containerRef} style={{position: 'relative', zIndex: 10}}>
             <div
@@ -122,6 +176,7 @@ function AISearchComponent() {
                     onClearImage={handleClearImage}
                     setSearchResults={setSearchResults}
                     onCloseSearchTerm={() => setIsFocused(false)} // 최근 검색어 닫기
+                    onSearch={goToSearch}
                 />
             </div>
 
