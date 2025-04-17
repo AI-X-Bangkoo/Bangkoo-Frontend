@@ -44,12 +44,6 @@ const authSlice = createSlice({
             const role = roleMatch
             const userId = userIdMatch ? decodeURIComponent(userIdMatch[1]) : null;
 
-            console.log('cookie:', Cookies);
-            console.log('nickname:', nickname);
-            console.log('roleMatch:', roleMatch);
-
-            console.log('nickname:', nickname, 'role:', role);
-
             // 쿠키에서 role을 읽어오고, user 상태와 일치하면 상태 업데이트 안 함
             if (nickname && role && state.user?.nickname === nickname && state.user?.role === role) return;
             if (!nickname && !state.user) return;
@@ -64,11 +58,11 @@ const authSlice = createSlice({
         },
         setLoginInfo: (state, action) => {
             const { nickname, role, userId } = action.payload;
-            console.log('setLoginInfo 호출:', { nickname, role, userId });
+
 
             // nickname 또는 role이 누락되었을 경우 로그를 출력하고 처리
             if (!nickname || !role || !userId) {
-                console.warn("🚨 nickname 또는 role이 누락되었습니다:", { nickname, role, userId });
+    
                 return;
             }
 
@@ -77,9 +71,7 @@ const authSlice = createSlice({
             document.cookie = `role=${encodeURIComponent(role)}; path=/;`;  // role 쿠키 저장 추가
             document.cookie = `userId=${encodeURIComponent(userId)}; path=/;`;
 
-            console.log("*******************");
-            console.log('쿠키 저장:', document.cookie);
-            console.log("***********************");
+      
             state.isLoggedIn = true;
 
             state.user = { nickname, role, userId };

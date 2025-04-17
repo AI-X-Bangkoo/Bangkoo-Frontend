@@ -3,8 +3,26 @@
 import React from "react";
 import {ControllerBox, FlexBox} from "./css/MyRoom.styled";
 import CommonButton from "@/common/CommonButton";
+import { useApplyPlacement } from "@/hooks/useApplyPlacement";
 
-function MyRoom({saveClick, aiClick}) {
+function FurnitureController({saveClick, aiClick}) {
+
+    const background = null;    // TODO: 실제 배경으로 교체
+    const reference = null;     // TODO: 필요시 참조 이미지로
+    const canvasSize = {width: 1024, height: 720} ;
+
+    const applyPlacement = useApplyPlacement({
+        mode: "default", // 기본 동작 막아두기
+        background: background,
+        reference: reference,
+        canvasSize: canvasSize,
+        setShowMask: () => {},
+        setShowHelper: () => {},
+    });
+
+    const handlePlacementClick = () => {
+        applyPlacement();
+    }
 
     const buttonProps = {
         height: "44px",
@@ -34,7 +52,7 @@ function MyRoom({saveClick, aiClick}) {
                 <CommonButton
                     width="135px"
                     type="outline"
-                    onClick={aiClick} // mode 값을 
+                    onClick={handlePlacementClick} // mode 값을 상태에서 전달받고 useApplyPlacement() 실행
                     {...buttonProps}
                 >
                     배치 결과 보기  
@@ -52,4 +70,4 @@ function MyRoom({saveClick, aiClick}) {
     );
 }
 
-export default MyRoom;
+export default FurnitureController;

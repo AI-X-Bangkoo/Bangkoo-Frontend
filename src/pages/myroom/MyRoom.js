@@ -33,7 +33,7 @@ import { useSaveInterior } from "@/hooks/useSaveInterior";
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [selectedIndices, setSelectedIndices] = useState([]);
+    const [selectedIndex, setselectedIndex] = useState([]);
     const openDrawer = () => setIsDrawerOpen(true);
     const closeDrawer = () => setIsDrawerOpen(false);
 
@@ -99,14 +99,14 @@ function MyRoom() {
                 <ImageUploader
                     onImageUploaded={handleImageUploaded}
                     onObjectSelect={(index) =>
-                        setSelectedIndices((prev) =>
+                        setselectedIndex((prev) =>
                             prev.includes(index)
                                 ? prev.filter((i) => i !== index)
                                 : [...prev, index]
                         )
                     }
-                    selectedIndices={selectedIndices}        // ✅ 이거 꼭 추가!
-                    setSelectedIndices={setSelectedIndices}  // ✅ 이것도 함께!
+                    selectedIndex={selectedIndex}        // ✅ 이거 꼭 추가!
+                    setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
                 />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >
@@ -137,14 +137,19 @@ function MyRoom() {
                     {currentTab === "my" && <MyFurnitureTab
                         onCustomRemove={furnitureDialog.openDialog}
                         onSelect={(index) => {
-                        setSelectedIndices(prev => {
-                        const updated = prev.includes(index)
-                        ? prev.filter(i => i !== index)
-                        : [...prev, index];
-                        console.log("🎯 setSelectedIndices 호출됨!", updated);
-                        return updated;
-                    });
-                    }}
+                        // 여러개 세팅
+                        // setselectedIndex(prev => {
+                        // const updated = prev.includes(index)
+                        // ? prev.filter(i => i !== index)
+                        // : [...prev, index];
+                        // console.log("🎯 setselectedIndex 호출됨!", updated);
+                        // return updated;
+                        setselectedIndex(prev => {
+                            return prev === index ? null : index; // 같은 거 누르면 해제, 아니면 새로 선택
+                        });
+
+                    }
+                    }
                     />}
                     {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} />}
                     {currentTab === "interior" && <InteriorTab onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}

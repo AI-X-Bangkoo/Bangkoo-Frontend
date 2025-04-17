@@ -20,6 +20,10 @@ export const SearchRoot = styled.div`
   `}
 ` ;
 
+export const LoadingBox = styled.div`
+  padding: 100px 0 0;
+` ;
+
 export const GridBox = styled.div`
   width: 100%;
   display: grid;
@@ -33,16 +37,18 @@ export const GridBox = styled.div`
 ` ;
 
 export const TextBox = styled.div`
-  height: 100px;
+  height: 108px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  & p:nth-child(1){
+  & > div > p:nth-child(1){
      margin-top: ${({ theme }) => theme.spacing.md};
-     margin-bottom: ${({ theme }) => theme.spacing.xs};
+     margin-bottom: 6px;
   }
-  & p:nth-child(2){
-    
+  & > div > p:nth-child(2){
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
 ` ;

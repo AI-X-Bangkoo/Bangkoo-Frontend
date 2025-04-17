@@ -9,6 +9,7 @@ const initialState = {
     recentKeywords: storedKeywords, // 검색 히스토리 추가
     autoSave: true, // 자동 저장 on/off
     resultList: [],
+    isLoading: false,
 };
 
 
@@ -64,6 +65,9 @@ const searchSlice = createSlice({
         setConfirmedKeyword: (state, action) => {
             state.confirmedKeyword = action.payload;
         },
+        setLoading: (state, action) => {
+            state.isLoading = action.payload;
+        },
     },
 });
 
@@ -77,5 +81,6 @@ export const {
     toggleAutoSave,
     setSearchResults,
     setConfirmedKeyword,
+    setLoading,
 } = searchSlice.actions;
 export default searchSlice.reducer;

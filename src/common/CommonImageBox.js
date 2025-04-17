@@ -7,7 +7,8 @@ import {
     CheckboxArea,
     CenterBox,
     EyeOnChip,
-    EyeClosedChip
+    EyeClosedChip,
+    HoverTextBox
 } from "./css/ImageBox.styled"
 import CommonIconButton from "../common/CommonIconButton"
 import { ReactComponent as EyeOnIcon } from "../assets/images/Eye.svg";
@@ -18,6 +19,7 @@ import { ReactComponent as MinusIcon } from "../assets/images/MinusIcon.svg";
 import { ReactComponent as TrashIcon } from "../assets/images/TrashIcon.svg";
 import { ReactComponent as CheckIcon } from "../assets/images/CheckIcon.svg";
 import { ReactComponent as UnCheckIcon } from "../assets/images/UnCheckIcon.svg";
+import {Text} from "@/common/Typography";
 
 function CommonImageBox({
             image,
@@ -30,7 +32,8 @@ function CommonImageBox({
             onPlusMinus,
             onDelete,
             onCheck,
-            onClick
+            onClick,
+            recommendationReason
         }) {
 
     if (type === "basic" && onLink) {
@@ -38,6 +41,16 @@ function CommonImageBox({
             <a href={onLink} target="_blank" rel="noopener noreferrer" style={{ display: "block" }}>
                 <ImageBoxStyle>
                     <img src={image} alt="가구 이미지" />
+
+                    {recommendationReason && (
+                        <HoverTextBox>
+                            <Text size="sm" $weight={600} color="white">추천 이유</Text>
+                            <div>
+                                <Text size="xxs" $weight={600} color="white">{recommendationReason}</Text> 
+                            </div>
+                            
+                        </HoverTextBox>
+                    )}
                 </ImageBoxStyle>
             </a>
         );
@@ -48,7 +61,10 @@ function CommonImageBox({
         height: "34px",
         type: "full",
     };
-
+    const handleClick = (e) => {
+        e.stopPropagation();
+        if (onClick) onClick(e);
+    }
     return (
         <ImageBoxStyle onClick={onClick} >
             <img src={image} alt="가구 이미지" />
@@ -77,7 +93,10 @@ function CommonImageBox({
                 <CenterBox>
                     <CommonIconButton
                         color="orange"
-                        onClick={onPlusMinus}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onPlusMinus();
+                        }}
                         icon={<PlusIcon />}
                         {...buttonProps}
                     />
@@ -88,7 +107,10 @@ function CommonImageBox({
                 <CenterBox>
                     <CommonIconButton
                         color="red"
-                        onClick={onPlusMinus}
+                        onClick={(e) => {
+                        e.stopPropagation();
+                        onPlusMinus();
+                        }}
                         icon={<MinusIcon />}
                         {...buttonProps}
                     />
@@ -104,13 +126,23 @@ function CommonImageBox({
             {/* 하단 마이너스 버튼 (eyeOn) */}
             {type === "eyeOn" && (
                 <BottomRightBox>
-                    <CommonIconButton onClick={onMinus} color="red" icon={<MinusIcon />} {...buttonProps}/>
+                    <CommonIconButton // onClick={onMinus}
+                                      onClick={(e) => {
+                                          e.stopPropagation(); // ✅ 공통 처리
+                                          onMinus?.(e);
+                                      }}
+                                      color="red" icon={<MinusIcon />} {...buttonProps}/>
                 </BottomRightBox>
             )}
             {/* 하단 플러스 버튼 (eyeClosed) */}
             {type === "eyeClosed" && (
                 <BottomRightBox>
-                    <CommonIconButton onClick={onPlus} color="orange" icon={<PlusIcon />} {...buttonProps}/>
+                    <CommonIconButton // onClick={onPlus}
+                                      onClick={(e) => {
+                                          e.stopPropagation(); // ✅ 공통 처리
+                                          onPlus?.(e);
+                                      }}
+                                      color="orange" icon={<PlusIcon />} {...buttonProps}/>
                 </BottomRightBox>
             )}
 
