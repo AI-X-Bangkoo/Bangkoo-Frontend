@@ -1,10 +1,11 @@
+// pages/3d/Canvas3DSection.js
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import FixedBackground from '@/common/three/FixedBackground';
-import Model from '@/components/canvas/Model/Model'; 
+import Model from '@/components/canvas/model/Model'; 
 
-export default function Canvas3DSection({ background, modelUrl, canvasSize, showMask }) {
+export default function Canvas3DSection({ background, modelUrl, canvasSize, showMask, showHelper }) {
   return (
     <div
       style={{
@@ -48,7 +49,7 @@ export default function Canvas3DSection({ background, modelUrl, canvasSize, show
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 5, 5]} intensity={0.8} />
         <Suspense fallback={null}>
-          {modelUrl && <Model url={modelUrl} showMask={showMask} />}
+          {modelUrl && <Model url={modelUrl} showMask={showMask} showHelper={showHelper} />}
         </Suspense>
         <OrbitControls />
       </Canvas>
