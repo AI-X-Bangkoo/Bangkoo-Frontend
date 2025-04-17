@@ -93,49 +93,56 @@ function SearchPage() {
                 </LoadingBox>
                 
                 :
-                <GridBox>
-                    {searchResults.map((item, index) => (
-                        <div key={index}>
-                            <CommonImageBox
-                                image={item.이미지}
-                                type={"basic"}
-                                onLink={item.링크}
-                                recommendationReason={item.추천이유 && item.추천이유}
-                            />
+                searchResults.length > 0 ? (
+                    <GridBox>
+                        {searchResults.map((item, index) => (
+                            <div key={index}>
+                                <CommonImageBox
+                                    image={item.이미지}
+                                    type={"basic"}
+                                    onLink={item.링크}
+                                    recommendationReason={item.추천이유 && item.추천이유}
+                                />
 
-                            <TextBox>
-                                <div>
-                                    <Text size="xs" $weight={800}>{item.이름}</Text>
-                                    <Text size="xs" $weight={600}>{item.설명}</Text>
-                                </div>
-                                
-                                <Text size="md" $weight={800}>
-                                    ₩
-                                    {item.할인가 != null ?
-                                        item.할인가.toLocaleString()
-                                        :
-                                        item.정상가 != null ?
-                                            item.정상가.toLocaleString()
+                                <TextBox>
+                                    <div>
+                                        <Text size="xs" $weight={800}>{item.이름}</Text>
+                                        <Text size="xs" $weight={600}>{item.설명}</Text>
+                                    </div>
+
+                                    <Text size="md" $weight={800}>
+                                        ₩
+                                        {item.할인가 != null ?
+                                            item.할인가.toLocaleString()
                                             :
-                                            "-"
-                                    }
-                                </Text>
-                            </TextBox>
+                                            item.정상가 != null ?
+                                                item.정상가.toLocaleString()
+                                                :
+                                                "-"
+                                        }
+                                    </Text>
+                                </TextBox>
 
-                            <CommonButton
-                                width="100%"
-                                height="44px"
-                                fontSize="xs"
-                                fontWeight={900}
-                                radius="sm"
-                                type="fill"
-                                onClick={goToRoom}
-                            >
-                                내방 인테리어 하러가기
-                            </CommonButton>
-                        </div>
-                    ))}
-                </GridBox>
+                                <CommonButton
+                                    width="100%"
+                                    height="44px"
+                                    fontSize="xs"
+                                    fontWeight={900}
+                                    radius="sm"
+                                    type="fill"
+                                    onClick={goToRoom}
+                                >
+                                    내방 인테리어 하러가기
+                                </CommonButton>
+                            </div>
+                        ))}
+                    </GridBox>
+                ) : (
+                    <Text size="base" $weight={500} color="dark" style={{ textAlign: "center", marginTop: "100px" }}>
+                        검색 결과가 없습니다.
+                    </Text>
+                )
+
             }
 
 
