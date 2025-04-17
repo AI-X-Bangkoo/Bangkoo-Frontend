@@ -18,4 +18,8 @@ export const store = configureStore({
         selection: selectionReducer,
         auth: authReducer
     },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: false,
+        }),
 });

@@ -1,3 +1,5 @@
+// components/canvas/model/placeModelOnGround.js
+
 import * as THREE from 'three';
 
 export function placeModelOnGround(scene) {

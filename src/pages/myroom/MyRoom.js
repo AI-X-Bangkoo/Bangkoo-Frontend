@@ -36,6 +36,7 @@ function MyRoom() {
     const [selectedIndex, setselectedIndex] = useState(null);
     const openDrawer = () => setIsDrawerOpen(true);
     const closeDrawer = () => setIsDrawerOpen(false);
+    const canvasRef = useRef(null);
 
     // 이미지 등록 시 상태 값 체크용도 "김범석"
     const [isImageUploaded, setIsImageUploaded] = useState(false);
@@ -95,8 +96,10 @@ function MyRoom() {
                 <FurnitureController
                     saveClick={interiorSaveDialog.openDialog}
                     aiClick={aiDialog.openDialog}
+                    canvasRef={canvasRef}
                 />
                 <ImageUploader
+                    canvasRef={canvasRef}
                     onImageUploaded={handleImageUploaded}
                     // onObjectSelect={(index) =>
                     //     setselectedIndex((prev) =>

@@ -14,7 +14,7 @@ import CommonButton from "@/common/CommonButton";
 import ImageRenderer from "./ImageRenderer";
 import axios from "axios";
 
-function ImageUploader({onImageUploaded, onObjectSelect, selectedIndex, setselectedIndex,resetObjectPositionRef }) {
+function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex, setselectedIndex,resetObjectPositionRef }) {
     const [imageUrl, setImageUrl] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const inputRef = useRef();
@@ -22,7 +22,7 @@ function ImageUploader({onImageUploaded, onObjectSelect, selectedIndex, setselec
     const [detectedObjects, setDetectedObjects] = useState([]);
     const [imageBase64, setImageBase64] = useState(null);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
-    const canvasRef = useRef(null);
+    // const canvasRef = useRef(null);
     const bgImageRef = useRef(null);
     const dispatch = useDispatch();
     const containerRef = useRef();

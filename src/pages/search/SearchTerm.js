@@ -29,7 +29,7 @@ import {
     fetchRecentSearches,
     deleteSearchItem,
     deleteAllSearchLogs,
-    searchByImage,
+    searchImageUnified,
     fetchPopularSearches
 } from "@/api/search/search";
 
@@ -53,7 +53,7 @@ function SearchTerm({onClose}) {
             const formData = new FormData();
             formData.append("query", trimmed);
 
-            const result = await searchByImage(formData);
+            const result = await searchImageUnified(formData);
             dispatch(setSearchResults(result));
             dispatch(setConfirmedKeyword(trimmed));
             dispatch(setUploadedImage(null));

@@ -7,9 +7,10 @@ import SearchTerm from "./SearchTerm";
 import Category from "./Category";
 import ImageSearchBox from "./ImageSearchBox";
 import { useNavigate } from "react-router-dom";
-import { searchByImage } from "@/api/search/search";
+import { searchByText } from "@/api/search/search";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
 import useAuth from "@/hooks/login/useAuth";
+import { setLoading } from "@/features/search/searchSlice";
 
 function AISearchComponent() {
     const dispatch = useDispatch();
@@ -18,12 +19,12 @@ function AISearchComponent() {
     const { user } = useAuth();
     const userId = user?.userId;
 
-    const uploadedImage = useSelector((state) => state.search.uploadedImage); // 전역 상태
-
     const [isHover, setIsHover] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [category, setCategory] = useState(false);
     const [showImageSearchBox, setShowImageSearchBox] = useState(false);
+    const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+    const [imageFile, setImageFile] = useState(null);
 
     const containerRef = useRef(null); // 전체 검색 영역 감싸는 div
 
@@ -54,25 +55,17 @@ function AISearchComponent() {
             const trimmed = categoryName.trim();
             if (!trimmed) return;
 
+            dispatch(setLoading(true));
             dispatch(setKeyword(trimmed));
 
-            const formData = new FormData();
-            formData.append("query", trimmed);
             const finalUserId = userId ? userId : "anonymous";
-            formData.append("userId", finalUserId);
-            
-            const result = await searchByImage(formData);
 
-            dispatch(setSearchResults(result));
-            dispatch(setConfirmedKeyword(trimmed));
-            dispatch(setKeyword(""));
-            dispatch(setUploadedImage(null));
+            navigate(`/search?query=${encodeURIComponent(trimmed)}`);
 
             setCategory(false);
             setIsFocused(false);
             setShowImageSearchBox(false);
 
-            navigate("/search");
         } catch (err) {
             console.error("카테고리 검색 실패:", err);
         }
@@ -95,7 +88,22 @@ function AISearchComponent() {
     }, []);
 
     const handleClearImage = () => {
-        dispatch(setUploadedImage(null)); // Redux 상태 초기화
+        dispatch(setUploadedImage(null));
+        setImagePreviewUrl("");
+        setImageFile(null);
+    };
+
+    const handleImageSearchComplete = (data) => {
+        if (typeof data === "string") {
+            dispatch(setUploadedImage(data));
+            setImagePreviewUrl(data);
+            setImageFile(null);
+        } else if (typeof data === "object" && data.previewUrl && data.imageFile) {
+            dispatch(setUploadedImage(data.previewUrl));
+            setImagePreviewUrl(data.previewUrl);
+            setImageFile(data.imageFile);
+        }
+        setShowImageSearchBox(false);
     };
 
     return (
@@ -109,7 +117,8 @@ function AISearchComponent() {
                     onFocus={handleClickIsFocused}
                     handleClickCategory={handleClickCategory}
                     onClickImage={handleClickImageSearch}
-                    imagePreviewUrl={uploadedImage} // Redux 상태 전달
+                    imagePreviewUrl={imagePreviewUrl}
+                    imageFile={imageFile}
                     onClearImage={handleClearImage}
                     setSearchResults={setSearchResults}
                     onCloseSearchTerm={() => setIsFocused(false)} // 최근 검색어 닫기
@@ -126,10 +135,7 @@ function AISearchComponent() {
             {/* 이미지 검색 */}
             {showImageSearchBox && (
                 <ImageSearchBox
-                    onSearchComplete={(imageUrl) => {
-                        dispatch(setUploadedImage(imageUrl)); // Redux로 이미지 저장
-                        setShowImageSearchBox(false);
-                    }}
+                    onSearchComplete={handleImageSearchComplete}
                 />
             )}
         </div>

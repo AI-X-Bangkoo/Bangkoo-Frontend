@@ -11,25 +11,47 @@ import { requestPlacement } from '@/api/placement';
  * @param {Object} canvasSize - 캔버스 사이즈 정보
  * @param {Function} setShowMask - 마스킹 UI 표시 함수
  */
-export const useApplyPlacement = ({ mode, background, reference, canvasSize, setShowMask }) => {
+export const useApplyPlacement = ({ mode, background, reference, canvasSize, setShowMask, setShowHelper }) => {
   return async () => {
     setShowMask(true);
+    setShowHelper(false);
     await new Promise(resolve => setTimeout(resolve, 200));
 
-    const canvas3D = document.querySelector('canvas');
-    const finalCanvas = await mergeCanvasImages(background, canvas3D, canvasSize);
+    const canvasRef = background; 
+    if (!canvasRef?.current) {
+      console.error("❌ canvasRef가 비어있습니다.");
+      alert("캔버스를 찾을 수 없습니다.");
+      return;
+    }
 
-    openImagePreview(finalCanvas.toDataURL('image/png'));
 
-    const blob = await canvasToBlob(finalCanvas);
+    const canvas = canvasRef.current;
 
+    // ✅ 2. 캔버스 내용을 Blob으로 변환
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob((b) => resolve(b), "image/png", 1.0)
+    );
+
+    // ✅ 3. 전송 및 결과 출력
     try {
       const base64 = await requestPlacement(mode, blob, reference);
       openImagePreview(`data:image/png;base64,${base64}`);
+
+    // ✅ 4. 🎯 캔버스 업데이트
+    const image = new Image();
+    image.onload = () => {
+      const ctx = canvas.getContext("2d");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    };
+    image.src = `data:image/png;base64,${base64}`;
+
       alert(`AI ${mode} 처리 성공!`);
     } catch (err) {
       console.error(`AI 서버 ${mode} 처리 실패:`, err);
-      alert('AI 서버로 전송 중 오류 발생!');
+      alert("AI 서버로 전송 중 오류 발생!");
     }
 
     setShowMask(false);
