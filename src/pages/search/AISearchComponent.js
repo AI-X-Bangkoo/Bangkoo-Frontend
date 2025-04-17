@@ -70,11 +70,20 @@ function AISearchComponent({
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const query = params.get("query");
+        const imageParam = params.get("image");
 
         if (query && inputValue === "") {
-            setInputValue(query); // 페이지 이동 후 검색어 복원
+            setInputValue(query);
         }
-    }, [location.search]);
+
+        const stateImage = location.state?.imagePreviewUrl;
+        if (stateImage && imagePreviewUrl === "") {
+            setImagePreviewUrl(stateImage);
+            dispatch(setUploadedImage(stateImage));
+        } else if (imageParam && imagePreviewUrl === "") {
+            setImagePreviewUrl(imageParam);
+        }
+    }, [location.search, location.state]);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -112,14 +121,13 @@ function AISearchComponent({
     };
 
     const goToSearch = async (inputKeyword) => {
-
         if (isSubmittingRef.current) return;
         isSubmittingRef.current = true;
 
         const searchText = inputKeyword || inputValue || "";
-        // const imageFileFromRef = imageFile;
         const isFile = imageFile instanceof File;
-        const isUrl = typeof imagePreviewUrl === "string" && (imagePreviewUrl.startsWith("http") || imagePreviewUrl.startsWith("blob:"));
+        const isUrl = typeof imagePreviewUrl === "string" &&
+            (imagePreviewUrl.startsWith("http") || imagePreviewUrl.startsWith("blob:"));
 
         if (!searchText && !imagePreviewUrl) {
             isSubmittingRef.current = false;
@@ -128,38 +136,54 @@ function AISearchComponent({
 
         try {
             dispatch(setLoading(true));
-            let result;
 
-            if (imagePreviewUrl) {
-                result = await searchImageUnified({
-                    imageFile: isFile ? imageFile : null,
-                    imageUrl: isUrl ? imagePreviewUrl : null,
-                    query: searchText,
-                    userId
-                });
-            } else if (searchText) {
-                result = await searchByText(searchText, userId);
-            } else {
-                isSubmittingRef.current = false;
-                return;
-            }
-
-            if (mode === "redirect") {
-                const params = new URLSearchParams();
-                if (searchText) params.append("query", searchText);
-                if (imagePreviewUrl) params.append("image", imagePreviewUrl);
-                navigate(`/search?${params.toString()}`);
-
-                setTimeout(() => {
-                    dispatch(setSearchResults(result));
-                    dispatch(setConfirmedKeyword(searchText));
-                    setInputValue(searchText);
-                }, 300);
-            } else if (mode === "inline") {
+            if (mode === "inline") {
+                let result;
+                if (imagePreviewUrl) {
+                    result = await searchImageUnified({
+                        imageFile: isFile ? imageFile : null,
+                        imageUrl: isUrl ? imagePreviewUrl : null,
+                        query: searchText,
+                        userId
+                    });
+                } else {
+                    result = await searchByText(searchText, userId);
+                }
                 if (typeof onSearchResults === "function") {
                     onSearchResults(result);
                 }
+
+            } else if (mode === "redirect") {
+                if (isFile) {
+                    const result = await searchImageUnified({
+                        imageFile,
+                        imageUrl: null,
+                        query: searchText,
+                        userId
+                    });
+                    dispatch(setSearchResults(result));
+                    dispatch(setConfirmedKeyword(searchText));
+                    setInputValue(searchText);
+
+                    const params = new URLSearchParams();
+                    if (searchText) params.append("query", searchText);
+                    params.append("image", "uploaded-file");
+                    navigate(`/search?${params.toString()}`, {
+                        state: {
+                            result,
+                            imagePreviewUrl,
+                            confirmedKeyword: searchText
+                        }
+                    });
+
+                } else {
+                    const params = new URLSearchParams();
+                    if (searchText) params.append("query", searchText);
+                    if (isUrl) params.append("image", imagePreviewUrl);
+                    navigate(`/search?${params.toString()}`);
+                }
             }
+
         } catch (error) {
             console.error("검색 실패:", error);
         } finally {
