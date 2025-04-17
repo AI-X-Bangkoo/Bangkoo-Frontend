@@ -46,7 +46,7 @@ const SearchInputComponent = ({
     const uploadedImage = useSelector((state) => state.search.uploadedImage);
     const [isListening, setIsListening] = useState(false); // 음성
     const userId = useSelector((state) => state.auth.user?.userId || "anonymous");
-    const [inputValue, setInputValue] = useState("");
+    const [inputValue, setInputValue] = useState(keyword || "");
 
     const {
         dialogOpen,
@@ -66,8 +66,13 @@ const SearchInputComponent = ({
     const handleClearAll = () => {
         updateKeyword("");
         dispatch(setKeyword(""));
-        dispatch(setUploadedImage(null));
-        if (typeof onClearImage === "function") onClearImage();
+        dispatch(setUploadedImage(null)); // 상태 초기화
+
+        if (typeof onClearImage === "function") {
+            onClearImage(); // 부모에서 미리보기까지 제거되도록 연결
+        }
+
+        setInputValue(""); // input 필드 UI 초기화
     };
 
     const handleKeyDown = (e) => {
@@ -140,6 +145,8 @@ const SearchInputComponent = ({
                 dispatch(setConfirmedKeyword(searchText));
                 dispatch(setKeyword(""));
                 dispatch(setUploadedImage(null)); // ← 이게 너무 빨라서 문제였음
+                setInputValue(""); // 텍스트 초기화
+                fileRef.current = null; // 파일 초기화
                 if (typeof onCloseSearchTerm === "function") onCloseSearchTerm();
             }, 300); // 300ms 정도면 충분합니다
 
@@ -180,6 +187,7 @@ const SearchInputComponent = ({
         recognition.onend = async () => {
             setIsListening(false);
             if (finalTranscript.trim()) {
+                setInputValue(finalTranscript);
                 updateKeyword(finalTranscript);
                 dispatch(setKeyword(finalTranscript));
                 await goToSearch(finalTranscript); // 음성 입력도 검색 저장과 함께 실행
