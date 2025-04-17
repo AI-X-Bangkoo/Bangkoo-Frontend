@@ -8,7 +8,7 @@ import CommonButton from "@/common/CommonButton";
 import CommonImageBox from "@/common/CommonImageBox";
 import useAuth from "@/hooks/login/useAuth";
 import { setSearchResults, setConfirmedKeyword, setLoading } from "@/features/search/searchSlice";
-import { searchByText, searchImageUnified } from "@/api/search/search";
+import { searchByText } from "@/api/search/search";
 import LoadingSpinner from "@/common/LoadingSpinner";
 
 function SearchPage() {
@@ -16,14 +16,13 @@ function SearchPage() {
     const dispatch = useDispatch();
     const location = useLocation();
     const { isLoggedIn, login, user } = useAuth(); // 로그인 상태, 로그인 함수
-    const isLoading = useSelector(state => state.search.isLoading); // 로딩
-    const [loadingDots, setLoadingDots] = useState(""); // 로딩
+    const userId = user?.userId || "anonymous";
 
+    const isLoading = useSelector(state => state.search.isLoading); // 로딩
     const searchResults = useSelector((state) => state.search.resultList); // 검색 결과 불러오기
     const keyword = useSelector((state) => state.search.confirmedKeyword); // Redux에서 검색어 가져오기
-    // const uploadedImage = useSelector((state) => state.search.uploadedImage);
 
-    const userId = user?.userId || "anonymous";
+    const [loadingDots, setLoadingDots] = useState(""); // 로딩
 
     const goToRoom = () => {
         if (isLoggedIn) {
@@ -49,31 +48,7 @@ function SearchPage() {
     }, [isLoading]);
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const query = params.get("query");
-        const imageParam = params.get("image");
-
-        const fetchSearchResult = async () => {
-            if (!query) return;
-
-            try {
-                dispatch(setLoading(true));
-                const decodedQuery = decodeURIComponent(query);
-
-                if (!imageParam) {
-                    const result = await searchByText(decodedQuery, userId);
-                    dispatch(setSearchResults(result));
-                    dispatch(setConfirmedKeyword(decodedQuery));
-                }
-            } catch (err) {
-                console.error("검색 실패:", err);
-            } finally {
-                dispatch(setLoading(false));
-            }
-        };
-
-        fetchSearchResult();
-
+        
         return () => {
             dispatch(setSearchResults([]));
         };

@@ -29,7 +29,6 @@ import {
     fetchRecentSearches,
     deleteSearchItem,
     deleteAllSearchLogs,
-    searchImageUnified,
     fetchPopularSearches
 } from "@/api/search/search";
 
@@ -44,30 +43,15 @@ function SearchTerm({onClose}) {
     
     // 검색 실행
     const handleSearch = async (keyword) => {
-        try {
-            const trimmed = keyword.trim();
-            if (!trimmed) return;
+        const trimmed = keyword.trim();
+        if (!trimmed) return;
 
-            dispatch(setKeyword(trimmed)); // input에 키워드 반영
+        dispatch(setKeyword(trimmed));
+        dispatch(setConfirmedKeyword(trimmed));
+        dispatch(setUploadedImage(null));
 
-            // userId 포함해서 텍스트 검색 API 호출
-            const result = await searchImageUnified({
-                imageFile: null,
-                imageUrl: null,
-                query: trimmed,
-                userId: userId || "anonymous"
-            });
-
-            dispatch(setSearchResults(result));
-            dispatch(setConfirmedKeyword(trimmed));
-            dispatch(setUploadedImage(null));
-            // dispatch(setKeyword("")); // 검색 완료 후 input 초기화
-
-            if (onClose) onClose();
-            navigate("/search");
-        } catch (err) {
-            console.error("검색 실패:", err);
-        }
+        if (onClose) onClose();
+        navigate(`/search?query=${encodeURIComponent(trimmed)}`);
     };
 
     // 개별 삭제
