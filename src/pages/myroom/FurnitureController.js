@@ -1,26 +1,26 @@
 // pages/myroom/FurnitureController.js
 
-import React from "react";
+import React, { useRef } from "react";
 import {ControllerBox, FlexBox} from "./css/MyRoom.styled";
 import CommonButton from "@/common/CommonButton";
 import { useApplyPlacement } from "@/hooks/useApplyPlacement";
 
-function FurnitureController({saveClick, aiClick}) {
+function FurnitureController({saveClick, aiClick, canvasRef}) {
 
-    const background = null;    // TODO: 실제 배경으로 교체
     const reference = null;     // TODO: 필요시 참조 이미지로
     const canvasSize = {width: 1024, height: 720} ;
 
     const applyPlacement = useApplyPlacement({
-        mode: "default", // 기본 동작 막아두기
-        background: background,
-        reference: reference,
-        canvasSize: canvasSize,
+        mode: "defaulf", // 기본 동작 막아두기
+        background: canvasRef,
+        reference,
+        canvasSize,
         setShowMask: () => {},
         setShowHelper: () => {},
     });
 
     const handlePlacementClick = () => {
+        console.log("배치 버튼 클릭됨");
         applyPlacement();
     }
 
