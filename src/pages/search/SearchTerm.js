@@ -48,16 +48,20 @@ function SearchTerm({onClose}) {
             const trimmed = keyword.trim();
             if (!trimmed) return;
 
-            dispatch(setKeyword(trimmed));           // input에 키워드 반영
+            dispatch(setKeyword(trimmed)); // input에 키워드 반영
 
-            const formData = new FormData();
-            formData.append("query", trimmed);
+            // userId 포함해서 텍스트 검색 API 호출
+            const result = await searchImageUnified({
+                imageFile: null,
+                imageUrl: null,
+                query: trimmed,
+                userId: userId || "anonymous"
+            });
 
-            const result = await searchImageUnified(formData);
             dispatch(setSearchResults(result));
             dispatch(setConfirmedKeyword(trimmed));
             dispatch(setUploadedImage(null));
-            dispatch(setKeyword(""));                // 검색 완료 후 input 초기화
+            // dispatch(setKeyword("")); // 검색 완료 후 input 초기화
 
             if (onClose) onClose();
             navigate("/search");
