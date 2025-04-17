@@ -5,6 +5,7 @@ import CommonTextField from "../../common/CommonTextField";
 import SearchIcon from "@mui/icons-material/Search";
 import GaguRegisterModal from "./ItemRegister";
 import { searchProducts, deleteAdminProducts } from "../../api/Admin";
+import Papa from "papaparse";
 
 function AdminHeader({ checkedItems, onRefresh, onSearchResults, searchTerm, setSearchTerm }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,6 +53,23 @@ function AdminHeader({ checkedItems, onRefresh, onSearchResults, searchTerm, set
     } catch (error) {
       console.error("삭제 실패:", error);
       alert("삭제 중 오류 발생");
+    }
+  };
+
+  //CSV 관련 
+  const handleCSVUpload = (event) =>{
+    const file = event.target.files[0];
+    if(file){
+      Papa.parse(file,{
+        complete: (result)=>{
+          console.log("CSV 파일 데이터:",result.data);
+
+          alert("CSV 파일이 성공적으로 불러와졌습니다.");
+          onRefresh();  //데이터 새로 고침
+        },
+        header:true,  //첫 번째 행을 헤더로 처리
+      });
+
     }
   };
 
@@ -106,6 +124,7 @@ function AdminHeader({ checkedItems, onRefresh, onSearchResults, searchTerm, set
             type="fill"
             bgColor="green"
             style={{ height: "32px", padding: "0 12px", fontSize: "14px" }}
+            onClick ={()=> document.getElementById("csv-upload").click()} //버튼 클릭시 파일 선택
           >
             CSV 파일 불러오기
           </CommonButton>
