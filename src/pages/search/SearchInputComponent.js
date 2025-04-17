@@ -31,18 +31,19 @@ const SearchInputComponent = ({
                                   imageFile,
                                   onClearImage,
                                   onCloseSearchTerm,
-                                  onSearch
+                                  onSearch,
+                                  inputValue,
+                                  setInputValue
         }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const recognitionRef = useRef(null); // 음성 인식 인스턴스 저장
     const fileRef = useRef(null);
 
-    const { keyword, updateKeyword } = useSearchHistory();
+    const { updateKeyword } = useSearchHistory();
     const uploadedImage = useSelector((state) => state.search.uploadedImage);
     const [isListening, setIsListening] = useState(false); // 음성
     const userId = useSelector((state) => state.auth.user?.userId || "anonymous");
-    const [inputValue, setInputValue] = useState(keyword || "");
 
     const {
         dialogOpen,
@@ -60,6 +61,7 @@ const SearchInputComponent = ({
     };
 
     const handleClearAll = () => {
+        setInputValue("");
         updateKeyword("");
         dispatch(setKeyword(""));
         dispatch(setUploadedImage(null)); // 상태 초기화
@@ -67,13 +69,14 @@ const SearchInputComponent = ({
         if (typeof onClearImage === "function") {
             onClearImage(); // 부모에서 미리보기까지 제거되도록 연결
         }
-
-        setInputValue(""); // input 필드 UI 초기화
     };
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
+            if (typeof setInputValue === "function") {
+                setInputValue(e.target.value.trim()); 
+            }
             if (typeof onSearch === "function") {
                 onSearch(e.target.value.trim()); // 검색 실행
             }

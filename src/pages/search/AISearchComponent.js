@@ -28,6 +28,7 @@ function AISearchComponent({
     const [showImageSearchBox, setShowImageSearchBox] = useState(false);
     const [imagePreviewUrl, setImagePreviewUrl] = useState("");
     const [imageFile, setImageFile] = useState(null);
+    const [inputValue, setInputValue] = useState("");
 
     const containerRef = useRef(null); // 전체 검색 영역 감싸는 div
     const isSubmittingRef = useRef(false);
@@ -58,12 +59,22 @@ function AISearchComponent({
         const trimmed = categoryName.trim();
         if (!trimmed) return;
 
-        goToSearch(trimmed); 
+        setInputValue(trimmed);
+        goToSearch(trimmed);
 
         setCategory(false);
         setIsFocused(false);
         setShowImageSearchBox(false);
     };
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const query = params.get("query");
+
+        if (query && inputValue === "") {
+            setInputValue(query); // 페이지 이동 후 검색어 복원
+        }
+    }, [location.search]);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -105,8 +116,8 @@ function AISearchComponent({
         if (isSubmittingRef.current) return;
         isSubmittingRef.current = true;
 
-        const searchText = inputKeyword || "";
-        const imageFileFromRef = imageFile;
+        const searchText = inputKeyword || inputValue || "";
+        // const imageFileFromRef = imageFile;
         const isFile = imageFile instanceof File;
         const isUrl = typeof imagePreviewUrl === "string" && (imagePreviewUrl.startsWith("http") || imagePreviewUrl.startsWith("blob:"));
 
@@ -121,7 +132,7 @@ function AISearchComponent({
 
             if (imagePreviewUrl) {
                 result = await searchImageUnified({
-                    imageFile: isFile ? imageFileFromRef : null,
+                    imageFile: isFile ? imageFile : null,
                     imageUrl: isUrl ? imagePreviewUrl : null,
                     query: searchText,
                     userId
@@ -142,10 +153,7 @@ function AISearchComponent({
                 setTimeout(() => {
                     dispatch(setSearchResults(result));
                     dispatch(setConfirmedKeyword(searchText));
-                    dispatch(setKeyword(""));
-                    dispatch(setUploadedImage(null));
-                    setImagePreviewUrl("");
-                    setImageFile(null);
+                    setInputValue(searchText);
                 }, 300);
             } else if (mode === "inline") {
                 if (typeof onSearchResults === "function") {
@@ -177,13 +185,21 @@ function AISearchComponent({
                     setSearchResults={setSearchResults}
                     onCloseSearchTerm={() => setIsFocused(false)} // 최근 검색어 닫기
                     onSearch={goToSearch}
+                    inputValue={inputValue}
+                    setInputValue={setInputValue}
                 />
             </div>
 
             {/* 검색창 마우스 hover시 */}
             <SearchExplanation visible={isHover}/>
             {/* 검색창 클릭시 */}
-            {isFocused && <SearchTerm onClose={() => setIsFocused(false)} />}
+            {isFocused && (
+                <SearchTerm
+                    onClose={() => setIsFocused(false)}
+                    onSearch={goToSearch}
+                    setInputValue={setInputValue}
+                />
+            )}
             {/* 카테고리 */}
             {category && <Category onSearch={handleSearchByCategory} setCategory={setCategory} />}
 
