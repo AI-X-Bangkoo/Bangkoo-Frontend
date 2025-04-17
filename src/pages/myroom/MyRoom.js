@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef} from "react";
 import { useDispatch } from "react-redux";
 import { GridBox, LeftPanel, MainLayout, RightPanel, TabBox } from "./css/MyRoom.styled";
 import FurnitureController from "./FurnitureController";
@@ -33,7 +33,7 @@ import { useSaveInterior } from "@/hooks/useSaveInterior";
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [selectedIndex, setselectedIndex] = useState([]);
+    const [selectedIndex, setselectedIndex] = useState(null);
     const openDrawer = () => setIsDrawerOpen(true);
     const closeDrawer = () => setIsDrawerOpen(false);
 
@@ -52,7 +52,7 @@ function MyRoom() {
     const addFurniture = useAddFurnitureWithToast();
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
     const handleSave = useSaveInterior(interiorSaveDialog.closeDialog);
-    
+    const resetObjectPositionRef = useRef();
     useGlobalInertEffect([
         furnitureDialog.open,
         interiorDialog.open,
@@ -98,13 +98,15 @@ function MyRoom() {
                 />
                 <ImageUploader
                     onImageUploaded={handleImageUploaded}
-                    onObjectSelect={(index) =>
-                        setselectedIndex((prev) =>
-                            prev.includes(index)
-                                ? prev.filter((i) => i !== index)
-                                : [...prev, index]
-                        )
-                    }
+                    // onObjectSelect={(index) =>
+                    //     setselectedIndex((prev) =>
+                    //         prev.includes(index)
+                    //             ? prev.filter((i) => i !== index)
+                    //             : [...prev, index]
+                    //     )
+                    // }
+                    onObjectSelect={(index) => setselectedIndex(index)}
+                    resetObjectPositionRef={resetObjectPositionRef}
                     selectedIndex={selectedIndex}        // ✅ 이거 꼭 추가!
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
                 />
@@ -136,20 +138,16 @@ function MyRoom() {
                 <GridBox>
                     {currentTab === "my" && <MyFurnitureTab
                         onCustomRemove={furnitureDialog.openDialog}
-                        onSelect={(index) => {
-                        // 여러개 세팅
+                        // onSelect={(index) => {
+                        // selectedIndex = index;
                         // setselectedIndex(prev => {
-                        // const updated = prev.includes(index)
-                        // ? prev.filter(i => i !== index)
-                        // : [...prev, index];
-                        // console.log("🎯 setselectedIndex 호출됨!", updated);
-                        // return updated;
-                        setselectedIndex(prev => {
-                            return prev === index ? null : index; // 같은 거 누르면 해제, 아니면 새로 선택
-                        });
-
-                    }
-                    }
+                        //     return prev === index ? null : index; // 같은 거 누르면 해제, 아니면 새로 선택
+                        // });
+                        // resetObjectPositionRef={resetObjectPositionRef}
+                        onSelect={(index) => setselectedIndex(index)}
+                        setselectedIndex={setselectedIndex}  // ✅ 이거 꼭 전달!!
+                        selectedIndex={selectedIndex}
+                        resetObjectPositionRef={resetObjectPositionRef}
                     />}
                     {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} />}
                     {currentTab === "interior" && <InteriorTab onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}

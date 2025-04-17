@@ -35,7 +35,7 @@ function MyRoom({saveClick, aiClick}) {
                     onClick={aiClick}
                     {...buttonProps}
                 >
-                    배치 결과 보기
+                    이미지 생성
                 </CommonButton>
                 <CommonButton
                     width="80px"
