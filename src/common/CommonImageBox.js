@@ -7,7 +7,8 @@ import {
     CheckboxArea,
     CenterBox,
     EyeOnChip,
-    EyeClosedChip
+    EyeClosedChip,
+    HoverTextBox
 } from "./css/ImageBox.styled"
 import CommonIconButton from "../common/CommonIconButton"
 import { ReactComponent as EyeOnIcon } from "../assets/images/Eye.svg";
@@ -18,6 +19,7 @@ import { ReactComponent as MinusIcon } from "../assets/images/MinusIcon.svg";
 import { ReactComponent as TrashIcon } from "../assets/images/TrashIcon.svg";
 import { ReactComponent as CheckIcon } from "../assets/images/CheckIcon.svg";
 import { ReactComponent as UnCheckIcon } from "../assets/images/UnCheckIcon.svg";
+import {Text} from "@/common/Typography";
 
 function CommonImageBox({
             image,
@@ -30,7 +32,8 @@ function CommonImageBox({
             onPlusMinus,
             onDelete,
             onCheck,
-            onClick
+            onClick,
+            recommendationReason
         }) {
 
     if (type === "basic" && onLink) {
@@ -38,6 +41,16 @@ function CommonImageBox({
             <a href={onLink} target="_blank" rel="noopener noreferrer" style={{ display: "block" }}>
                 <ImageBoxStyle>
                     <img src={image} alt="가구 이미지" />
+
+                    {recommendationReason && (
+                        <HoverTextBox>
+                            <Text size="sm" $weight={600} color="white">추천 이유</Text>
+                            <div>
+                                <Text size="xxs" $weight={600} color="white">{recommendationReason}</Text> 
+                            </div>
+                            
+                        </HoverTextBox>
+                    )}
                 </ImageBoxStyle>
             </a>
         );

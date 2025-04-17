@@ -96,7 +96,12 @@ function SearchPage() {
                 <GridBox>
                     {searchResults.map((item, index) => (
                         <div key={index}>
-                            <CommonImageBox image={item.이미지} type={"basic"} onLink={item.링크}/>
+                            <CommonImageBox
+                                image={item.이미지}
+                                type={"basic"}
+                                onLink={item.링크}
+                                recommendationReason={item.추천이유 && item.추천이유}
+                            />
 
                             <TextBox>
                                 <div>
