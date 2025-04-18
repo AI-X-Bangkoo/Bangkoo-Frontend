@@ -52,7 +52,7 @@ function MyRoom() {
     const aiDialog = useAIDialog();
     const addFurniture = useAddFurnitureWithToast();
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
-    const handleSave = useSaveInterior(interiorSaveDialog.closeDialog);
+    const handleSave = useSaveInterior(canvasRef, interiorSaveDialog.closeDialog);
     const resetObjectPositionRef = useRef();
     useGlobalInertEffect([
         furnitureDialog.open,
@@ -188,7 +188,7 @@ function MyRoom() {
                 onClose={interiorSaveDialog.closeDialog}
                 onClick={handleSave}
             >
-                <InteriorSave/>
+                <InteriorSave canvasRef={canvasRef}/>
             </CommonDialog>
 
             <CommonDialog

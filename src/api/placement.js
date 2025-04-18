@@ -1,4 +1,4 @@
-// src/api/placement.js
+// api/placement.js
 import api from "./axios";
 
 /**
