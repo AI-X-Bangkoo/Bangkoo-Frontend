@@ -14,8 +14,10 @@ import {
  * ✅ Redis 기반 Undo/Redo/SaveState 기능을 제공하는 커스텀 훅
  * - AI 결과를 히스토리로 관리
  * - 캔버스 및 미리보기 동기화에 활용
+ * 
+ * @param {string} sessionId - 히스토리를 구분할 세션 ID
  */
-export const usePlacementHistory = () => {
+export const usePlacementHistory = (sessionId) => {
   // 🔸 현재 이미지(base64)를 로컬 state로 관리 (프론트 동기화용)
   const [currentImage, setCurrentImage] = useState(null);
 
@@ -25,8 +27,8 @@ export const usePlacementHistory = () => {
    */
   const saveState = async (base64Image) => {
     try {
-      await pushPlacementState(base64Image);     // Redis에 push
-      setCurrentImage(base64Image);              // 프론트 미리보기용 state 업데이트
+      await pushPlacementState(base64Image, sessionId);     // Redis에 push
+      setCurrentImage(base64Image);                         // 프론트 미리보기용 state 업데이트
     } catch (err) {
       console.error("상태 저장 실패:", err);
     }
@@ -38,7 +40,7 @@ export const usePlacementHistory = () => {
    */
   const undo = async () => {
     try {
-      const prevImage = await undoPlacementState(); // Redis에서 pop
+      const prevImage = await undoPlacementState(sessionId); // Redis에서 pop
       if (prevImage) setCurrentImage(prevImage);
       return prevImage;
     } catch (err) {
@@ -53,7 +55,7 @@ export const usePlacementHistory = () => {
    */
   const redo = async () => {
     try {
-      const nextImage = await redoPlacementState(); // Redis에서 forward
+      const nextImage = await redoPlacementState(sessionId); // Redis에서 forward
       if (nextImage) setCurrentImage(nextImage);
       return nextImage;
     } catch (err) {
@@ -67,7 +69,7 @@ export const usePlacementHistory = () => {
    */
   const loadCurrent = async () => {
     try {
-      const current = await getCurrentPlacementState(); // Redis에서 peek
+      const current = await getCurrentPlacementState(sessionId); // Redis에서 peek
       if (current) setCurrentImage(current);
     } catch (err) {
       console.error("현재 상태 로드 실패:", err);
