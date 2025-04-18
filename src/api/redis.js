@@ -7,41 +7,39 @@ import api from "./axios";
 /**
  * 📌 현재 상태 저장 (undo stack에 push)
  * @param {string} base64 - base64 문자열
+ * @param {string} sessionId - 작업 세션 구분자
  */
-export async function pushPlacementState(base64) {
-  return await api.post("/api/redis/state", base64, {
+export async function pushPlacementState(base64, sessionId) {
+  return await api.post(`/api/redis/state?sessionId=${sessionId}`, base64, {
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "text/plain", // base64는 text로 보내는 게 안정적
     },
   });
 }
 
 /**
  * 🔙 되돌리기 (undo)
- * - 이전 상태를 불러온다
- * @returns {Promise<string|null>} - base64 문자열 또는 null
+ * @param {string} sessionId
  */
-export async function undoPlacementState() {
-  const response = await api.post("/api/redis/undo");
+export async function undoPlacementState(sessionId) {
+  const response = await api.post(`/api/redis/undo?sessionId=${sessionId}`);
   return response.data;
 }
 
 /**
  * 🔁 다시 실행 (redo)
- * - 되돌리기를 취소하고 이후 상태로 복원
- * @returns {Promise<string|null>} - base64 문자열 또는 null
+ * @param {string} sessionId
  */
-export async function redoPlacementState() {
-  const response = await api.post("/api/redis/redo");
+export async function redoPlacementState(sessionId) {
+  const response = await api.post(`/api/redis/redo?sessionId=${sessionId}`);
   return response.data;
 }
 
 /**
  * 📂 현재 상태 조회
- * - 가장 최근 저장된 base64 이미지
- * @returns {Promise<string|null>} - base64 문자열 또는 null
+ * @param {string} sessionId
  */
-export async function getCurrentPlacementState() {
-  const response = await api.get("/api/redis/state");
+export async function getCurrentPlacementState(sessionId) {
+  const response = await api.get(`/api/redis/state?sessionId=${sessionId}`);
   return response.data;
 }
