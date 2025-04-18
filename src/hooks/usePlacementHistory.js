@@ -23,8 +23,10 @@ export const usePlacementHistory = () => {
     try {
       const prevImage = await undoPlacementState();
       if (prevImage) setCurrentImage(prevImage);
+      return prevImage;
     } catch (err) {
       console.error("undo 실패:", err);
+      return null;
     }
   };
 
@@ -32,8 +34,10 @@ export const usePlacementHistory = () => {
     try {
       const nextImage = await redoPlacementState();
       if (nextImage) setCurrentImage(nextImage);
+      return nextImage;
     } catch (err) {
       console.error("redo 실패:", err);
+      return null;
     }
   };
 

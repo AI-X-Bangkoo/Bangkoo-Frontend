@@ -8,11 +8,13 @@ import {
     DeleteBox, MainCanvas,
     UploadBox,
     UploadContainer,
-    UploadInput,
+    UploadInput, UndoRedoBox
 } from "./css/ImageUploader.styled";
 import CommonButton from "@/common/CommonButton";
 import ImageRenderer from "./ImageRenderer";
 import axios from "axios";
+import { usePlacementHistory } from "@/hooks/usePlacementHistory";
+import {FaUndo, FaRedo} from "react-icons/fa";
 
 function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex, setselectedIndex,resetObjectPositionRef }) {
     const [imageUrl, setImageUrl] = useState(null);
@@ -28,6 +30,7 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
     const containerRef = useRef();
     const [imageWidth, setImageWidth] = useState(0);
     const [imageHeight, setImageHeight] = useState(0);
+    const { saveState, undo, redo } = usePlacementHistory();
 
     // const resetObjectPosition = (index) => {
     //     setDetectedObjects((prev) => {
@@ -77,7 +80,46 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
         }
     }, [resetObjectPositionRef]);
 
-
+    const handleUndo = async () => {
+        const base64 = await undo(); // ⬅️ 훅에서 base64 받아옴
+        if (!base64 || !canvasRef.current) return;
+      
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+      
+        const image = new Image();
+        image.onload = () => {
+          canvas.width = image.width;
+          canvas.height = image.height;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(image, 0, 0, image.width, image.height);
+      
+          bgImageRef.current = image;
+          setImageBase64(base64); // 마스크 재렌더링 위해 base64도 갱신
+        };
+        image.src = base64;
+      };
+      
+      const handleRedo = async () => {
+        const base64 = await redo();
+        if (!base64 || !canvasRef.current) return;
+      
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+      
+        const image = new Image();
+        image.onload = () => {
+          canvas.width = image.width;
+          canvas.height = image.height;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(image, 0, 0, image.width, image.height);
+      
+          bgImageRef.current = image;
+          setImageBase64(base64);
+        };
+        image.src = base64;
+      };
+      
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -129,6 +171,10 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
 
                 setDetectedObjects(filtered);
                 setImageBase64(res.data.original_image_base64);
+                
+                // 태원: 최초 업로드 base64 상태 저장
+                saveState(res.data.original_image_base64);
+
                 dispatch(setInitialFurniture(
                     filtered.map((item, index) => ({
                         id: Date.now() + index,
@@ -319,6 +365,14 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
     }, [detectedObjects, selectedIndex]);
     return (
         <>
+            <UndoRedoBox>
+                <CommonButton onClick={handleUndo}>
+                    <FaUndo style={{margin: 5}}/>
+                </CommonButton>
+                <CommonButton onClick={handleRedo}>
+                    <FaRedo style={{ margin: 5 }}/>
+                </CommonButton>
+            </UndoRedoBox>
             <DeleteBox>
                 <CommonButton
                     width="120px"

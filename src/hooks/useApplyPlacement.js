@@ -2,6 +2,7 @@
 import { mergeCanvasImages, canvasToBlob } from '@/common/utils/canvas';
 import { openImagePreview } from '@/common/utils/popup';
 import { requestPlacement } from '@/api/placement';
+import { usePlacementHistory } from './usePlacementHistory';
 
 /**
  * mode에 따라 AI 배치를 요청하는 훅
@@ -12,7 +13,10 @@ import { requestPlacement } from '@/api/placement';
  * @param {Function} setShowMask - 마스킹 UI 표시 함수
  */
 export const useApplyPlacement = ({ mode, background, reference, canvasSize, setShowMask, setShowHelper }) => {
-  return async () => {
+
+  const { saveState } = usePlacementHistory();
+  
+    return async () => {
     setShowMask(true);
     setShowHelper(false);
     await new Promise(resolve => setTimeout(resolve, 200));
@@ -23,7 +27,6 @@ export const useApplyPlacement = ({ mode, background, reference, canvasSize, set
       alert("캔버스를 찾을 수 없습니다.");
       return;
     }
-
 
     const canvas = canvasRef.current;
 
@@ -39,15 +42,17 @@ export const useApplyPlacement = ({ mode, background, reference, canvasSize, set
 
     // ✅ 4. 🎯 캔버스 업데이트
     const image = new Image();
-    image.onload = () => {
+    image.onload = async () => {
       const ctx = canvas.getContext("2d");
       canvas.width = image.width;
       canvas.height = image.height;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    // 5. Redis History 저장
+      await saveState(`data:image/png;base64,${base64}`);
     };
     image.src = `data:image/png;base64,${base64}`;
-
       alert(`AI ${mode} 처리 성공!`);
     } catch (err) {
       console.error(`AI 서버 ${mode} 처리 실패:`, err);
