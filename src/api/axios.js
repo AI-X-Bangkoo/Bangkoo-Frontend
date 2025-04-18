@@ -24,7 +24,7 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       console.warn("🔐 토큰 만료됨 - 자동 로그아웃");
       Cookies.remove("jwtToken");
-      window.location.href = "/login"; // 👉 로그인 경로에 맞게 수정
+      window.location.href = "/"; 
     }
     return Promise.reject(error);
   }
