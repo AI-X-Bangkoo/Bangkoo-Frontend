@@ -1,10 +1,13 @@
 import React, {useState, useEffect} from "react";
 import {
-    ButtonBox, CloseButton,
+    ButtonBox,
+    CloseButton,
+    NoContent,
     Content,
     DrawerRoot,
     DrawerWrapper,
     SearchBox,
+    KeywordBox,
     TextBox
 } from "./css/SearchDrawer.styled";
 import {Text} from "@/common/Typography";
@@ -17,11 +20,16 @@ import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
 import { addFurniture } from "@/features/furniture/furnitureSlice";
 import { useSelector, useDispatch } from "react-redux";
 import useCheckedFurniture from "@/hooks/furniture/useCheckedFurniture";
+import LoadingSpinner from "@/common/LoadingSpinner";
 
 const SearchDrawer = ({ onClose }) => {
     const [isOpen, setIsOpen] = useState(false); // 애니메이션 제어용
     const dispatch = useDispatch();
     const myFurniture = useSelector((state) => state.furniture.list);
+    const [list, setList] = useState([]);
+    const [confirmedKeyword, setConfirmedKeyword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingDots, setLoadingDots] = useState("");
 
     const {
         checkedItems,
@@ -35,9 +43,16 @@ const SearchDrawer = ({ onClose }) => {
         requestAnimationFrame(() => setIsOpen(true));
     }, []);
 
+    useEffect(() => {
+        if (!isLoading) return;
+        const interval = setInterval(() => {
+            setLoadingDots(prev => prev === "..." ? "" : prev + ".");
+        }, 500);
+        return () => clearInterval(interval);
+    }, [isLoading]);
+
     const isInMyFurniture = (itemId) =>
         myFurniture.some((f) => f.originalId === itemId);
-
 
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
@@ -48,53 +63,50 @@ const SearchDrawer = ({ onClose }) => {
         }
     };
 
-    const list = [
-        {
-            id: 0,
-            image: TestImage,
-            link: 'https://www.ikea.com/kr/ko/p/lagan-integrated-dishwasher-40568019/',
-            title: 'LAGAN 라간',
-            text: '빌트인 식기세척기, 60 cm',
-            price: 699000,
-            isCheckable: true,
-        },
-        {
-            id: 1,
-            image: TestImage,
-            link: 'https://www.ikea.com/kr/ko/p/lagan-integrated-dishwasher-40568019/',
-            title: 'LAGAN 라간',
-            text: '빌트인 식기세척기, 60 cm',
-            price: 699000,
-            isCheckable: true,
-        },
-        {
-            id: 2,
-            image: TestImage,
-            link: 'https://www.ikea.com/kr/ko/p/lagan-integrated-dishwasher-40568019/',
-            title: 'LAGAN 라간',
-            text: '빌트인 식기세척기, 60 cm',
-            price: 699000,
-            isCheckable: false,
-        },
-        {
-            id: 3,
-            image: TestImage,
-            link: 'https://www.ikea.com/kr/ko/p/lagan-integrated-dishwasher-40568019/',
-            title: 'LAGAN 라간',
-            text: '빌트인 식기세척기, 60 cm',
-            price: 699000,
-            isCheckable: false,
-        },
-        {
-            id: 4,
-            image: TestImage,
-            link: 'https://www.ikea.com/kr/ko/p/lagan-integrated-dishwasher-40568019/',
-            title: 'LAGAN 라간',
-            text: '빌트인 식기세척기, 60 cm',
-            price: 699000,
-            isCheckable: true,
-        },
-    ]
+    const renderResults = () => {
+        if (isLoading) {
+            return (
+                <NoContent>
+                    <LoadingSpinner />
+                    <Text size="base" $weight={500}>로딩중{loadingDots}</Text>
+                </NoContent>
+            );
+        }
+        if (list.length === 0) {
+            return (
+                <NoContent>
+                    <Text size="base" $weight={500} color="dark" style={{ textAlign: "center", marginTop: "100px" }}>
+                        검색 결과가 없습니다.
+                    </Text>
+                </NoContent>
+            );
+        }
+        return (
+            <Content>
+                {list.map((item, index) => (
+                    <div key={index}>
+                        <CommonImageBox
+                            image={item.이미지}
+                            type="checkbox"
+                            isChecked={!!checkedItems[index] || isInMyFurniture(index)}
+                            onLink={item.링크}
+                            onCheck={() => toggle(index)}
+                            recommendationReason={item.추천이유}
+                        />
+                        <TextBox>
+                            <Text size="xs" $weight={800}>{item.이름}</Text>
+                            <Text size="xs" $weight={600}>{item.설명}</Text>
+                            <Text size="xs" $weight={800}>
+                                ₩{item.할인가 != null ? item.할인가.toLocaleString() : item.정상가 != null ? item.정상가.toLocaleString() : "-"}
+                            </Text>
+                        </TextBox>
+
+
+                    </div>
+                ))}
+            </Content>
+        );
+    };
 
     return (
         <DrawerRoot onClick={handleOverlayClick}>
@@ -102,42 +114,31 @@ const SearchDrawer = ({ onClose }) => {
                 <Text size="base" $weight={800}>가구검색</Text>
 
                 <SearchBox>
-                    <AISearchComponent/>
+                    <AISearchComponent
+                        mode="inline"
+                        onSearchStart={() => {
+                            setIsLoading(true);
+                            setList([]);
+                        }}
+                        onSearchResults={(result, keyword) => {
+                            setList(result);
+                            setConfirmedKeyword(keyword);
+                            setIsLoading(false);
+                        }}
+                    />
                 </SearchBox>
 
-                <TextBox>
-                    <Text
-                        size="sm"
-                        $weight={800}
-                    >
-                        의자 <span style={{fontWeight: 500}}>(10,500)</span>
+                <KeywordBox>
+                    <Text size="sm" $weight={800}>
+                        {confirmedKeyword || "검색어"} <span style={{fontWeight: 500}}>({list.length})</span>
                     </Text>
-                    <Text
-                        size="xxs"
-                        $weight={600}
-                        color="red"
-                    >
+                    <Text size="xxs" $weight={600} color="red">
                         * 체크된 가구만 배치가 가능합니다.
                     </Text>
-                </TextBox>
+                </KeywordBox>
 
 
-                <Content>
-                    {list.map((item) => (
-                        <div key={item.id}>
-                            <CommonImageBox
-                                image={item.image}
-                                type={item.isCheckable ? "checkbox" : "basic"}
-                                isChecked={!!checkedItems[item.id] || isInMyFurniture(item.id)}
-                                onLink={item.link}
-                                onCheck={() => toggle(item.id)}
-                            />
-                            <Text size="base" $weight={800}>{item.title}</Text>
-                            <Text size="xs" $weight={600}>{item.text}</Text>
-                            <Text size="xs" $weight={800}>₩ {item.price.toLocaleString()}</Text>
-                        </div>
-                    ))}
-                </Content>
+                {renderResults()}
 
                 <ButtonBox>
                     <CommonButton
@@ -149,15 +150,15 @@ const SearchDrawer = ({ onClose }) => {
                         type="fill"
                         onClick={() => {
                             const selectedIds = getCheckedIds();
-                            const selectedFurniture = list.filter(item =>
-                                selectedIds.includes(item.id)
+                            const selectedFurniture = list.filter( index =>
+                                selectedIds.includes(index)
                             );
 
-                            selectedFurniture.forEach((item) => {
+                            selectedFurniture.forEach((item, index) => {
                                 dispatch(addFurniture({
                                     ...item,
                                     id: Date.now() + Math.random(),
-                                    originalId: item.id,
+                                    originalId: index,
                                     type: "hoverMinus",
                                     isCustom: true,
                                 }));
