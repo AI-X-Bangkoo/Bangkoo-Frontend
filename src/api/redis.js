@@ -43,3 +43,11 @@ export async function getCurrentPlacementState(sessionId) {
   const response = await api.get(`/api/redis/state?sessionId=${sessionId}`);
   return response.data;
 }
+
+/**
+ * 🧹 세션별 히스토리 삭제
+ * @param {string} sessionId - 삭제할 세션 ID
+ */
+export async function clearPlacementSession(sessionId) {
+  return await api.delete(`/api/redis/clear?sessionId=${sessionId}`);
+}
