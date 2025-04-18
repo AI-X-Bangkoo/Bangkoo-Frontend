@@ -10,6 +10,9 @@ import {
   logoutThunk,
 } from "../../features/auth/authSlice";
 import Cookies from "js-cookie";
+import { clearAllCachedSearch } from "@/features/search/cachedSearchSlice";
+import { clearAllSelections } from "@/features/furniture/selectionSlice";
+import { clearRecentKeywords } from "@/features/search/searchSlice";
 
 // 쿠키에서 값 가져오기 함수 (디코딩 처리 포함)
 const getCookieValue = (name) => {
@@ -47,6 +50,11 @@ const useAuth = () => {
       document.cookie = "nickname=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
       document.cookie = "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
       document.cookie = "userId=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+
+      // Redux 상태 초기화
+      dispatch(clearAllCachedSearch());
+      dispatch(clearAllSelections());
+      dispatch(clearRecentKeywords());
 
       // 페이지 이동 처리
       navigate("/", { replace: true });
