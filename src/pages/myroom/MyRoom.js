@@ -37,12 +37,13 @@ function MyRoom() {
     const openDrawer = () => setIsDrawerOpen(true);
     const closeDrawer = () => setIsDrawerOpen(false);
     const canvasRef = useRef(null);
+    const uploaderRef = useRef(null);
 
     // 이미지 등록 시 상태 값 체크용도 "김범석"
     const [isImageUploaded, setIsImageUploaded] = useState(false);
-    const handleImageUploaded = (uploaded) => {
-        setIsImageUploaded(uploaded);
-    };
+    // const handleImageUploaded = (uploaded) => {
+    //     setIsImageUploaded(uploaded);
+    // };
     //  여기까지
     const dispatch = useDispatch();
     const furnitureDialog = useFurnitureDialog();
@@ -54,6 +55,7 @@ function MyRoom() {
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
     const handleSave = useSaveInterior(canvasRef, interiorSaveDialog.closeDialog);
     const resetObjectPositionRef = useRef();
+    const [centerArea, setCenterArea] = useState(null);
     useGlobalInertEffect([
         furnitureDialog.open,
         interiorDialog.open,
@@ -97,21 +99,17 @@ function MyRoom() {
                     saveClick={interiorSaveDialog.openDialog}
                     aiClick={aiDialog.openDialog}
                     canvasRef={canvasRef}
+                    centerArea={centerArea} // ⬅️ 전달
+                    handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
                 />
                 <ImageUploader
+                    ref={uploaderRef}
                     canvasRef={canvasRef}
-                    onImageUploaded={handleImageUploaded}
-                    // onObjectSelect={(index) =>
-                    //     setselectedIndex((prev) =>
-                    //         prev.includes(index)
-                    //             ? prev.filter((i) => i !== index)
-                    //             : [...prev, index]
-                    //     )
-                    // }
                     onObjectSelect={(index) => setselectedIndex(index)}
                     resetObjectPositionRef={resetObjectPositionRef}
                     selectedIndex={selectedIndex}        // ✅ 이거 꼭 추가!
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
+                    setCenterArea={setCenterArea} // ⬅️ 이거 추가
                 />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >

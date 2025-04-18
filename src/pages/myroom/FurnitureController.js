@@ -9,7 +9,7 @@ import { ControllerBox, FlexBox } from "./css/MyRoom.styled";
 import CommonButton from "@/common/CommonButton";
 import { useApplyPlacement } from "@/hooks/useApplyPlacement";
 
-function FurnitureController({ saveClick, aiClick, canvasRef }) {
+function FurnitureController({ saveClick, aiClick, canvasRef,centerArea }) {
     // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
     const reference = null;
 
@@ -29,6 +29,7 @@ function FurnitureController({ saveClick, aiClick, canvasRef }) {
         canvasSize,
         setShowMask: () => {},
         setShowHelper: () => {},
+        centerArea,
     });
 
     /**

@@ -6,6 +6,7 @@ import { mergeCanvasImages, canvasToBlob } from '@/common/utils/canvas';
 import { openImagePreview } from '@/common/utils/popup';
 import { requestPlacement } from '@/api/placement';
 import { usePlacementHistory } from './usePlacementHistory';
+import base64ToFile from '../pages/myroom/event/base64ToFile';
 
 /**
  * ✅ AI 배치 요청을 처리하는 커스텀 훅
@@ -16,10 +17,28 @@ import { usePlacementHistory } from './usePlacementHistory';
  * @param {Function} setShowMask - 마스킹 UI 표시 토글 함수
  * @param {Function} setShowHelper - 헬퍼 UI 토글 함수
  */
-export const useApplyPlacement = ({ mode, background, reference, canvasSize, setShowMask, setShowHelper }) => {
+export const useApplyPlacement = ({ mode, background, reference, canvasSize, setShowMask, setShowHelper, centerArea,handleFileChange }) => {
   
   // 🔸 Redis 기반 배치 히스토리 저장 함수 (undo/redo용)
   const { saveState } = usePlacementHistory();
+  // 🔧 가운데 영역만 잘라서 Blob으로 만드는 유틸
+  const extractCenterImageBlob = async (canvas, centerArea) => {
+    const { x, y, width, height } = centerArea;
+
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+
+    const tempCtx = tempCanvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
+    const imageData = ctx.getImageData(x, y, width, height);
+    tempCtx.putImageData(imageData, 0, 0);
+
+    return new Promise((resolve) =>
+        tempCanvas.toBlob((blob) => resolve(blob), "image/png", 1.0)
+    );
+  };
+
 
   return async () => {
     // ✅ UI 상태 초기화
@@ -38,9 +57,8 @@ export const useApplyPlacement = ({ mode, background, reference, canvasSize, set
     const canvas = canvasRef.current;
 
     // ✅ 1. 현재 캔버스 내용을 Blob으로 변환 (서버 전송용)
-    const blob = await new Promise((resolve) =>
-      canvas.toBlob((b) => resolve(b), "image/png", 1.0)
-    );
+    const blob = await extractCenterImageBlob(canvas, centerArea);
+
 
     // ✅ 2. 서버에 요청 전송 및 결과 수신 (Base64 형태 이미지)
     try {
@@ -59,6 +77,14 @@ export const useApplyPlacement = ({ mode, background, reference, canvasSize, set
 
         // ✅ 4. Redis 히스토리로 저장 (Undo/Redo용)
         await saveState(`data:image/png;base64,${base64}`);
+        const file = base64ToFile(`data:image/png;base64,${base64}`, "ai_result.png");
+        if (typeof handleFileChange === 'function') {
+          console.log("function handler 타기 완료");
+          const dummyEvent = { target: { files: [file] } };  // 이벤트 모방
+          handleFileChange(dummyEvent); // ✅ 핵심!
+        }
+        console.log("%c[ApplyPlacement] 📥 AI 결과 base64 수신 완료", "color: green;");
+        console.log("%c[ApplyPlacement] 🔄 handleFileChange로 전달 시작", "color: blue;");
       };
       image.src = `data:image/png;base64,${base64}`;
 
