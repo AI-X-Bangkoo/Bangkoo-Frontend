@@ -148,8 +148,8 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
 
             const formData = new FormData();
             formData.append("file", resizedFile);
-            formData.append("canvasWidth", divWidth);   // ⬅️ 추가
-            formData.append("canvasHeight", divHeight); // ⬅️ 추가
+            formData.append("canvasWidth", 1024);   // ⬅️ 추가
+            formData.append("canvasHeight", 455); // ⬅️ 추가
 
             try {
                 const res = await axios.post("http://localhost:8080/api/detect_all_base64", formData);
@@ -235,6 +235,7 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
         }
 
         ctx.stroke();
+        console.log(obj.bbox);
     };
 
 
@@ -275,7 +276,7 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
             // canvas.height = image.height;
             setImageWidth(image.width);
             setImageHeight(image.height);
-
+            console.log("imageUploader : " ,image.width, image.height);
             ctx.drawImage(image, 0, 0, image.width, image.height);
         };
         image.src = imageBase64;
