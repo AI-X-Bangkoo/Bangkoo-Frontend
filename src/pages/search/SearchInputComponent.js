@@ -3,10 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
     setUploadedImage,
-    setSearchResults,
-    setConfirmedKeyword,
     setKeyword,
-    setLoading
 } from "@/features/search/searchSlice";
 import {
     SearchRoot,
@@ -21,7 +18,6 @@ import { ReactComponent as MenuIcon } from "@/assets/images/MenuIcon.svg";
 import { ReactComponent as ImageIcon } from "@/assets/images/ImageIcon.svg";
 import CommonTextField from "@/common/CommonTextField";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
-import { searchByText, searchImageUnified } from "@/api/search/search";
 import useSearchDialog from "@/hooks/dialog/useSearchDialog";
 import CommonDialog from "@/common/CommonDialog";
 
@@ -34,19 +30,20 @@ const SearchInputComponent = ({
                                   imagePreviewUrl,
                                   imageFile,
                                   onClearImage,
-                                  onCloseSearchTerm
+                                  onCloseSearchTerm,
+                                  onSearch,
+                                  inputValue,
+                                  setInputValue
         }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const recognitionRef = useRef(null); // 음성 인식 인스턴스 저장
-    const isSubmittingRef = useRef(false); // 중복 방지용 ref
     const fileRef = useRef(null);
 
-    const { keyword, updateKeyword } = useSearchHistory();
+    const { updateKeyword } = useSearchHistory();
     const uploadedImage = useSelector((state) => state.search.uploadedImage);
     const [isListening, setIsListening] = useState(false); // 음성
     const userId = useSelector((state) => state.auth.user?.userId || "anonymous");
-    const [inputValue, setInputValue] = useState("");
 
     const {
         dialogOpen,
@@ -64,17 +61,26 @@ const SearchInputComponent = ({
     };
 
     const handleClearAll = () => {
+        setInputValue("");
         updateKeyword("");
         dispatch(setKeyword(""));
-        dispatch(setUploadedImage(null));
-        if (typeof onClearImage === "function") onClearImage();
+        dispatch(setUploadedImage(null)); // 상태 초기화
+
+        if (typeof onClearImage === "function") {
+            onClearImage(); // 부모에서 미리보기까지 제거되도록 연결
+        }
     };
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
-            goToSearch(e.target.value.trim());
-            if (typeof onFocus === "function") {
+            if (typeof setInputValue === "function") {
+                setInputValue(e.target.value.trim()); 
+            }
+            if (typeof onSearch === "function") {
+                onSearch(e.target.value.trim()); // 검색 실행
+            }
+            if (typeof onCloseSearchTerm === "function") {
                 onCloseSearchTerm();
             }
         }
@@ -87,70 +93,6 @@ const SearchInputComponent = ({
             fileRef.current = null;
         }
     }, [imageFile]);
-
-    const goToSearch = async (inputKeyword) => {
-
-        if (isSubmittingRef.current) return; // 중복 호출 방지
-        isSubmittingRef.current = true;
-
-        const searchText = inputKeyword || keyword || "";
-
-        // 이미지가 'File 객체'가 아니고 URL일 경우, URL 넘기기
-        const imageFileFromRef = fileRef.current;
-        const isFile = imageFile instanceof File;
-        const isUrl = typeof uploadedImage === "string" && (uploadedImage.startsWith("http") || uploadedImage.startsWith("blob:"));
-        
-        if (!searchText && !uploadedImage) {
-            isSubmittingRef.current = false;
-            return;
-        }
-
-        try {
-            dispatch(setLoading(true));
-
-            // 검색 API 호출
-            let result;
-
-            if (uploadedImage) {
-                // 이미지 기반 검색 (URL 또는 파일)
-                result = await searchImageUnified({
-                    imageFile: isFile ? imageFileFromRef : null,
-                    imageUrl: isUrl ? uploadedImage : null,
-                    query: searchText,
-                    userId
-                });
-            }  else if (searchText) {
-                // 텍스트만 있을 때
-                result = await searchByText(searchText, userId);
-            } else {
-                isSubmittingRef.current = false;
-                return;
-            }
-
-            const params = new URLSearchParams();
-            if (searchText) params.append("query", searchText);
-            if (uploadedImage) params.append("image", uploadedImage); // 필요 시만
-
-            // 먼저 이동
-            navigate(`/search?${params.toString()}`);
-
-            // 잠깐 딜레이를 줘서 useEffect에서 uploadedImage를 아직 볼 수 있도록 함
-            setTimeout(() => {
-                dispatch(setSearchResults(result));
-                dispatch(setConfirmedKeyword(searchText));
-                dispatch(setKeyword(""));
-                dispatch(setUploadedImage(null)); // ← 이게 너무 빨라서 문제였음
-                if (typeof onCloseSearchTerm === "function") onCloseSearchTerm();
-            }, 300); // 300ms 정도면 충분합니다
-
-        } catch (error) {
-            console.error("검색 실패:", error);
-
-        } finally {
-            isSubmittingRef.current = false;
-            dispatch(setLoading(false));
-        }
-    };
 
     const startVoiceSearch = () => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -180,9 +122,12 @@ const SearchInputComponent = ({
         recognition.onend = async () => {
             setIsListening(false);
             if (finalTranscript.trim()) {
+                setInputValue(finalTranscript);
                 updateKeyword(finalTranscript);
                 dispatch(setKeyword(finalTranscript));
-                await goToSearch(finalTranscript); // 음성 입력도 검색 저장과 함께 실행
+                if (typeof onSearch === "function") {
+                    await onSearch(finalTranscript); // 검색 실행
+                }
             } else {
                 console.warn("🎤 음성 결과 없음");
             }
@@ -242,7 +187,11 @@ const SearchInputComponent = ({
             <CommonIconButton
                 type={"none"}
                 icon={<SearchIcon />}
-                onClick={() => goToSearch(inputValue)}
+                onClick={() => {
+                    if (typeof onSearch === "function") {
+                        onSearch(inputValue); // 검색 버튼 클릭 시 실행
+                    }
+                }}
             />
 
             {dialogOpen && (

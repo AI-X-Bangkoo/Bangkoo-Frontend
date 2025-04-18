@@ -33,7 +33,9 @@ function CommonImageBox({
             onDelete,
             onCheck,
             onClick,
-            recommendationReason
+            recommendationReason,
+            item,   //Gemini 전달 값으로 사용
+            index   //Gemini 전달 값으로 사용
         }) {
 
     if (type === "basic" && onLink) {
@@ -129,9 +131,10 @@ function CommonImageBox({
                     <CommonIconButton // onClick={onMinus}
                                       onClick={(e) => {
                                           e.stopPropagation(); // ✅ 공통 처리
-                                          onMinus?.(e);
+                                          // onMinus?.(item,index);
+                                          if (onMinus) onMinus(item, index); // 직접 props로 넘긴 item/index 사용
                                       }}
-                                      color="red" icon={<MinusIcon />} {...buttonProps}/>
+                                      color="red" icon={<TrashIcon />} {...buttonProps}/>
                 </BottomRightBox>
             )}
             {/* 하단 플러스 버튼 (eyeClosed) */}

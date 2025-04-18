@@ -55,7 +55,7 @@ function FurnitureController({saveClick, aiClick, canvasRef}) {
                     onClick={handlePlacementClick} // mode 값을 상태에서 전달받고 useApplyPlacement() 실행
                     {...buttonProps}
                 >
-                    배치 결과 보기  
+                    이미지 생성
                 </CommonButton>
                 <CommonButton
                     width="80px"

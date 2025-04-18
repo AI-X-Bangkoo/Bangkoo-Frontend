@@ -7,7 +7,7 @@ import {Text} from "@/common/Typography";
 import CommonButton from "@/common/CommonButton";
 import CommonImageBox from "@/common/CommonImageBox";
 import useAuth from "@/hooks/login/useAuth";
-import { setSearchResults, setConfirmedKeyword, setLoading } from "@/features/search/searchSlice";
+import { setSearchResults, setConfirmedKeyword, setUploadedImage, setLoading } from "@/features/search/searchSlice";
 import { searchByText, searchImageUnified } from "@/api/search/search";
 import LoadingSpinner from "@/common/LoadingSpinner";
 
@@ -16,14 +16,18 @@ function SearchPage() {
     const dispatch = useDispatch();
     const location = useLocation();
     const { isLoggedIn, login, user } = useAuth(); // 로그인 상태, 로그인 함수
-    const isLoading = useSelector(state => state.search.isLoading); // 로딩
-    const [loadingDots, setLoadingDots] = useState(""); // 로딩
+    const userId = user?.userId || "anonymous";
 
+    const isLoading = useSelector(state => state.search.isLoading); // 로딩
     const searchResults = useSelector((state) => state.search.resultList); // 검색 결과 불러오기
     const keyword = useSelector((state) => state.search.confirmedKeyword); // Redux에서 검색어 가져오기
-    // const uploadedImage = useSelector((state) => state.search.uploadedImage);
 
-    const userId = user?.userId || "anonymous";
+    const [loadingDots, setLoadingDots] = useState(""); // 로딩
+
+    // location.state에서 전달된 값 추출
+    const preloadResult = location.state?.result;
+    const preloadImage = location.state?.imagePreviewUrl;
+    const preloadKeyword = location.state?.confirmedKeyword;
 
     const goToRoom = () => {
         if (isLoggedIn) {
@@ -53,18 +57,39 @@ function SearchPage() {
         const query = params.get("query");
         const imageParam = params.get("image");
 
-        const fetchSearchResult = async () => {
-            if (!query) return;
+        if (preloadResult) {
+            dispatch(setSearchResults(preloadResult));
+            dispatch(setConfirmedKeyword(preloadKeyword));
+            dispatch(setUploadedImage(preloadImage));
+            return;
+        }
 
+        const fetchSearchResult = async () => {
             try {
                 dispatch(setLoading(true));
-                const decodedQuery = decodeURIComponent(query);
+                let result;
 
-                if (!imageParam) {
-                    const result = await searchByText(decodedQuery, userId);
-                    dispatch(setSearchResults(result));
-                    dispatch(setConfirmedKeyword(decodedQuery));
+                const decodedQuery = decodeURIComponent(query || "");
+
+                const isValidImageUrl =
+                    typeof imageParam === "string" &&
+                    (imageParam.startsWith("http") || imageParam.startsWith("blob:"));
+
+                if (imageParam && isValidImageUrl) {
+                    result = await searchImageUnified({
+                        imageFile: null,
+                        imageUrl: imageParam,
+                        query: decodedQuery,
+                        userId
+                    });
+                } else if (query) {
+                    result = await searchByText(decodedQuery, userId);
+                } else {
+                    return;
                 }
+
+                dispatch(setSearchResults(result));
+                dispatch(setConfirmedKeyword(decodedQuery));
             } catch (err) {
                 console.error("검색 실패:", err);
             } finally {
@@ -73,11 +98,8 @@ function SearchPage() {
         };
 
         fetchSearchResult();
+    }, [location.search]);
 
-        return () => {
-            dispatch(setSearchResults([]));
-        };
-    }, [location.search, userId, dispatch]);
 
     return (
         <SearchRoot>

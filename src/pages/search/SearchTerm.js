@@ -29,11 +29,10 @@ import {
     fetchRecentSearches,
     deleteSearchItem,
     deleteAllSearchLogs,
-    searchImageUnified,
     fetchPopularSearches
 } from "@/api/search/search";
 
-function SearchTerm({onClose}) {
+function SearchTerm({onClose, onSearch, setInputValue}) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { autoSave, toggleAuto } = useSearchHistory();
@@ -44,26 +43,21 @@ function SearchTerm({onClose}) {
     
     // 검색 실행
     const handleSearch = async (keyword) => {
-        try {
-            const trimmed = keyword.trim();
-            if (!trimmed) return;
+        const trimmed = keyword.trim();
+        if (!trimmed) return;
 
-            dispatch(setKeyword(trimmed));           // input에 키워드 반영
+        dispatch(setConfirmedKeyword(trimmed));
+        dispatch(setUploadedImage(null));
 
-            const formData = new FormData();
-            formData.append("query", trimmed);
-
-            const result = await searchImageUnified(formData);
-            dispatch(setSearchResults(result));
-            dispatch(setConfirmedKeyword(trimmed));
-            dispatch(setUploadedImage(null));
-            dispatch(setKeyword(""));                // 검색 완료 후 input 초기화
-
-            if (onClose) onClose();
-            navigate("/search");
-        } catch (err) {
-            console.error("검색 실패:", err);
+        if (typeof setInputValue === "function") {
+            setInputValue(trimmed);
         }
+
+        if (typeof onSearch === "function") {
+            onSearch(trimmed); // 검색 실행
+        }
+
+        if (onClose) onClose();
     };
 
     // 개별 삭제
