@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUploadedImage, setSearchResults, setConfirmedKeyword, setKeyword, setLoading } from "@/features/search/searchSlice";
+import { setUploadedImage, setSearchResults, setConfirmedKeyword, setLoading } from "@/features/search/searchSlice";
 import SearchInputComponent from "./SearchInputComponent";
 import SearchExplanation from "./SearchExplanation";
 import SearchTerm from "./SearchTerm";
@@ -13,7 +13,8 @@ import useAuth from "@/hooks/login/useAuth";
 
 function AISearchComponent({
     mode = "redirect", // "redirect" or "inline"
-    onSearchResults // 검색 결과 콜백 (inline 모드 전용)
+    onSearchResults, // 검색 결과 콜백 (inline 모드 전용)
+    onSearchStart
 }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -78,10 +79,10 @@ function AISearchComponent({
 
         const stateImage = location.state?.imagePreviewUrl;
         if (stateImage && imagePreviewUrl === "") {
-            setImagePreviewUrl(stateImage);
+            setImagePreviewUrl(stateImage); // blob URL 사용
             dispatch(setUploadedImage(stateImage));
         } else if (imageParam && imagePreviewUrl === "") {
-            setImagePreviewUrl(imageParam);
+            setImagePreviewUrl(imageParam); // URL 기반
         }
     }, [location.search, location.state]);
 
@@ -135,9 +136,9 @@ function AISearchComponent({
         }
 
         try {
-            dispatch(setLoading(true));
-
             if (mode === "inline") {
+                if (typeof onSearchStart === "function") onSearchStart();
+                
                 let result;
                 if (imagePreviewUrl) {
                     result = await searchImageUnified({
@@ -150,10 +151,12 @@ function AISearchComponent({
                     result = await searchByText(searchText, userId);
                 }
                 if (typeof onSearchResults === "function") {
-                    onSearchResults(result);
+                    onSearchResults(result, searchText);
                 }
 
             } else if (mode === "redirect") {
+                dispatch(setLoading(true));
+                
                 if (isFile) {
                     const result = await searchImageUnified({
                         imageFile,
