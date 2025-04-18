@@ -103,6 +103,7 @@ export const CheckboxArea = styled.div`
   bottom: 8px;
   right: 8px;
   cursor: pointer;
+  z-index: 10;
 `;
 
 export const HoverTextBox = styled.div`
