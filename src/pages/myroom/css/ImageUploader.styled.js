@@ -8,6 +8,12 @@ export const DeleteBox = styled.div`
   }
 `;
 
+export const UndoRedoBox = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+`;
+
 export const UploadContainer = styled.div`
   //width: 100%;
   //max-width: 800px;
