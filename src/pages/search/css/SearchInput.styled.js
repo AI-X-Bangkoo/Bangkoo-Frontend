@@ -72,6 +72,7 @@ export const SearchBox = styled.div`
   justify-content: center;
   align-items: center;
   box-shadow: 0 4px 4px rgba(0,0,0,0.25);
+  z-index: 20;
 
   ${media.tablet`
     top: 70px;
@@ -252,6 +253,7 @@ export const CategoryBox = styled.div`
   box-shadow: 0 4px 4px rgba(0,0,0,0.25);
   border-radius: ${({ theme }) => theme.borderRadius.sm};
   overflow-y: auto;
+  z-index: 20;
   
   & p {
     cursor: pointer;

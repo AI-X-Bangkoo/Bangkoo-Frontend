@@ -20,13 +20,14 @@ import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
 import { addFurniture } from "@/features/furniture/furnitureSlice";
 import { useSelector, useDispatch } from "react-redux";
 import useCheckedFurniture from "@/hooks/furniture/useCheckedFurniture";
+import useCachedSearch from "@/hooks/search/useCachedSearch";
 import LoadingSpinner from "@/common/LoadingSpinner";
 
 const SearchDrawer = ({ onClose }) => {
     const [isOpen, setIsOpen] = useState(false); // 애니메이션 제어용
     const dispatch = useDispatch();
     const myFurniture = useSelector((state) => state.furniture.list);
-    const [list, setList] = useState([]);
+    const [rawList, setRawList] = useState([]);
     const [confirmedKeyword, setConfirmedKeyword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [loadingDots, setLoadingDots] = useState("");
@@ -38,9 +39,44 @@ const SearchDrawer = ({ onClose }) => {
         getCheckedIds,
     } = useCheckedFurniture();
 
-    // mount 후 슬라이드 인
+    const {
+        getCachedResult,
+        saveToCache,
+        getCachedCheckedIds,
+        saveCheckedIds
+    } = useCachedSearch();
+
+    const list = rawList;
+
     useEffect(() => {
+        // mount 후 슬라이드 인
         requestAnimationFrame(() => setIsOpen(true));
+
+        const lastKeyword = localStorage.getItem("lastSearchKeyword");
+        if (lastKeyword) {
+            const cachedResults = getCachedResult(lastKeyword);
+            const cachedChecked = getCachedCheckedIds(lastKeyword);
+
+            if (cachedResults && cachedResults.length > 0) {
+                const resultWithId = cachedResults.map((item, index) => ({
+                    ...item,
+                    id: `${item.이름}-${index}`
+                }));
+
+                setConfirmedKeyword(lastKeyword);
+                setRawList(resultWithId);
+
+                // 체크 상태 복원
+                cachedChecked?.forEach(id => {
+                    if (!checkedItems[id]) toggle(id);
+                });
+            } else {
+                // 캐시가 없다면 검색 상태 초기화
+                localStorage.removeItem("lastSearchKeyword");
+                setConfirmedKeyword("");
+                setRawList([]);
+            }
+        }
     }, []);
 
     useEffect(() => {
@@ -72,7 +108,7 @@ const SearchDrawer = ({ onClose }) => {
                 </NoContent>
             );
         }
-        if (list.length === 0) {
+        if (rawList.length === 0) {
             return (
                 <NoContent>
                     <Text size="base" $weight={500} color="dark" style={{ textAlign: "center", marginTop: "100px" }}>
@@ -83,14 +119,26 @@ const SearchDrawer = ({ onClose }) => {
         }
         return (
             <Content>
-                {list.map((item, index) => (
-                    <div key={index}>
+                {list.map((item) => (
+                    <div key={item.id}>
                         <CommonImageBox
                             image={item.이미지}
                             type="checkbox"
-                            isChecked={!!checkedItems[index] || isInMyFurniture(index)}
+                            isChecked={!!checkedItems[item.id] || isInMyFurniture(item.id)}
                             onLink={item.링크}
-                            onCheck={() => toggle(index)}
+                            onCheck={(e) => {
+                                toggle(item.id);
+
+                                // 체크 상태 저장
+                                const updatedChecked = {
+                                    ...checkedItems,
+                                    [item.id]: !checkedItems[item.id] // toggle 후 상태
+                                };
+                                const checkedIds = Object.entries(updatedChecked)
+                                    .filter(([_, isChecked]) => isChecked)
+                                    .map(([id]) => id);
+                                saveCheckedIds(confirmedKeyword, checkedIds);
+                            }}
                             recommendationReason={item.추천이유}
                         />
                         <TextBox>
@@ -118,19 +166,32 @@ const SearchDrawer = ({ onClose }) => {
                         mode="inline"
                         onSearchStart={() => {
                             setIsLoading(true);
-                            setList([]);
+                            setRawList([]);
                         }}
                         onSearchResults={(result, keyword) => {
-                            setList(result);
+                            const resultWithId = result.map((item, index) => ({
+                                ...item,
+                                id: `${item.이름}-${index}`
+                            }));
+
+                            saveToCache(keyword, resultWithId);
+                            localStorage.setItem("lastSearchKeyword", keyword);
+
+                            setRawList(resultWithId);
                             setConfirmedKeyword(keyword);
                             setIsLoading(false);
+
+                            const cachedChecked = getCachedCheckedIds(keyword);
+                            cachedChecked?.forEach(id => {
+                                if (!checkedItems[id]) toggle(id);
+                            });
                         }}
                     />
                 </SearchBox>
 
                 <KeywordBox>
                     <Text size="sm" $weight={800}>
-                        {confirmedKeyword || "검색어"} <span style={{fontWeight: 500}}>({list.length})</span>
+                        {confirmedKeyword || "검색 결과"} <span style={{fontWeight: 500}}>({rawList.length})</span>
                     </Text>
                     <Text size="xxs" $weight={600} color="red">
                         * 체크된 가구만 배치가 가능합니다.
@@ -150,15 +211,15 @@ const SearchDrawer = ({ onClose }) => {
                         type="fill"
                         onClick={() => {
                             const selectedIds = getCheckedIds();
-                            const selectedFurniture = list.filter( index =>
-                                selectedIds.includes(index)
+                            const selectedFurniture = list.filter( item =>
+                                selectedIds.includes(item.id)
                             );
 
-                            selectedFurniture.forEach((item, index) => {
+                            selectedFurniture.forEach((item) => {
                                 dispatch(addFurniture({
                                     ...item,
                                     id: Date.now() + Math.random(),
-                                    originalId: index,
+                                    originalId: item.id,
                                     type: "hoverMinus",
                                     isCustom: true,
                                 }));
