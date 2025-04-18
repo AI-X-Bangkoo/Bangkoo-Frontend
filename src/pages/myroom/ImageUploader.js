@@ -31,6 +31,7 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
     const [imageWidth, setImageWidth] = useState(0);
     const [imageHeight, setImageHeight] = useState(0);
     const { saveState, undo, redo } = usePlacementHistory();
+    const [sessionId, setSessionId] = useState(null);
 
     // const resetObjectPosition = (index) => {
     //     setDetectedObjects((prev) => {
@@ -171,9 +172,16 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
 
                 setDetectedObjects(filtered);
                 setImageBase64(res.data.original_image_base64);
-                
-                // 태원: 최초 업로드 base64 상태 저장
-                saveState(res.data.original_image_base64);
+
+                // 1. 세션 ID가 없으면 먼저 생성하고 저장(태원)
+                if (!sessionId) {
+                    const generated = crypto.randomUUID(); // 또는 Date.now() + Math.random() 조합
+                    setSessionId(generated);
+                    console.log("🎯 생성된 세션 ID:", generated);
+                  }
+
+                // 2. base64 상태 저장 시 sessionId 함께 넘기기(태원)
+                saveState(res.data.original_image_base64, sessionId);
 
                 dispatch(setInitialFurniture(
                     filtered.map((item, index) => ({
