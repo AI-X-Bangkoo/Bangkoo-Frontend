@@ -16,7 +16,7 @@ import axios from "axios";
 import { usePlacementHistory } from "@/hooks/usePlacementHistory";
 import {FaUndo, FaRedo} from "react-icons/fa";
 
-function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex, setselectedIndex,resetObjectPositionRef }) {
+function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex, setselectedIndex,resetObjectPositionRef, restoreInitialImageRef }) {
     const [imageUrl, setImageUrl] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const inputRef = useRef();
@@ -32,6 +32,7 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
     const [imageHeight, setImageHeight] = useState(0);
     const { saveState, undo, redo, clearHistory } = usePlacementHistory();
     const [sessionId, setSessionId] = useState(null);
+    const originalImageRef = useRef(null);
 
     // const resetObjectPosition = (index) => {
     //     setDetectedObjects((prev) => {
@@ -120,7 +121,32 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
         };
         image.src = base64;
       };
-      
+
+        // 복원 함수 정의
+        const restoreOriginalImage = () => {
+        const base64 = originalImageRef.current;
+        if (!base64 || !canvasRef.current) return;
+
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        const image = new Image();
+        image.onload = () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0, image.width, image.height);
+        bgImageRef.current = image;
+        setImageBase64(base64);
+        };
+        image.src = base64;
+    };
+
+    // 🔹 부모에서 접근 가능하게 등록
+        useEffect(() => {
+        if (restoreInitialImageRef) {
+        restoreInitialImageRef.current = restoreOriginalImage;
+        }
+    }, [restoreInitialImageRef]);
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -157,6 +183,8 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
 
             try {
                 const res = await axios.post("http://localhost:8080/api/detect_all_base64", formData);
+                
+                originalImageRef.current = res.data.original_image_base64; // 🧷 최초 이미지 저장
                 const results = res.data.results.map((obj, idx) => ({
 
                     ...obj,
