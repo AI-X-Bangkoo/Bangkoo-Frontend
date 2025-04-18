@@ -8,6 +8,7 @@ import {
   undoPlacementState,
   redoPlacementState,
   getCurrentPlacementState,
+  clearPlacementSession,
 } from "@/api/redis";
 
 /**
@@ -76,6 +77,19 @@ export const usePlacementHistory = (sessionId) => {
     }
   };
 
+  /**
+   * 🧹 현재 세션의 히스토리 전체 삭제
+   */
+  const clearHistory = async () => {
+    try {
+      await clearPlacementSession(sessionId);
+      setCurrentImage(null); // 프론트 상태도 초기화
+      console.log("🧹 히스토리 삭제 완료");
+    } catch (err) {
+      console.error("히스토리 삭제 실패:", err);
+    }
+  };
+
   // 🔹 외부에서 사용할 함수들 리턴
   return {
     currentImage,  // 프론트에서 현재 상태 미리보기에 활용 가능
@@ -83,5 +97,6 @@ export const usePlacementHistory = (sessionId) => {
     undo,
     redo,
     loadCurrent,
+    clearHistory,
   };
 };

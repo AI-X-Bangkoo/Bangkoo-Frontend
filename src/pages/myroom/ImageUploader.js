@@ -30,7 +30,7 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
     const containerRef = useRef();
     const [imageWidth, setImageWidth] = useState(0);
     const [imageHeight, setImageHeight] = useState(0);
-    const { saveState, undo, redo } = usePlacementHistory();
+    const { saveState, undo, redo, clearHistory } = usePlacementHistory();
     const [sessionId, setSessionId] = useState(null);
 
     // const resetObjectPosition = (index) => {
@@ -125,6 +125,9 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (!file || !containerRef.current) return;
+
+          // ✅ 기존 세션 히스토리 삭제
+        clearHistory();
 
         // ✅ 현재 div의 실제 보이는 크기 가져오기
         const divWidth = containerRef.current.clientWidth;
