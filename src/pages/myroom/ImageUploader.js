@@ -32,6 +32,54 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
     const [imageHeight, setImageHeight] = useState(0);
     const { saveState, undo, redo } = usePlacementHistory();
 
+    // const resetObjectPosition = (index) => {
+    //     setDetectedObjects((prev) => {
+    //         const updated = [...prev];
+    //         if (!updated[index] || !updated[index].originalBbox) return prev;
+    //
+    //         updated[index] = {
+    //             ...updated[index],
+    //             bbox: [...updated[index].originalBbox], // 복원
+    //         };
+    //         return updated;
+    //     });
+    // };
+    // drawScene을 useEffect보다 위에 정의해야 함
+    const drawScene = (objects = detectedObjects) => {
+        if (!canvasRef.current || !bgImageRef.current) return;
+        const ctx = canvasRef.current.getContext("2d");
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        ctx.drawImage(bgImageRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+
+        if (typeof selectedIndex === "number" && objects[selectedIndex]) {
+            const obj = objects[selectedIndex];
+            drawMaskBorder(ctx, obj);
+        }
+    };
+
+    useEffect(() => {
+        if (resetObjectPositionRef) {
+            resetObjectPositionRef.current = (index) => {
+                setDetectedObjects((prev) => {
+                    const updated = [...prev];
+                    const obj = updated[index];
+                    if (!obj || !obj.originalBbox) return prev;
+
+                    updated[index] = {
+                        ...obj,
+                        bbox: [...obj.originalBbox],
+                    };
+
+                    return updated;
+                });
+
+                // ❗여기서 selectedIndex도 설정해줘야 drawScene 반응함
+                setselectedIndex(index); // ✅ 이거 추가!
+            };
+            console.log("✅ resetObjectPositionRef 등록 완료");
+        }
+    }, [resetObjectPositionRef]);
+
     const handleUndo = async () => {
         const base64 = await undo(); // ⬅️ 훅에서 base64 받아옴
         if (!base64 || !canvasRef.current) return;
@@ -51,6 +99,7 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
         };
         image.src = base64;
       };
+      
       const handleRedo = async () => {
         const base64 = await redo();
         if (!base64 || !canvasRef.current) return;
