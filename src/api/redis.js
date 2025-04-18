@@ -1,3 +1,4 @@
+// api/redis.js
 // 작성자: 김태원
 // Redis 기반 상태 히스토리 관리 API
 
