@@ -54,6 +54,7 @@ function MyRoom() {
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
     const handleSave = useSaveInterior(canvasRef, interiorSaveDialog.closeDialog);
     const resetObjectPositionRef = useRef();
+    const restoreInitialImageRef = useRef();
     useGlobalInertEffect([
         furnitureDialog.open,
         interiorDialog.open,
@@ -97,6 +98,7 @@ function MyRoom() {
                     saveClick={interiorSaveDialog.openDialog}
                     aiClick={aiDialog.openDialog}
                     canvasRef={canvasRef}
+                    restoreInitialImageRef={restoreInitialImageRef}
                 />
                 <ImageUploader
                     canvasRef={canvasRef}
@@ -112,6 +114,7 @@ function MyRoom() {
                     resetObjectPositionRef={resetObjectPositionRef}
                     selectedIndex={selectedIndex}        // ✅ 이거 꼭 추가!
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
+                    restoreInitialImageRef={restoreInitialImageRef}
                 />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >
