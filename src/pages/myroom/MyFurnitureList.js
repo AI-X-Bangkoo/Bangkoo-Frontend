@@ -20,6 +20,14 @@ function MyFurnitureList({ furnitureList = [], onPlus, onMinus, onSelect}) {
                         onSelect(index);
                     }} // ✅ 클릭 핸들러 연결
 
+                    onPlusMinus={(e) => {  // 지은 추가
+                        if (item.type === "hoverMinus") {
+                            onMinus(item, index);
+                        } else if (item.type === "hoverPlus") {
+                            onPlus(item, index);
+                        }
+                    }}
+
                 />
             ))}
         </FurnitureGrid>

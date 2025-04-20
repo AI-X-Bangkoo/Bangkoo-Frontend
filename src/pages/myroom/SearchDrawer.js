@@ -17,7 +17,7 @@ import TestImage from "@/assets/images/TestImage.png";
 import CommonButton from "@/common/CommonButton";
 import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
 
-import { addFurniture } from "@/features/furniture/furnitureSlice";
+import { appendFurniture } from "@/features/furniture/furnitureSlice";
 import { useSelector, useDispatch } from "react-redux";
 import useCheckedFurniture from "@/hooks/furniture/useCheckedFurniture";
 import useCachedSearch from "@/hooks/search/useCachedSearch";
@@ -137,6 +137,7 @@ const SearchDrawer = ({ onClose }) => {
                                 const checkedIds = Object.entries(updatedChecked)
                                     .filter(([_, isChecked]) => isChecked)
                                     .map(([id]) => id);
+
                                 saveCheckedIds(confirmedKeyword, checkedIds);
                             }}
                             recommendationReason={item.추천이유}
@@ -210,17 +211,22 @@ const SearchDrawer = ({ onClose }) => {
                         radius="sm"
                         type="fill"
                         onClick={() => {
+                            const checkedMap = { ...checkedItems };
                             const selectedIds = getCheckedIds();
-                            const selectedFurniture = list.filter( item =>
+
+                            const selectedFurniture = list.filter(item =>
                                 selectedIds.includes(item.id)
                             );
 
                             selectedFurniture.forEach((item) => {
-                                dispatch(addFurniture({
-                                    ...item,
-                                    id: Date.now() + Math.random(),
-                                    originalId: item.id,
-                                    type: "hoverMinus",
+                                dispatch(appendFurniture({
+                                    id: item.id,     
+                                    image: item.이미지,    
+                                    name: item.이름,
+                                    description: item.설명,
+                                    price: item.할인가 ?? item.정상가,
+                                    link: item.링크,
+                                    type: "eyeOn",
                                     isCustom: true,
                                 }));
                             });
