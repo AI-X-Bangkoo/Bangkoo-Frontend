@@ -24,11 +24,6 @@ export const searchImageUnified = async ({ imageFile = null, imageUrl = null, qu
     if (query) formData.append("query", query);
     formData.append("userId", userId);
 
-    // // 디버깅용 로그
-    // for (const pair of formData.entries()) {
-    //     console.log(`🧪 ${pair[0]}:`, pair[1]);
-    // }
-
     const res = await api.post("/api/search", formData, {
         headers: {
             "Content-Type": "multipart/form-data",
