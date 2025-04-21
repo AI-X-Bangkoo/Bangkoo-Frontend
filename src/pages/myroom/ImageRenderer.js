@@ -32,28 +32,28 @@ function ImageRenderer({ imageBase64, width, height, detectedObjects, selectedIn
     };
 
 
-    useEffect(() => {
-        if (!canvasRef.current || !imageBase64) return;
-
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d");
-        const image = new Image();
-
-        image.onload = () => {
-            canvas.width = image.width;
-            canvas.height = image.height;
-            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-            if (typeof selectedIndex === "number") {
-                const obj = detectedObjects[selectedIndex];
-                if (obj) {
-                    drawMask(ctx, obj);
-                }
-            }
-        };
-        image.src = imageBase64;
-    }, [imageBase64, detectedObjects, selectedIndex]);
-
+    // useEffect(() => {
+    //     if (!canvasRef.current || !imageBase64) return;
+    //
+    //     const canvas = canvasRef.current;
+    //     const ctx = canvas.getContext("2d");
+    //     const image = new Image();
+    //
+    //     image.onload = () => {
+    //         canvas.width = image.width;
+    //         canvas.height = image.height;
+    //         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    //
+    //         if (typeof selectedIndex === "number") {
+    //             const obj = detectedObjects[selectedIndex];
+    //             if (obj) {
+    //                 drawMask(ctx, obj);
+    //             }
+    //         }
+    //     };
+    //     image.src = imageBase64;
+    // }, [imageBase64, detectedObjects, selectedIndex]);
+    //
 
 
     return <MainCanvas ref={canvasRef}
