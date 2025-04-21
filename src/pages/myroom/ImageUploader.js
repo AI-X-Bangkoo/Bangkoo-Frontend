@@ -37,12 +37,14 @@ import {FaUndo, FaRedo} from "react-icons/fa";
     const bgImageRef = useRef(null);
     const dispatch = useDispatch();
     const containerRef = useRef();
+    const restoreInitialImageRef = useRef();
+    const originalImageRef = useRef(null);
     const [imageWidth, setImageWidth] = useState(0);
     const [imageHeight, setImageHeight] = useState(0);
     const { saveState, undo, redo, clearHistory } = usePlacementHistory();
     const [sessionId, setSessionId] = useState(null);
     const transformRef = useRef(null); // 🔥 transform 기억해둠
-        
+
         const drawScene = (objects = detectedObjects) => {
             if (!canvasRef.current || !bgImageRef.current) return;
             const ctx = canvasRef.current.getContext("2d");
@@ -55,13 +57,6 @@ import {FaUndo, FaRedo} from "react-icons/fa";
             } // 아직 transform이 없으면 그리지 않음
 
             drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
-    const originalImageRef = useRef(null);
-    // drawScene을 useEffect보다 위에 정의해야 함
-    const drawScene = (objects = detectedObjects) => {
-        if (!canvasRef.current || !bgImageRef.current) return;
-        const ctx = canvasRef.current.getContext("2d");
-        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        ctx.drawImage(bgImageRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
             if (typeof selectedIndex === "number" && objects[selectedIndex]) {
                 drawMaskBorder(ctx, objects[selectedIndex], transform);
@@ -225,37 +220,44 @@ import {FaUndo, FaRedo} from "react-icons/fa";
           setImageBase64(base64);
         };
         image.src = base64;
-      };
+    };
+            const restoreOriginalImage = () => {
+                const base64 = originalImageRef.current;
+                if (!base64 || !canvasRef.current) return;
 
-        // 복원 함수 정의
-        const restoreOriginalImage = () => {
-        const base64 = originalImageRef.current;
-        if (!base64 || !canvasRef.current) return;
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext("2d");
+                const image = new Image();
+                image.onload = () => {
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(image, 0, 0, image.width, image.height);
+                    bgImageRef.current = image;
+                    setImageBase64(base64);
+                };
+                image.src = base64;
+            };
+            useEffect(() => {
+                if (restoreInitialImageRef) {
+                    restoreInitialImageRef.current = restoreOriginalImage;
+                }
+            }, [restoreInitialImageRef]);
+            useImperativeHandle(ref, () => ({
+                handleFileChange,
+            }));
+    const applyAiImage = (aiBase64) => {
+        setImageBase64(aiBase64);
 
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d");
         const image = new Image();
         image.onload = () => {
-        canvas.width = image.width;
-        canvas.height = image.height;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(image, 0, 0, image.width, image.height);
-        bgImageRef.current = image;
-        setImageBase64(base64);
+            bgImageRef.current = image;
+            const transform = drawImageContainWithSideBlur(image, canvasRef.current.getContext("2d"), canvasRef.current);
+            transformRef.current = transform;
+            drawScene(); // 선택된 객체에 대해 마스크만 다시 그림
         };
-        image.src = base64;
+        image.src = aiBase64;
     };
-
-    // 🔹 부모에서 접근 가능하게 등록
-        useEffect(() => {
-        if (restoreInitialImageRef) {
-        restoreInitialImageRef.current = restoreOriginalImage;
-        }
-    }, [restoreInitialImageRef]);
-
-      useImperativeHandle(ref, () => ({
-          handleFileChange,
-      }));
     const handleFileChange = async (e) => {
         // const file = e.target.files[0];
         const file = e.target?.files?.[0] || e; // e가 File이면 직접 사용
