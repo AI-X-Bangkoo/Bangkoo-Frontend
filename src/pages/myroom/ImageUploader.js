@@ -42,43 +42,7 @@ import {FaUndo, FaRedo} from "react-icons/fa";
     const { saveState, undo, redo } = usePlacementHistory();
     const [sessionId, setSessionId] = useState(null);
     const transformRef = useRef(null); // 🔥 transform 기억해둠
-
-    // const resetObjectPosition = (index) => {
-    //     setDetectedObjects((prev) => {
-    //         const updated = [...prev];
-    //         if (!updated[index] || !updated[index].originalBbox) return prev;
-    //
-    //         updated[index] = {
-    //             ...updated[index],
-    //             bbox: [...updated[index].originalBbox], // 복원
-    //         };
-    //         return updated;
-    //     });
-    // };
-    // drawScene을 useEffect보다 위에 정의해야 함
-    // const drawScene = (objects = detectedObjects) => {
-    //     if (!canvasRef.current || !bgImageRef.current) return;
-    //     const ctx = canvasRef.current.getContext("2d");
-    //     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    //     ctx.drawImage(bgImageRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-    //
-    //     if (typeof selectedIndex === "number" && objects[selectedIndex]) {
-    //         const obj = objects[selectedIndex];
-    //         drawMaskBorder(ctx, obj);
-    //     }
-    // };
-    // const drawScene = (objects = detectedObjects) => {
-    //     if (!canvasRef.current || !bgImageRef.current) return;
-    //
-    //     const ctx = canvasRef.current.getContext("2d");
-    //     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    //
-    //     const transform = drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current); // 여기만 바꿔줌!
-    //     transformRef.current = transform;
-    //     if (typeof selectedIndex === "number" && objects[selectedIndex]) {
-    //         drawMaskBorder(ctx, objects[selectedIndex], transform);
-    //     }
-    // };
+        
         const drawScene = (objects = detectedObjects) => {
             if (!canvasRef.current || !bgImageRef.current) return;
             const ctx = canvasRef.current.getContext("2d");
@@ -96,38 +60,7 @@ import {FaUndo, FaRedo} from "react-icons/fa";
                 drawMaskBorder(ctx, objects[selectedIndex], transform);
             }
         };
-
-
-
-        // const drawImageFill = (image, ctx, canvas) => {
-    //     const canvasAspect = canvas.width / canvas.height;
-    //     const imageAspect = image.width / image.height;
-    //
-    //     let renderableWidth, renderableHeight, xStart, yStart;
-    //
-    //     if (imageAspect > canvasAspect) {
-    //         // 이미지가 더 넓음 → 좌우 잘림
-    //         renderableHeight = canvas.height;
-    //         renderableWidth = image.width * (renderableHeight / image.height);
-    //         xStart = (canvas.width - renderableWidth) / 2;
-    //         yStart = 0;
-    //     } else {
-    //         // 이미지가 더 높음 → 위아래 잘림
-    //         renderableWidth = canvas.width;
-    //         renderableHeight = image.height * (renderableWidth / image.width);
-    //         xStart = 0;
-    //         yStart = (canvas.height - renderableHeight) / 2;
-    //     }
-    //
-    //     ctx.drawImage(image, xStart, yStart, renderableWidth, renderableHeight);
-    //
-    //     return {
-    //         scaleX: renderableWidth / image.width,
-    //         scaleY: renderableHeight / image.height,
-    //         offsetX: xStart,
-    //         offsetY: yStart,
-    //     };
-    // };
+        
     const drawImageContainWithSideBlur = (image, ctx, canvas,reuseTransform = null) => {
         let transform;
         if (reuseTransform) {
@@ -204,11 +137,25 @@ import {FaUndo, FaRedo} from "react-icons/fa";
         return transform;
     };
 
+        const drawMaskOnly = () => {
+            if (!canvasRef.current || !bgImageRef.current || !transformRef.current) {
+                console.warn("❗ 필수 요소 없음: canvas or image or transform");
+                return;
+            }
 
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext("2d");
+            const transform = transformRef.current;
 
+            // 1. 최신 배경 이미지 유지
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawImageContainWithSideBlur(bgImageRef.current, ctx, canvas, transform);
 
-
-
+            // 2. 선택된 마스크만 덧그리기
+            if (typeof selectedIndex === "number" && detectedObjects[selectedIndex]) {
+                drawMaskBorder(ctx, detectedObjects[selectedIndex], transform);
+            }
+        };
 
     useEffect(() => {
         if (resetObjectPositionRef) {
@@ -275,7 +222,6 @@ import {FaUndo, FaRedo} from "react-icons/fa";
       useImperativeHandle(ref, () => ({
           handleFileChange,
       }));
-
     const handleFileChange = async (e) => {
         // const file = e.target.files[0];
         const file = e.target?.files?.[0] || e; // e가 File이면 직접 사용
@@ -337,54 +283,6 @@ import {FaUndo, FaRedo} from "react-icons/fa";
         }
     };
 
-
-    // const drawMaskBorder = (ctx, obj) => {
-    //     const [x, y, w, h] = obj.bbox;
-    //     const mask = obj.mask;
-    //     if (!mask || mask.length === 0 || mask[0].length === 0) return;
-    //
-    //     const rows = mask.length;
-    //     const cols = mask[0].length;
-    //     const dx = w / cols;
-    //     const dy = h / rows;
-    //
-    //     ctx.beginPath();
-    //     ctx.strokeStyle = "red";
-    //     ctx.lineWidth = 1;
-    //
-    //     for (let j = 0; j < rows; j++) {
-    //         for (let i = 0; i < cols; i++) {
-    //             if (!mask[j][i]) continue;
-    //
-    //             const px = x + i * dx;
-    //             const py = y + j * dy;
-    //
-    //             // 상단 경계
-    //             if (j === 0 || !mask[j - 1][i]) {
-    //                 ctx.moveTo(px, py);
-    //                 ctx.lineTo(px + dx, py);
-    //             }
-    //             // 하단 경계
-    //             if (j === rows - 1 || !mask[j + 1][i]) {
-    //                 ctx.moveTo(px, py + dy);
-    //                 ctx.lineTo(px + dx, py + dy);
-    //             }
-    //             // 좌측 경계
-    //             if (i === 0 || !mask[j][i - 1]) {
-    //                 ctx.moveTo(px, py);
-    //                 ctx.lineTo(px, py + dy);
-    //             }
-    //             // 우측 경계
-    //             if (i === cols - 1 || !mask[j][i + 1]) {
-    //                 ctx.moveTo(px + dx, py);
-    //                 ctx.lineTo(px + dx, py + dy);
-    //             }
-    //         }
-    //     }
-    //
-    //     ctx.stroke();
-    //     console.log(obj.bbox);
-    // };
     const drawMaskBorder = (ctx, obj, transform = {
         scaleX: 1,
         scaleY: 1,
@@ -446,27 +344,20 @@ import {FaUndo, FaRedo} from "react-icons/fa";
         if (imageBase64) drawScene();
     }, [imageBase64,selectedIndex, imageWidth, imageHeight]);
 
-    const isPointInsideBox = (x, y, bbox) => {
+    const isPointInsideBox = (x, y, bbox,transform) => {
         const [bx, by, bw, bh] = bbox;
-        return x >= bx && x <= bx + bw && y >= by && y <= by + bh;
+        const { scaleX, scaleY, offsetX, offsetY } = transform;
+
+        const canvasX = bx * scaleX + offsetX;
+        const canvasY = by * scaleY + offsetY;
+        const canvasW = bw * scaleX;
+        const canvasH = bh * scaleY;
+
+        return x >= canvasX && x <= canvasX + canvasW && y >= canvasY && y <= canvasY + canvasH;
+        // const [bx, by, bw, bh] = bbox;
+        //
+        // return x >= bx && x <= bx + bw && y >= by && y <= by + bh;
     };
-
-    // const drawScene = (objects = detectedObjects) => {
-    //     console.log("drawScene", objects);
-    //     if (!canvasRef.current || !bgImageRef.current) return;
-    //     console.log("여기탐");
-    //     const ctx = canvasRef.current.getContext("2d");
-    //     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    //     ctx.drawImage(bgImageRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-    //
-    //     if (typeof selectedIndex === "number" && objects[selectedIndex]) {
-    //         const obj = objects[selectedIndex];
-    //         drawMaskBorder(ctx, obj);
-    //         // drawBox(ctx, obj.bbox);
-    //     }
-    // }
-
-
 
     useEffect(() => {
         if (!imageBase64 || !canvasRef.current) return;
@@ -496,6 +387,7 @@ import {FaUndo, FaRedo} from "react-icons/fa";
             drawScene();
         };
         image.src = imageBase64;
+        console.log("image Uploader",image.src);
     }, [imageBase64]);
 
     const handleMouseDown = (e) => {
@@ -507,40 +399,56 @@ import {FaUndo, FaRedo} from "react-icons/fa";
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        for (let i = detectedObjects.length - 1; i >= 0; i--) {
-            const obj = detectedObjects[i];
-            if (selectedIndex === i && isPointInsideBox(x, y, obj.bbox)) {
-                setDraggingIndex(i);
-                setOffset({ x: x - obj.bbox[0], y: y - obj.bbox[1] });
-                return;
-            }
+        const transform = transformRef.current;
+        if (!transform) return;
+
+        if (typeof selectedIndex !== "number" || selectedIndex < 0) {
+            console.warn("❗ selectedIndex가 유효하지 않음:", selectedIndex);
+            return;
+        }
+
+        const obj = detectedObjects[selectedIndex];
+        const canvasX = obj.bbox[0] * transform.scaleX + transform.offsetX;
+        const canvasY = obj.bbox[1] * transform.scaleY + transform.offsetY;
+        const canvasW = obj.bbox[2] * transform.scaleX;
+        const canvasH = obj.bbox[3] * transform.scaleY;
+
+        if (x >= canvasX && x <= canvasX + canvasW && y >= canvasY && y <= canvasY + canvasH) {
+            setDraggingIndex(selectedIndex);
+            setOffset({
+                x: x - canvasX,
+                y: y - canvasY,
+            });
+            console.log("✅ 드래그 시작!", { index: selectedIndex, offsetX: x - canvasX, offsetY: y - canvasY });
+        } else {
+            console.log("❌ 선택된 객체를 클릭하지 않았습니다.");
         }
     };
 
     const handleMouseMove = (e) => {
         if (!canvasRef.current || draggingIndex === null) return;
 
+        const transform = transformRef.current;
+        if (!transform) return;
+
         const rect = canvasRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        // 위치 계산만 state에 반영하지 않고 local copy 사용
         const updated = [...detectedObjects];
         const obj = { ...updated[draggingIndex] };
-        obj.bbox[0] = x - offset.x;
-        obj.bbox[1] = y - offset.y;
+
+        obj.bbox[0] = (x - offset.x - transform.offsetX) / transform.scaleX;
+        obj.bbox[1] = (y - offset.y - transform.offsetY) / transform.scaleY;
+
         updated[draggingIndex] = obj;
 
-        // 직접 drawScene만 호출하고 state는 유지
         requestAnimationFrame(() => {
             const ctx = canvasRef.current.getContext("2d");
             ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-            const transform = transformRef.current;
-            if (!transform) return;
-
-            drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform); // ✅ 정해진 위치에 다시 그림
-            drawMaskBorder(ctx, obj, transform); // ✅ 이동 중인 마스크만
+            drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
+            drawMaskBorder(ctx, obj, transform);
         });
     };
 
@@ -572,10 +480,10 @@ import {FaUndo, FaRedo} from "react-icons/fa";
         onImageUploaded(false);
     };
 
-    useEffect(() => {
-        console.log("🔥 selectedIndex changed:", selectedIndex);
-        drawScene();
-    }, [selectedIndex,imageWidth, imageHeight]);
+        useEffect(() => {
+            console.log("🔥 selectedIndex changed:", selectedIndex);
+            drawMaskOnly(); // drawScene 대신
+        }, [selectedIndex]);
     useEffect(() => {
         const handleResize = () => {
             drawScene();
