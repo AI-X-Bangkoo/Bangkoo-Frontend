@@ -1,14 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import CommonButton from "../../common/CommonButton";
 import { GaguListHeader } from "./css/Admin.styled";
 import CommonTextField from "../../common/CommonTextField";
 import SearchIcon from "@mui/icons-material/Search";
 import GaguRegisterModal from "./ItemRegister";
-import { searchProducts, deleteAdminProducts } from "../../api/Admin";
+import {
+  searchProducts,
+  deleteAdminProducts,
+  createAdminProducts,
+  handleCSVUpload as uploadCSVToServer, // ✅ 이름 충돌 방지
+} from "../../api/Admin";
 import Papa from "papaparse";
 
-function AdminHeader({ checkedItems, onRefresh, onSearchResults, searchTerm, setSearchTerm }) {
+function AdminHeader({ checkedItems, setCheckedItems, onRefresh, onSearchResults, searchTerm, setSearchTerm }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const fileInputRef = useRef(); // 파일 업로드 input 참조
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => {
@@ -21,7 +27,7 @@ function AdminHeader({ checkedItems, onRefresh, onSearchResults, searchTerm, set
     try {
       const results = await searchProducts(searchTerm, "", "");
       console.log("검색 결과:", results);
-      onSearchResults(results); // 부모 컴포넌트로 전달
+      onSearchResults(results); // 검색 결과 부모에 전달
     } catch (error) {
       console.error("검색 오류:", error);
     }
@@ -44,32 +50,56 @@ function AdminHeader({ checkedItems, onRefresh, onSearchResults, searchTerm, set
       return;
     }
 
-    if (!window.confirm(`${checkedItems.length}개 항목을 삭제하시겠습니까?`)) return;
-
     try {
-      await deleteAdminProducts(checkedItems);
-      alert("삭제가 완료 되었습니다.");
+      await Promise.all(checkedItems.map(id => deleteAdminProducts(id)));
+      alert("선택한 항목이 삭제되었습니다.");
+      setCheckedItems([]);
       onRefresh();
     } catch (error) {
-      console.error("삭제 실패:", error);
-      alert("삭제 중 오류 발생");
+      console.error("삭제 중 오류 발생:", error);
+      alert("삭제 실패");
     }
   };
 
-  //CSV 관련 
-  const handleCSVUpload = (event) =>{
+  // ✅ CSV 버튼 클릭 → 파일 선택 input 클릭 유도
+  const handleCSVButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  // ✅ CSV 파일 선택 후 실행되는 함수 (JSON 방식으로 백엔드에 전송)
+  const handleCSVFileSelect = async (event) => {
     const file = event.target.files[0];
-    if(file){
-      Papa.parse(file,{
-        complete: (result)=>{
-          console.log("CSV 파일 데이터:",result.data);
+    if (!file) {
+      alert("CSV 파일을 선택해주세요.");
+      return;
+    }
 
-          alert("CSV 파일이 성공적으로 불러와졌습니다.");
-          onRefresh();  //데이터 새로 고침
+    try {
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: async (result) => {
+          let rows = result.data;
+
+          // 빈 name 제거
+          rows = rows.filter(item => item.name && item.name.trim() !== "");
+
+          console.log("CSV 파싱 결과:", rows);
+
+          try {
+            const res = await uploadCSVToServer(rows); // ✅ JSON 배열 전송
+            console.log("스프링 응답:", res);
+            alert("CSV 업로드 및 저장 완료!");
+            onRefresh();
+          } catch (err) {
+            console.error("스프링 처리 중 오류:", err);
+            alert("서버 오류 발생");
+          }
         },
-        header:true,  //첫 번째 행을 헤더로 처리
       });
-
+    } catch (err) {
+      console.error("CSV 파싱 오류:", err);
+      alert("CSV 파싱 실패");
     }
   };
 
@@ -86,6 +116,7 @@ function AdminHeader({ checkedItems, onRefresh, onSearchResults, searchTerm, set
           gap: "8px",
         }}
       >
+        {/* 🔍 검색 필드 */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <div
             style={{
@@ -104,7 +135,7 @@ function AdminHeader({ checkedItems, onRefresh, onSearchResults, searchTerm, set
               placeholder="가구명을 입력하세요."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={handleKeyDown} // 엔터 감지
+              onKeyDown={handleKeyDown}
               onClearAll={handleClearAll}
               custom="none"
               fontSize="sx"
@@ -119,15 +150,23 @@ function AdminHeader({ checkedItems, onRefresh, onSearchResults, searchTerm, set
           </CommonButton>
         </div>
 
+        {/* ➕ 등록/삭제/CSV 버튼 */}
         <div style={{ display: "flex", gap: "8px" }}>
           <CommonButton
             type="fill"
             bgColor="green"
             style={{ height: "32px", padding: "0 12px", fontSize: "14px" }}
-            onClick ={()=> document.getElementById("csv-upload").click()} //버튼 클릭시 파일 선택
+            onClick={handleCSVButtonClick}
           >
             CSV 파일 불러오기
           </CommonButton>
+          <input
+            type="file"
+            accept=".csv"
+            ref={fileInputRef}
+            onChange={handleCSVFileSelect} // ✅ 올바른 핸들러 연결
+            style={{ display: "none" }}
+          />
           <CommonButton
             style={{ height: "32px", padding: "0 12px", fontSize: "14px" }}
             onClick={handleOpenModal}
@@ -145,6 +184,7 @@ function AdminHeader({ checkedItems, onRefresh, onSearchResults, searchTerm, set
         </div>
       </GaguListHeader>
 
+      {/* 🪟 모달 */}
       {isModalOpen && <GaguRegisterModal handleClose={handleCloseModal} />}
     </>
   );

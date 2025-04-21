@@ -83,6 +83,7 @@ export async function searchProducts(searchTerm, currentPage = 0, pageSize = 10)
   } catch (error) {
     console.error("검색 요청 실패:", error);
     throw error;
+    
   }
 }
 
@@ -90,7 +91,7 @@ export async function searchProducts(searchTerm, currentPage = 0, pageSize = 10)
 export async function handleCSVUpload(file) {
   try {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", file);  // file은 파일 입력 필드에서 가져온 파일 객체
 
     const response = await api.post('/api/admin/CSVupload', formData, {
       headers: {
@@ -105,3 +106,4 @@ export async function handleCSVUpload(file) {
     throw error;
   }
 }
+

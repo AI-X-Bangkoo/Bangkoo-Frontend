@@ -18,6 +18,7 @@ function AdminRightArea() {
     <RightArea>
       <AdminHeader
         checkedItems={checkedItems}
+        setCheckedItems={setCheckedItems}
         onRefresh={handleRefresh}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
