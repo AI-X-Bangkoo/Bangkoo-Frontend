@@ -10,7 +10,7 @@ import CommonButton from "@/common/CommonButton";
 import { useApplyPlacement } from "@/hooks/useApplyPlacement";
 import { restoreInitialImageRef } from "@/pages/myroom/ImageUploader";
 
-function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImageRef, onTutorialStart }) {
+function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImageRef, onTutorialStart, mode }) {
     // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
     const reference = null;
 
@@ -32,12 +32,13 @@ function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImag
      * - 마스킹/헬퍼 UI는 비활성화(dummy 함수 전달)
      */
     const applyPlacement = useApplyPlacement({
-        mode: "remove",
+        mode,
         background: canvasRef,
         reference,
         canvasSize,
         setShowMask: () => {},
         setShowHelper: () => {},
+        centerArea,
     });
 
     /**
