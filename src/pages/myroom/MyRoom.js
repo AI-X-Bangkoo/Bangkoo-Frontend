@@ -117,6 +117,8 @@ function MyRoom() {
                     selectedIndex={selectedIndex}        // ✅ 이거 꼭 추가!
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
                     restoreInitialImageRef={restoreInitialImageRef}
+                    mode={mode}
+                    setMode={setMode}
                 />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >

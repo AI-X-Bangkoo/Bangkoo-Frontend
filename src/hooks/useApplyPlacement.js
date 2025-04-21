@@ -46,7 +46,8 @@ export const useApplyPlacement = ({ mode, background, reference, canvasSize, set
     const blob = await new Promise((resolve) =>
       canvas.toBlob((b) => resolve(b), "image/png", 1.0)
     );
-
+    console.log("📦 Blob 크기:", blob.size / 1024 / 1024, "MB");
+    console.log("📨 mode:", mode, "전송 중...");
     // ✅ 2. 서버에 요청 전송 및 결과 수신 (Base64 형태 이미지)
     try {
       const base64 = await requestPlacement(mode, blob, reference); // 서버에 mode별 요청 보내기

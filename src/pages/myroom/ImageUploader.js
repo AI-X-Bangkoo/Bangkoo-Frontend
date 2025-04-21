@@ -16,7 +16,7 @@ import axios from "axios";
 import { usePlacementHistory } from "@/hooks/usePlacementHistory";
 import {FaUndo, FaRedo} from "react-icons/fa";
 
-function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex, setselectedIndex,resetObjectPositionRef, restoreInitialImageRef }) {
+function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex, setselectedIndex,resetObjectPositionRef, restoreInitialImageRef, mode, setMode }) {
     const [imageUrl, setImageUrl] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const inputRef = useRef();
@@ -334,6 +334,9 @@ function ImageUploader({canvasRef,onImageUploaded, onObjectSelect, selectedIndex
             if (selectedIndex === i && isPointInsideBox(x, y, obj.bbox)) {
                 setDraggingIndex(i);
                 setOffset({ x: x - obj.bbox[0], y: y - obj.bbox[1] });
+
+                setMode("move");
+                console.log("드래그 시작 -> mode: move");
                 return;
             }
         }
