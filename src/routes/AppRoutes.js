@@ -19,7 +19,8 @@ export default function AppRoutes() {
       <Route path="/myroom" element={<MyRoom />} />
       <Route path="/auth/callback/kakao" element={<KakaoCallback />} />
       <Route path="/admin" element={<AdminDashBoard />} />
-      <Route path="/error" element={<ErrorPage />} />
+      <Route path="/*" element={<ErrorPage  />} />
+        <Route path="/error" element={<ErrorPage error={"500"} />} />
     </Routes>
   );
 }
