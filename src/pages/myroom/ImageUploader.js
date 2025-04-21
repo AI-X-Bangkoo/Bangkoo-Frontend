@@ -39,7 +39,7 @@ import {FaUndo, FaRedo} from "react-icons/fa";
     const containerRef = useRef();
     const [imageWidth, setImageWidth] = useState(0);
     const [imageHeight, setImageHeight] = useState(0);
-    const { saveState, undo, redo } = usePlacementHistory();
+    const { saveState, undo, redo, clearHistory } = usePlacementHistory();
     const [sessionId, setSessionId] = useState(null);
     const transformRef = useRef(null); // 🔥 transform 기억해둠
         
@@ -55,6 +55,13 @@ import {FaUndo, FaRedo} from "react-icons/fa";
             } // 아직 transform이 없으면 그리지 않음
 
             drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
+    const originalImageRef = useRef(null);
+    // drawScene을 useEffect보다 위에 정의해야 함
+    const drawScene = (objects = detectedObjects) => {
+        if (!canvasRef.current || !bgImageRef.current) return;
+        const ctx = canvasRef.current.getContext("2d");
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        ctx.drawImage(bgImageRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
             if (typeof selectedIndex === "number" && objects[selectedIndex]) {
                 drawMaskBorder(ctx, objects[selectedIndex], transform);
@@ -219,6 +226,33 @@ import {FaUndo, FaRedo} from "react-icons/fa";
         };
         image.src = base64;
       };
+
+        // 복원 함수 정의
+        const restoreOriginalImage = () => {
+        const base64 = originalImageRef.current;
+        if (!base64 || !canvasRef.current) return;
+
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        const image = new Image();
+        image.onload = () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0, image.width, image.height);
+        bgImageRef.current = image;
+        setImageBase64(base64);
+        };
+        image.src = base64;
+    };
+
+    // 🔹 부모에서 접근 가능하게 등록
+        useEffect(() => {
+        if (restoreInitialImageRef) {
+        restoreInitialImageRef.current = restoreOriginalImage;
+        }
+    }, [restoreInitialImageRef]);
+
       useImperativeHandle(ref, () => ({
           handleFileChange,
       }));
@@ -226,6 +260,14 @@ import {FaUndo, FaRedo} from "react-icons/fa";
         // const file = e.target.files[0];
         const file = e.target?.files?.[0] || e; // e가 File이면 직접 사용
         if (!file || !containerRef.current) return;
+
+          // ✅ 기존 세션 히스토리 삭제
+        clearHistory();
+
+        // ✅ 현재 div의 실제 보이는 크기 가져오기
+        const divWidth = containerRef.current.clientWidth;
+        const divHeight = containerRef.current.clientHeight;
+        // console.log("📏 div 영역:", divWidth, divHeight);
 
         // ✅ 원본 이미지 크기 추출
         const imageBitmap = await createImageBitmap(file);
@@ -240,26 +282,27 @@ import {FaUndo, FaRedo} from "react-icons/fa";
         formData.append("canvasWidth", originalWidth);   // ⬅️ 원본 해상도 사용
         formData.append("canvasHeight", originalHeight); // ⬅️ 원본 해상도 사용
 
-        try {
-            const res = await axios.post("http://localhost:8080/api/detect_all_base64", formData);
+            try {
+                const res = await axios.post("http://localhost:8080/api/detect_all_base64", formData);
+                originalImageRef.current = res.data.original_image_base64;
+                const results = res.data.results.map((obj, idx) => ({
 
-            const results = res.data.results.map((obj, idx) => ({
-                ...obj,
-                x: obj.bbox?.[0],
-                y: obj.bbox?.[1],
-                width: obj.bbox?.[2],
-                height: obj.bbox?.[3],
-                bbox: obj.bbox,
-                originalBbox: [...obj.bbox],
-                mask: obj.mask,
-                thumbIndex: idx,
-                thumbnail: res.data.thumbnails_base64[idx],
-                flipHorizontal: false,
-            }));
+                    ...obj,
+                    x: obj.bbox?.[0],
+                    y: obj.bbox?.[1],
+                    width: obj.bbox?.[2],
+                    height: obj.bbox?.[3],
+                    bbox: obj.bbox,
+                    originalBbox: [...obj.bbox],  // ✅ 초기 위치 보존
+                    mask: obj.mask,
+                    thumbIndex: idx,
+                    thumbnail: res.data.thumbnails_base64[idx],
+                    flipHorizontal: false,
+                }));
+                const filtered = smartFilterDuplicates(results, 0.5);
 
-            const filtered = smartFilterDuplicates(results, 0.5);
-            setDetectedObjects(filtered);
-            setImageBase64(res.data.original_image_base64);
+                setDetectedObjects(filtered);
+                setImageBase64(res.data.original_image_base64);
 
             if (!sessionId) {
                 const generated = crypto.randomUUID();

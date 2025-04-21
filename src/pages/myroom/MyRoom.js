@@ -37,6 +37,7 @@ function MyRoom() {
     const openDrawer = () => setIsDrawerOpen(true);
     const closeDrawer = () => setIsDrawerOpen(false);
     const canvasRef = useRef(null);
+    const [mode, setMode] = useState(null);
     const uploaderRef = useRef(null);
 
     // 이미지 등록 시 상태 값 체크용도 "김범석"
@@ -55,6 +56,7 @@ function MyRoom() {
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
     const handleSave = useSaveInterior(canvasRef, interiorSaveDialog.closeDialog);
     const resetObjectPositionRef = useRef();
+    const restoreInitialImageRef = useRef();
     const [centerArea, setCenterArea] = useState(null);
     useGlobalInertEffect([
         furnitureDialog.open,
@@ -99,6 +101,8 @@ function MyRoom() {
                     saveClick={interiorSaveDialog.openDialog}
                     aiClick={aiDialog.openDialog}
                     canvasRef={canvasRef}
+                    restoreInitialImageRef={restoreInitialImageRef}
+                    mode={mode}
                     centerArea={centerArea} // ⬅️ 전달
                     handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
                 />
@@ -110,6 +114,7 @@ function MyRoom() {
                     selectedIndex={selectedIndex}        // ✅ 이거 꼭 추가!
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
                     setCenterArea={setCenterArea} // ⬅️ 이거 추가
+                    restoreInitialImageRef={restoreInitialImageRef}
                 />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >
@@ -149,6 +154,8 @@ function MyRoom() {
                         setselectedIndex={setselectedIndex}  // ✅ 이거 꼭 전달!!
                         selectedIndex={selectedIndex}
                         resetObjectPositionRef={resetObjectPositionRef}
+                        mode={mode}
+                        setMode={setMode}
                     />}
                     {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} />}
                     {currentTab === "interior" && <InteriorTab onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}

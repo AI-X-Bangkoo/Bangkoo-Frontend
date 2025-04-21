@@ -16,4 +16,18 @@ api.interceptors.request.use((config) => {
     }
     return config;
   });
+
+// ✅ 응답 인터셉터: 401 (토큰 만료) 시 로그아웃 처리(태원)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      console.warn("🔐 토큰 만료됨 - 자동 로그아웃");
+      Cookies.remove("jwtToken");
+      window.location.href = "/"; 
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

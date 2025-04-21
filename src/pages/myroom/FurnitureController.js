@@ -8,13 +8,22 @@ import React from "react";
 import { ControllerBox, FlexBox } from "./css/MyRoom.styled";
 import CommonButton from "@/common/CommonButton";
 import { useApplyPlacement } from "@/hooks/useApplyPlacement";
+import { restoreInitialImageRef } from "@/pages/myroom/ImageUploader";
 
-function FurnitureController({ saveClick, aiClick, canvasRef,centerArea }) {
+function FurnitureController({ saveClick, aiClick, canvasRef,centerArea,restoreInitialImageRef, mode  }) {
     // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
     const reference = null;
 
     // 🔹 캔버스 사이즈 정보 (현재는 고정값 사용)
     const canvasSize = { width: 1024, height: 720 };
+
+    const handleRestoreClick = () => {
+        if (restoreInitialImageRef?.current) {
+          restoreInitialImageRef.current();
+        } else {
+          console.warn("restoreInitialImageRef가 비어있습니다.");
+        }
+      };
 
     /**
      * ✅ AI 배치 기능 훅
@@ -23,7 +32,7 @@ function FurnitureController({ saveClick, aiClick, canvasRef,centerArea }) {
      * - 마스킹/헬퍼 UI는 비활성화(dummy 함수 전달)
      */
     const applyPlacement = useApplyPlacement({
-        mode: "remove",
+        mode,
         background: canvasRef,
         reference,
         canvasSize,
@@ -65,6 +74,7 @@ function FurnitureController({ saveClick, aiClick, canvasRef,centerArea }) {
                 <CommonButton
                     width="135px"
                     type="outline"
+                    onClick={handleRestoreClick}
                     {...buttonProps}
                 >
                     초기 이미지

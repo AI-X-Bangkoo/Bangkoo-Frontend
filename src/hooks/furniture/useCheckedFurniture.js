@@ -26,7 +26,7 @@ export default function useCheckedFurniture() {
     const getCheckedIds = () =>
         Object.entries(checkedItems)
             .filter(([_, checked]) => checked)
-            .map(([id]) => Number(id));
+            .map(([id]) => id);
 
     return {
         checkedItems, // 전체 체크 상태

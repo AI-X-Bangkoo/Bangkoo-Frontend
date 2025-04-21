@@ -52,6 +52,11 @@ export const useApplyPlacement = ({ mode, background, reference, canvasSize, set
     }
 
     const canvas = canvasRef.current;
+    console.log("mode: ", mode);
+    if (!mode) {
+      alert("작업 모드를 선택해주세요!");
+      return;
+    }
 
     // ✅ 1. 현재 캔버스 내용을 Blob으로 변환 (서버 전송용)
     const blob = await extractCenterImageBlob(canvas, centerArea);
