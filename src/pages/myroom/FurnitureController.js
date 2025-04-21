@@ -10,7 +10,7 @@ import CommonButton from "@/common/CommonButton";
 import { useApplyPlacement } from "@/hooks/useApplyPlacement";
 import { restoreInitialImageRef } from "@/pages/myroom/ImageUploader";
 
-function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImageRef }) {
+function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImageRef, onTutorialStart }) {
     // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
     const reference = null;
 
@@ -63,6 +63,7 @@ function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImag
             <CommonButton
                 width="135px"
                 type="fill"
+                onClick={onTutorialStart}
                 {...buttonProps}
             >
                 튜토리얼

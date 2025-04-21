@@ -61,6 +61,7 @@ const theme = {
     },
 
     borderRadius: {
+        xs: '4px',
         sm: '6px',
         md: '16px',
         lg: '30px',
