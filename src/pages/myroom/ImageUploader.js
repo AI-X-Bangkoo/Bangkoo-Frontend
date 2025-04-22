@@ -309,6 +309,10 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
         const file = e.target?.files?.[0] || e; // e가 File이면 직접 사용
         if (!file || !containerRef.current) return;
 
+        if (setIsImageUploaded) {
+            setIsImageUploaded(true);
+        }
+
           // ✅ 기존 세션 히스토리 삭제
         clearHistory();
 
@@ -354,9 +358,9 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
 
                 const img = new Image();
                 img.onload = () => {
-                    if (setIsImageUploaded) {
-                        setIsImageUploaded(true); // 이게 핵심
-                    }
+                    // if (setIsImageUploaded) {
+                    //     setIsImageUploaded(true);
+                    // }
                 };
                 img.src = res.data.original_image_base64; // base64로 trigger
 

@@ -10,7 +10,7 @@ import CommonButton from "@/common/CommonButton";
 import { useApplyPlacement } from "@/hooks/useApplyPlacement";
 import { restoreInitialImageRef } from "@/pages/myroom/ImageUploader";
 
-function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImageRef, onTutorialStart, mode, centerArea }) {
+function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImageRef, onTutorialStart, mode, centerArea, onTutorialAdvance }) {
     // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
     const reference = null;
 
@@ -48,6 +48,11 @@ function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImag
     const handlePlacementClick = () => {
         console.log("배치 버튼 클릭됨");
         applyPlacement();
+
+        // 튜토리얼 단계 전환
+        if (typeof onTutorialAdvance === "function") {
+            onTutorialAdvance();
+        }
     };
 
     // 🔸 버튼에 공통 적용할 props 모음
@@ -83,6 +88,7 @@ function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImag
 
                 {/* ✅ AI 이미지 생성 버튼 */}
                 <CommonButton
+                    className="generate-image-button"
                     width="135px"
                     type="outline"
                     onClick={handlePlacementClick}
