@@ -1,7 +1,7 @@
 import React, { useImperativeHandle, forwardRef, useRef, useState , useEffect } from "react";
 import { ReactComponent as ImageUploaderIcon } from "@/assets/images/ImageUploaderIcon.svg";
 import {Text} from "@/common/Typography";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { setInitialFurniture } from "@/features/furniture/furnitureSlice";
 import {
     BlurredCanvas, BlurredWrapper,MaskCanvas,
@@ -16,8 +16,11 @@ import axios from "axios";
 import { usePlacementHistory } from "@/hooks/usePlacementHistory";
 import {FaUndo, FaRedo} from "react-icons/fa";
 import { useRemoveObject } from "@/hooks/useRemoveObject";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { useThreeRenderer } from "./utils/useThreeRenderer";
 
-    const ImageUploader = forwardRef((props, ref) => {
+const ImageUploader = forwardRef((props, ref) => {
         const {
             canvasRef,
             onImageUploaded,
@@ -28,7 +31,8 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             setCenterArea,
             mode, 
             setMode,
-            className
+            className,
+            setIsImageUploaded,
         } = props;
     const [imageUrl, setImageUrl] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -47,7 +51,14 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
     const [imageHeight, setImageHeight] = useState(0);
     const { saveState, undo, redo, clearHistory } = usePlacementHistory();
     const [sessionId, setSessionId] = useState(null);
+    const webglCanvasRef = useRef(null); // 3D Canvas
+    const { initRenderer,loadModel,moveModel, zoom, focusModel, getCurrentModel  } = useThreeRenderer(webglCanvasRef); // 💡 초기화
     const transformRef = useRef(null); // 🔥 transform 기억해둠
+    const is3DDragging = useRef(false);
+    const last3DMouse = useRef({ x: 0, y: 0 });
+    const glbModelStateRef = useRef(new Map());
+
+
     
     const [draggingThumbnailPos, setDraggingThumbnailPos] = useState(null);
     const [finalThumbnailPos, setFinalThumbnailPos] = useState(null);
@@ -178,11 +189,27 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             drawImageContainWithSideBlur(bgImageRef.current, ctx, canvas, transform);
 
             // 2. 선택된 마스크만 덧그리기
-            if (typeof selectedIndex === "number" && detectedObjects[selectedIndex]) {
+            if (typeof selectedIndex === "number" && detectedObjects[selectedIndex]?.bbox) {
                 drawMaskBorder(ctx, detectedObjects[selectedIndex], transform);
             }
         };
+    const handle3DMouseDown = (e) => {
+        is3DDragging.current = true;
+        last3DMouse.current = { x: e.clientX, y: e.clientY };
+    };
+    const handle3DMouseMove = (e) => {
+        if (!is3DDragging.current) return;
 
+        const dx = (e.clientX - last3DMouse.current.x) * 0.01;
+        const dy = (e.clientY - last3DMouse.current.y) * 0.01;
+        last3DMouse.current = { x: e.clientX, y: e.clientY };
+
+        moveModel(dx, dy); // useThreeRenderer에서 가져온 함수
+    };
+
+    const handle3DMouseUp = () => {
+        is3DDragging.current = false;
+    };
     useEffect(() => {
         if (resetObjectPositionRef) {
             resetObjectPositionRef.current = (index) => {
@@ -205,6 +232,49 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             console.log("✅ resetObjectPositionRef 등록 완료");
         }
     }, [resetObjectPositionRef]);
+    const handleGlbClick = (url) => {
+        const currentState = glbModelStateRef.current.get(url);
+        const currentModel = getCurrentModel();
+
+        // 🔴 현재 보이고 있으면 => 상태 저장하고 숨김
+        if (currentModel && currentState?.visible) {
+            glbModelStateRef.current.set(url, {
+                visible: false,
+                position: currentModel.position.clone(),
+                scale: currentModel.scale.clone(),
+                rotation: currentModel.rotation.clone(),
+            });
+            currentModel.visible = false;
+            return;
+        }
+
+        // 🟡 숨겨져 있고 모델 존재 => 상태 복원해서 다시 보이기
+        if (currentState && currentModel) {
+            currentModel.visible = true;
+            currentModel.position.copy(currentState.position);
+            currentModel.scale.copy(currentState.scale);
+            currentModel.rotation.copy(currentState.rotation);
+            glbModelStateRef.current.set(url, { ...currentState, visible: true });
+            return;
+        }
+
+        // 🔵 최초 로딩
+        loadModel(url);
+        setTimeout(() => {
+            const model = getCurrentModel();
+            if (!model) return;
+
+            focusModel();
+
+            glbModelStateRef.current.set(url, {
+                visible: true,
+                position: model.position.clone(),
+                scale: model.scale.clone(),
+                rotation: model.rotation.clone(),
+            });
+        }, 500);
+    };
+
 
     const handleUndo = async () => {
         const base64 = await undo(); // ⬅️ 훅에서 base64 받아옴
@@ -341,6 +411,14 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
                 setDetectedObjects(filtered);
                 setImageBase64(res.data.original_image_base64);
 
+                const img = new Image();
+                img.onload = () => {
+                    if (setIsImageUploaded) {
+                        setIsImageUploaded(true); // 이게 핵심
+                    }
+                };
+                img.src = res.data.original_image_base64; // base64로 trigger
+
             if (!sessionId) {
                 const generated = crypto.randomUUID();
                 setSessionId(generated);
@@ -448,34 +526,40 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
     };
 
     useEffect(() => {
-        if (!imageBase64 || !canvasRef.current) return;
-
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d");
-        const container = containerRef.current;
-
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-
-        const image = new Image();
-        image.onload = () => {
-            bgImageRef.current = image;
-            // canvas.width = image.width;
-            // canvas.height = image.height;
-            setImageWidth(image.width);
-            setImageHeight(image.height);
-            // const transform = drawImageContainWithSideBlur(image, canvasRef.current.getContext("2d"), canvasRef.current);
+        if (!imageBase64 || !canvasRef.current ) return;
+        setTimeout(() => {
+            const canvas = canvasRef.current;
             const ctx = canvas.getContext("2d");
-            // transformRef.current = drawImageContainWithSideBlur(image, ctx, canvasRef.current);
-            const transform = drawImageContainWithSideBlur(image, ctx, canvas);
-            transformRef.current = transform;
-            console.log("imageUploader : " ,image.width, image.height);
-            // ctx.drawImage(image, 0, 0, image.width, image.height);
-            // ctx.drawImage(bgImageRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-            drawScene();
-        };
-        image.src = imageBase64;
-        console.log("image Uploader",image.src);
+            const container = containerRef.current;
+
+            if (!canvas || !container) return;
+
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+
+            const image = new Image();
+            image.onload = () => {
+                bgImageRef.current = image;
+
+                setImageWidth(image.width);
+                setImageHeight(image.height);
+
+                const ctx = canvas.getContext("2d");
+                const transform = drawImageContainWithSideBlur(image, ctx, canvas);
+                transformRef.current = transform;
+
+                drawScene();
+                setTimeout(() => {
+                    if (webglCanvasRef.current) {
+                        console.log("🌟 이미지 로딩 이후 WebGL 초기화!");
+                        initRenderer();
+                    }
+                }, 0); // 💡 또는 requestAnimationFrame으로 시점 밀어줘도 OK
+            };
+
+            image.src = imageBase64;
+
+        }, 0); // ✅ DOM layout 반영 후 실행
     }, [imageBase64]);
 
     const handleMouseDown = (e) => {
@@ -497,6 +581,10 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
         }
       
         const obj = detectedObjects[selectedIndex];
+        if (!obj || obj.isGlb || !obj.bbox) {
+            console.warn("❗ 선택된 객체는 bbox 정보가 없거나 3D 모델입니다.");
+            return;
+        }
         const canvasX = obj.bbox[0] * transform.scaleX + transform.offsetX;
         const canvasY = obj.bbox[1] * transform.scaleY + transform.offsetY;
         const canvasW = obj.bbox[2] * transform.scaleX;
@@ -617,7 +705,7 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             </UndoRedoBox>
             <DeleteBox>
                 <CommonButton
-                    className={className}
+                    className={`upload-button ${className}`}
                     width="120px"
                     height="40px"
                     fontSize="xs"
@@ -635,7 +723,7 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
                 ref={containerRef}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
-                className={className}
+                className={`preview-area ${className}`}
                 $hasImage={!!imageUrl}
             >
                 {!imageUrl ? (
@@ -656,6 +744,13 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
                                 onMouseMove={handleMouseMove}
                                 onMouseUp={handleMouseUp}
                                 canvasRef={canvasRef}
+                            />
+                            <canvas
+                                ref={webglCanvasRef}
+                                onMouseDown={handle3DMouseDown}
+                                onMouseMove={handle3DMouseMove}
+                                onMouseUp={handle3DMouseUp}
+                                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 2, pointerEvents: "auto" }}
                             />
                         </BlurredWrapper>
 

@@ -108,7 +108,7 @@ function MyRoom() {
         { id: "recommend", label: "추천 가구" },
         { id: "interior", label: "내 인테리어" },
     ];
-    
+
     return (
         <MainLayout>
             <LeftPanel>
@@ -126,18 +126,21 @@ function MyRoom() {
                 <ImageUploader
                     ref={uploaderRef}
                     canvasRef={canvasRef}
+
                     onObjectSelect={(index) => setselectedIndex(index)}
                     resetObjectPositionRef={resetObjectPositionRef}
                     selectedIndex={selectedIndex}        // ✅ 이거 꼭 추가!
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
+
                     setCenterArea={setCenterArea} // ⬅️ 이거 추가
                     restoreInitialImageRef={restoreInitialImageRef}
                     mode={mode}
                     setMode={setMode}
 
                     // 튜토리얼
-                    isTutorialActive={tutorialStep === 1}
-                    className={tutorialStep === 1 ? "upload-area" : ""}
+                    isTutorialActive={tutorialStep === "1.1"}
+                    className={tutorialStep === "1.1" ? "upload-button" : ""}
+                    setIsImageUploaded={setIsImageUploaded}
                 />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >
@@ -167,12 +170,12 @@ function MyRoom() {
                 <GridBox>
                     {currentTab === "my" && <MyFurnitureTab
                         onCustomRemove={furnitureDialog.openDialog}
-                        // onSelect={(index) => {
-                        // selectedIndex = index;
-                        // setselectedIndex(prev => {
-                        //     return prev === index ? null : index; // 같은 거 누르면 해제, 아니면 새로 선택
-                        // });
-                        // resetObjectPositionRef={resetObjectPositionRef}
+                        onGlbSelect={(item, index) => {
+                            console.log("🔥 GLB 클릭 감지됨:", item);
+                            setselectedIndex(index);
+                            uploaderRef.current?.loadGlbModel(item.model3dUrl);
+                            // loadGlbModelToCanvas(item.image); // 예시
+                        }}
                         onSelect={(index) => setselectedIndex(index)}
                         setselectedIndex={setselectedIndex}  // ✅ 이거 꼭 전달!!
                         selectedIndex={selectedIndex}
