@@ -72,24 +72,24 @@ const ImageUploader = forwardRef((props, ref) => {
         detectedObjects,
         setDetectedObjects,
       });
-
-    const drawScene = (objects = detectedObjects) => {
-            if (!canvasRef.current || !bgImageRef.current) return;
-            const ctx = canvasRef.current.getContext("2d");
-            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-            const transform = transformRef.current;
-            if (!transform) {
-                console.warn("❌ transform이 비어 있음!");
-                return;
-            } // 아직 transform이 없으면 그리지 않음
-
-            drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
-
-            if (typeof selectedIndex === "number" && objects[selectedIndex]?.bbox) {
-                drawMaskBorder(ctx, objects[selectedIndex], transform);
-            }
-        };
+    //
+    // const drawScene = (objects = detectedObjects) => {
+    //         if (!canvasRef.current || !bgImageRef.current) return;
+    //         const ctx = canvasRef.current.getContext("2d");
+    //         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    //
+    //         const transform = transformRef.current;
+    //         if (!transform) {
+    //             console.warn("❌ transform이 비어 있음!");
+    //             return;
+    //         } // 아직 transform이 없으면 그리지 않음
+    //
+    //         drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
+    //
+    //         if (typeof selectedIndex === "number" && objects[selectedIndex]?.bbox) {
+    //             drawMaskBorder(ctx, objects[selectedIndex], transform);
+    //         }
+    //     };
     const drawMovingHint = (ctx, transform) => {
         if (!initialDragBbox || !transform) return;
         const [x, y, w, h] = initialDragBbox;
