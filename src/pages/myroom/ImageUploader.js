@@ -28,7 +28,8 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             setCenterArea,
             mode, 
             setMode,
-            className
+            className,
+            setIsImageUploaded,
         } = props;
     const [imageUrl, setImageUrl] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -351,6 +352,14 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
                 setDetectedObjects(filtered);
                 setImageBase64(res.data.original_image_base64);
 
+                const img = new Image();
+                img.onload = () => {
+                    if (setIsImageUploaded) {
+                        setIsImageUploaded(true); // 이게 핵심
+                    }
+                };
+                img.src = res.data.original_image_base64; // base64로 trigger
+
             if (!sessionId) {
                 const generated = crypto.randomUUID();
                 setSessionId(generated);
@@ -619,7 +628,7 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             </UndoRedoBox>
             <DeleteBox>
                 <CommonButton
-                    className={className}
+                    className={`upload-button ${className}`}
                     width="120px"
                     height="40px"
                     fontSize="xs"
@@ -637,7 +646,7 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
                 ref={containerRef}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
-                className={className}
+                className={`preview-area ${className}`}
                 $hasImage={!!imageUrl}
             >
                 {!imageUrl ? (
