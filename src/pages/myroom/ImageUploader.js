@@ -25,6 +25,7 @@ import {FaUndo, FaRedo} from "react-icons/fa";
             setselectedIndex,
             resetObjectPositionRef,
             setCenterArea,
+            className
         } = props;
     const [imageUrl, setImageUrl] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -549,6 +550,7 @@ import {FaUndo, FaRedo} from "react-icons/fa";
             </UndoRedoBox>
             <DeleteBox>
                 <CommonButton
+                    className={className}
                     width="120px"
                     height="40px"
                     fontSize="xs"
@@ -566,6 +568,7 @@ import {FaUndo, FaRedo} from "react-icons/fa";
                 ref={containerRef}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
+                className={className}
                 $hasImage={!!imageUrl}
             >
                 {!imageUrl ? (
