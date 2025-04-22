@@ -77,31 +77,36 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
       };
       
 
-        const drawScene = (objects = detectedObjects) => {
-            if (!canvasRef.current || !bgImageRef.current) return;
-            const ctx = canvasRef.current.getContext("2d");
-            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-            const transform = transformRef.current;
-            if (!transform) {
-                console.warn("❌ transform이 비어 있음!");
-                return;
-            } // 아직 transform이 없으면 그리지 않음
-
-            drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
-
-            if (draggingIndex !== null && detectedObjects[draggingIndex]) {
-                const obj = detectedObjects[draggingIndex];
-              
-                if (mode === "move" && initialDragBbox) {
-                    drawMovingHint(ctx, transform);
-                  }
-              }
-              
-            if (typeof selectedIndex === "number" && objects[selectedIndex]) {
-                drawMaskBorder(ctx, objects[selectedIndex], transform);
-            }
-        };
+      const drawScene = (objects = detectedObjects) => {
+        if (!canvasRef.current || !bgImageRef.current) return;
+        const ctx = canvasRef.current.getContext("2d");
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      
+        const transform = transformRef.current;
+        if (!transform) {
+          console.warn("❌ transform이 비어 있음!");
+          return;
+        }
+      
+        drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
+      
+        // 🔸 드래그 중이면 빨간 힌트 박스 표시
+        if (draggingIndex !== null && detectedObjects[draggingIndex]) {
+          if (mode === "move" && initialDragBbox) {
+            drawMovingHint(ctx, transform);
+          }
+        }
+      
+        // 🔸 마스크 윤곽선은 항상 original 위치 기준으로 그리기
+        if (typeof selectedIndex === "number" && objects[selectedIndex]) {
+          const obj = objects[selectedIndex];
+          const maskTarget = mode === "move" && initialDragBbox
+            ? { ...obj, bbox: initialDragBbox }  // 이동 중엔 원래 bbox로
+            : obj;
+          drawMaskBorder(ctx, maskTarget, transform);
+        }
+      };
+      
         
     const drawImageContainWithSideBlur = (image, ctx, canvas,reuseTransform = null) => {
         let transform;
@@ -554,7 +559,8 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
             drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
-            drawMaskBorder(ctx, obj, transform);
+            const safeBbox = obj.originalBbox ? obj.originalBbox : obj.bbox;
+            drawMaskBorder(ctx, { ...obj, bbox: obj.originalBbox}, transform);
         });
     };
 
