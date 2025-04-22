@@ -5,6 +5,7 @@ import { startAnalysis, endAnalysis } from "@/features/ai/aiSlice";
 
 /**
  * ✅ AI 분석 진행 상태를 0~100까지 자동으로 증가시키는 커스텀 훅
+ * 작성자: 김태원
  *
  * @param {Function} onComplete - 100%에 도달했을 때 실행할 콜백 함수
  * @param {number} [step=5] - 진행률 증가 간격 (기본 5%)

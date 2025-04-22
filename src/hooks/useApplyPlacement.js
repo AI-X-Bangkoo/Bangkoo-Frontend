@@ -25,7 +25,6 @@ export const useApplyPlacement = ({
 }) => {
   const transformRef = useRef(null);
   const { saveState } = usePlacementHistory();
-  
   const extractCenterImageBlob = async (canvas, centerArea) => {
     const { x, y, width, height } = centerArea;
     const tempCanvas = document.createElement("canvas");
@@ -138,19 +137,9 @@ export const useApplyPlacement = ({
         handleFileChange?.(base64ToFile(removeImage.src, "ai_removed.png"));
         await new Promise((res) => setTimeout(res, 300));
 
-        console.log("🧾 imageUploaderRef:", imageUploaderRef);
-        console.log("🧾 imageUploaderRef.current:", imageUploaderRef?.current);
-        
         // ✅ 썸네일 합성
         if (imageUploaderRef?.current) {
           const { thumbnail, finalThumbnailPos, clickOffsetRatio, transform, bbox, outputSize } = imageUploaderRef.current;
-
-          console.log("📦 확인 - thumbnail:", thumbnail);
-          console.log("📦 확인 - finalThumbnailPos:", finalThumbnailPos);
-          console.log("📦 확인 - clickOffsetRatio:", clickOffsetRatio);
-          console.log("📦 확인 - transform:", transform);
-          console.log("📦 확인 - bbox:", bbox);
-          console.log("📦 확인 - outputSize:", outputSize);
 
           if (thumbnail && finalThumbnailPos && clickOffsetRatio && transform && bbox && outputSize) {
             
@@ -166,14 +155,6 @@ export const useApplyPlacement = ({
               bbox,
               outputSize,
             });
-        
-            if (blob) {
-              const url = URL.createObjectURL(blob);
-              window.open(url, "_blank");
-              console.log("✅ composedBlob URL:", url);
-            } else {
-              console.error("❌ blob 생성 실패!");
-            }
           }
         }
 
