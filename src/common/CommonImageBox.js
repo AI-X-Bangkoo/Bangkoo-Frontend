@@ -33,7 +33,9 @@ function CommonImageBox({
             onDelete,
             onCheck,
             onClick,
-            recommendationReason
+            recommendationReason,
+            item,   //Gemini 전달 값으로 사용
+            index   //Gemini 전달 값으로 사용
         }) {
 
     if (type === "basic" && onLink) {
@@ -54,6 +56,45 @@ function CommonImageBox({
                 </ImageBoxStyle>
             </a>
         );
+    }
+
+    // type === "checkbox"
+    if (type === "checkbox") {
+        const content = (
+            <ImageBoxStyle>
+                <img src={image} alt="가구 이미지" />
+
+                {recommendationReason && (
+                    <HoverTextBox>
+                        <Text size="sm" $weight={600} color="white">추천 이유</Text>
+                        <div>
+                            <Text size="xxs" $weight={600} color="white">{recommendationReason}</Text>
+                        </div>
+                    </HoverTextBox>
+                )}
+
+                <CheckboxArea
+                    onClick={(e) => {
+                        e.stopPropagation(); // 링크로 이동 막지 않도록 클릭만 막기
+                        e.preventDefault();
+                        if (onCheck) onCheck();
+                    }}
+                >
+                    {isChecked ? <CheckIcon /> : <UnCheckIcon />}
+                </CheckboxArea>
+            </ImageBoxStyle>
+        );
+
+        // 링크가 있으면 <a>로 감싸기
+        if (onLink) {
+            return (
+                <a href={onLink} target="_blank" rel="noopener noreferrer" style={{ display: "block" }}>
+                    {content}
+                </a>
+            );
+        }
+
+        return content;
     }
 
     const buttonProps = {
@@ -129,9 +170,10 @@ function CommonImageBox({
                     <CommonIconButton // onClick={onMinus}
                                       onClick={(e) => {
                                           e.stopPropagation(); // ✅ 공통 처리
-                                          onMinus?.(e);
+                                          // onMinus?.(item,index);
+                                          if (onMinus) onMinus(item, index); // 직접 props로 넘긴 item/index 사용
                                       }}
-                                      color="red" icon={<MinusIcon />} {...buttonProps}/>
+                                      color="red" icon={<TrashIcon />} {...buttonProps}/>
                 </BottomRightBox>
             )}
             {/* 하단 플러스 버튼 (eyeClosed) */}
@@ -152,14 +194,7 @@ function CommonImageBox({
                     <CommonIconButton onClick={onDelete} color="red" icon={<TrashIcon />} {...buttonProps}/>
                 </BottomRightBox>
             )}
-
-            {/*/!* 체크박스 (type === checkbox) *!/*/}
-            {type === "checkbox" && (
-                <CheckboxArea onClick={onCheck}>
-                    {isChecked ? <CheckIcon /> : <UnCheckIcon />}
-                </CheckboxArea>
-            )}
-
+            
         </ImageBoxStyle>
     );
 }

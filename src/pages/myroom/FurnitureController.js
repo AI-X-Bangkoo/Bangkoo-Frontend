@@ -1,9 +1,56 @@
+// ✅ 파일 위치: pages/myroom/FurnitureController.js
+// ✅ 작성자: 김태원
+// ✅ 기능 요약: 이미지 배치 관련 컨트롤 버튼 UI 컴포넌트
+// - 튜토리얼, 초기화, AI 배치, 저장 버튼 등을 제공
+// - 외부에서 전달받은 canvasRef를 기반으로 AI 배치 요청 가능
+
 import React from "react";
-import {ControllerBox, FlexBox} from "./css/MyRoom.styled";
+import { ControllerBox, FlexBox } from "./css/MyRoom.styled";
 import CommonButton from "@/common/CommonButton";
+import { useApplyPlacement } from "@/hooks/useApplyPlacement";
+import { restoreInitialImageRef } from "@/pages/myroom/ImageUploader";
 
-function MyRoom({saveClick, aiClick}) {
+function FurnitureController({ saveClick, aiClick, canvasRef,centerArea,restoreInitialImageRef, mode  }) {
+    // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
+    const reference = null;
 
+    // 🔹 캔버스 사이즈 정보 (현재는 고정값 사용)
+    const canvasSize = { width: 1024, height: 720 };
+
+    const handleRestoreClick = () => {
+        if (restoreInitialImageRef?.current) {
+          restoreInitialImageRef.current();
+        } else {
+          console.warn("restoreInitialImageRef가 비어있습니다.");
+        }
+      };
+
+    /**
+     * ✅ AI 배치 기능 훅
+     * - 배경(canvasRef)을 기반으로 AI 서버에 이미지 전송
+     * - 현재는 "remove" 모드 고정
+     * - 마스킹/헬퍼 UI는 비활성화(dummy 함수 전달)
+     */
+    const applyPlacement = useApplyPlacement({
+        mode,
+        background: canvasRef,
+        reference,
+        canvasSize,
+        setShowMask: () => {},
+        setShowHelper: () => {},
+        centerArea,
+    });
+
+    /**
+     * ✅ AI 이미지 생성 버튼 클릭 시 동작
+     * - useApplyPlacement 훅 호출 → AI 서버 요청
+     */
+    const handlePlacementClick = () => {
+        console.log("배치 버튼 클릭됨");
+        applyPlacement();
+    };
+
+    // 🔸 버튼에 공통 적용할 props 모음
     const buttonProps = {
         height: "44px",
         fontSize: "xs",
@@ -13,6 +60,7 @@ function MyRoom({saveClick, aiClick}) {
 
     return (
         <ControllerBox>
+            {/* ✅ 튜토리얼 버튼 (추후 동작 연결 예정) */}
             <CommonButton
                 width="135px"
                 type="fill"
@@ -22,21 +70,27 @@ function MyRoom({saveClick, aiClick}) {
             </CommonButton>
 
             <FlexBox>
+                {/* ✅ 초기 이미지로 되돌리기 버튼 (아직 동작 없음) */}
                 <CommonButton
                     width="135px"
                     type="outline"
+                    onClick={handleRestoreClick}
                     {...buttonProps}
                 >
                     초기 이미지
                 </CommonButton>
+
+                {/* ✅ AI 이미지 생성 버튼 */}
                 <CommonButton
                     width="135px"
                     type="outline"
-                    onClick={aiClick}
+                    onClick={handlePlacementClick}
                     {...buttonProps}
                 >
-                    배치 결과 보기
+                    이미지 생성
                 </CommonButton>
+
+                {/* ✅ 인테리어 저장 버튼 (외부에서 전달받은 함수 실행) */}
                 <CommonButton
                     width="80px"
                     type="outline"
@@ -50,4 +104,4 @@ function MyRoom({saveClick, aiClick}) {
     );
 }
 
-export default MyRoom;
+export default FurnitureController;

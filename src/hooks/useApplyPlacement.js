@@ -1,37 +1,101 @@
-// hooks/useApplyPlacement.js
+// ✅ 파일 위치: hooks/useApplyPlacement.js
+// ✅ 작성자: 김태원
+// ✅ 기능 요약: 현재 캔버스 이미지를 서버에 보내고, AI가 수정한 결과를 다시 캔버스에 반영하며 히스토리까지 저장하는 핵심 훅
+import { useRef } from "react";
 import { mergeCanvasImages, canvasToBlob } from '@/common/utils/canvas';
 import { openImagePreview } from '@/common/utils/popup';
 import { requestPlacement } from '@/api/placement';
+import { usePlacementHistory } from './usePlacementHistory';
+import base64ToFile from '../pages/myroom/event/base64ToFile';
+import {drawImageContainWithSideBlur} from './utils/drawUtils';
 
 /**
- * mode에 따라 AI 배치를 요청하는 훅
- * @param {'add' | 'remove' | 'move'} mode - 작업 모드
- * @param {Blob} background - 배경 이미지 Blob
- * @param {Blob=} reference - reference 이미지 (add일 때만 필요)
- * @param {Object} canvasSize - 캔버스 사이즈 정보
- * @param {Function} setShowMask - 마스킹 UI 표시 함수
+ * ✅ AI 배치 요청을 처리하는 커스텀 훅
+ * @param {'add' | 'remove' | 'move'} mode - 작업 모드 (추가/삭제/이동)
+ * @param {RefObject<HTMLCanvasElement>} background - 캔버스 참조
+ * @param {Blob=} reference - 'add' 모드일 때만 참조 이미지 필요
+ * @param {Object} canvasSize - 캔버스 사이즈 정보 (현재 사용 안 함)
+ * @param {Function} setShowMask - 마스킹 UI 표시 토글 함수
+ * @param {Function} setShowHelper - 헬퍼 UI 토글 함수
  */
-export const useApplyPlacement = ({ mode, background, reference, canvasSize, setShowMask }) => {
+export const useApplyPlacement = ({ mode, background, reference, canvasSize, setShowMask, setShowHelper, centerArea,handleFileChange,imageUploaderRef }) => {
+
+  const transformRef = useRef(null); // 이미지 변환 정보 저장
+  // 🔸 Redis 기반 배치 히스토리 저장 함수 (undo/redo용)
+  const { saveState } = usePlacementHistory();
+  // 🔧 가운데 영역만 잘라서 Blob으로 만드는 유틸
+  const extractCenterImageBlob = async (canvas, centerArea) => {
+    const { x, y, width, height } = centerArea;
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+    const tempCtx = tempCanvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
+    const imageData = ctx.getImageData(x, y, width, height);
+    tempCtx.putImageData(imageData, 0, 0);
+    return new Promise((resolve) => tempCanvas.toBlob((blob) => resolve(blob), "image/png", 1.0));
+  };
+
+
   return async () => {
+    // ✅ UI 상태 초기화
     setShowMask(true);
-    await new Promise(resolve => setTimeout(resolve, 200));
+    setShowHelper(false);
+    await new Promise(resolve => setTimeout(resolve, 200)); // 마스킹 전환 대기
 
-    const canvas3D = document.querySelector('canvas');
-    const finalCanvas = await mergeCanvasImages(background, canvas3D, canvasSize);
+    const canvasRef = background;
 
-    openImagePreview(finalCanvas.toDataURL('image/png'));
-
-    const blob = await canvasToBlob(finalCanvas);
-
-    try {
-      const base64 = await requestPlacement(mode, blob, reference);
-      openImagePreview(`data:image/png;base64,${base64}`);
-      alert(`AI ${mode} 처리 성공!`);
-    } catch (err) {
-      console.error(`AI 서버 ${mode} 처리 실패:`, err);
-      alert('AI 서버로 전송 중 오류 발생!');
+    if (!canvasRef?.current) {
+      console.error("❌ canvasRef가 비어있습니다.");
+      alert("캔버스를 찾을 수 없습니다.");
+      return;
     }
 
+    const canvas = canvasRef.current;
+    console.log("mode: ", mode);
+    if (!mode) {
+      alert("작업 모드를 선택해주세요!");
+      return;
+    }
+
+    // ✅ 1. 현재 캔버스 내용을 Blob으로 변환 (서버 전송용)
+    const blob = await extractCenterImageBlob(canvas, centerArea);
+
+
+    // ✅ 2. 서버에 요청 전송 및 결과 수신 (Base64 형태 이미지)
+    try {
+      const base64 = await requestPlacement(mode, blob, reference);
+      // openImagePreview(`data:image/png;base64,${base64}`);
+
+      const image = new Image();
+      image.onload = async () => {
+        const ctx = canvas.getContext("2d");
+        const container = canvas.parentElement;
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+
+        const transform = drawImageContainWithSideBlur(image, ctx, canvas);
+        transformRef.current = transform;
+
+
+        // ✅ 4. Redis 히스토리로 저장 (Undo/Redo용)
+        await saveState(`data:image/png;base64,${base64}`);
+        const file = base64ToFile(`data:image/png;base64,${base64}`, "ai_result.png");
+
+        if (typeof handleFileChange === 'function') {
+          handleFileChange(file);
+        }
+      };
+      image.src = `data:image/png;base64,${base64}`;
+
+      alert(`AI ${mode} 처리 성공!`);
+    } catch (err) {
+      // ✅ 에러 핸들링
+      console.error(`AI 서버 ${mode} 처리 실패:`, err);
+      alert("AI 서버로 전송 중 오류 발생!");
+    }
+
+    // ✅ UI 상태 복구
     setShowMask(false);
   };
 };

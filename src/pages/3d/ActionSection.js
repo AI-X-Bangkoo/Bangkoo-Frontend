@@ -3,8 +3,8 @@ import React from 'react';
 import CommonButton from '@/common/CommonButton';
 import { useApplyPlacement } from '@/hooks/useApplyPlacement';
 
-export default function ActionSection({ background, canvasSize, setShowMask }) {
-  const handleApply = useApplyPlacement({ background, canvasSize, setShowMask });
+export default function ActionSection({ background, canvasSize, setShowMask, setShowHelper }) {
+  const handleApply = useApplyPlacement({ background, canvasSize, setShowMask, setShowHelper });
 
   return (
     <div style={{ textAlign: 'center', marginTop: '20px' }}>

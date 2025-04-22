@@ -1,11 +1,9 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
     setUploadedImage,
-    setSearchResults,
-    setConfirmedKeyword,
-    setKeyword
+    setKeyword,
 } from "@/features/search/searchSlice";
 import {
     SearchRoot,
@@ -20,7 +18,6 @@ import { ReactComponent as MenuIcon } from "@/assets/images/MenuIcon.svg";
 import { ReactComponent as ImageIcon } from "@/assets/images/ImageIcon.svg";
 import CommonTextField from "@/common/CommonTextField";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
-import { searchByImage } from "../../api/search/search";
 import useSearchDialog from "@/hooks/dialog/useSearchDialog";
 import CommonDialog from "@/common/CommonDialog";
 
@@ -31,19 +28,22 @@ const SearchInputComponent = ({
                                   handleClickCategory,
                                   onClickImage,
                                   imagePreviewUrl,
+                                  imageFile,
                                   onClearImage,
-                                  onCloseSearchTerm
+                                  onCloseSearchTerm,
+                                  onSearch,
+                                  inputValue,
+                                  setInputValue
         }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const recognitionRef = useRef(null); // 음성 인식 인스턴스 저장
-    const isSubmittingRef = useRef(false); // 중복 방지용 ref
+    const fileRef = useRef(null);
 
-    const { keyword, updateKeyword } = useSearchHistory();
+    const { updateKeyword } = useSearchHistory();
     const uploadedImage = useSelector((state) => state.search.uploadedImage);
     const [isListening, setIsListening] = useState(false); // 음성
     const userId = useSelector((state) => state.auth.user?.userId || "anonymous");
-    const [inputValue, setInputValue] = useState("");
 
     const {
         dialogOpen,
@@ -56,68 +56,43 @@ const SearchInputComponent = ({
     const handleTextChange = (e) => {
         const value = e.target.value;
         setInputValue(value);
-        updateKeyword(e.target.value); // 상태 변경
-        dispatch(setKeyword(e.target.value));
+        updateKeyword(value); // 상태 변경
+        dispatch(setKeyword(value));
     };
 
     const handleClearAll = () => {
+        setInputValue("");
         updateKeyword("");
         dispatch(setKeyword(""));
-        dispatch(setUploadedImage(null));
-        if (typeof onClearImage === "function") onClearImage();
+        dispatch(setUploadedImage(null)); // 상태 초기화
+
+        if (typeof onClearImage === "function") {
+            onClearImage(); // 부모에서 미리보기까지 제거되도록 연결
+        }
     };
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
-            e.preventDefault();            // 폼 제출 방지
-            const inputValue = e.target.value.trim();
-            goToSearch(inputValue); // 최신 입력값 직접 전달
-            if (typeof onFocus === "function") {
-                onCloseSearchTerm();              // 최근 검색창 닫기!
+            e.preventDefault();
+            if (typeof setInputValue === "function") {
+                setInputValue(e.target.value.trim()); 
+            }
+            if (typeof onSearch === "function") {
+                onSearch(e.target.value.trim()); // 검색 실행
+            }
+            if (typeof onCloseSearchTerm === "function") {
+                onCloseSearchTerm();
             }
         }
     };
 
-    const goToSearch = async (inputKeyword) => {
-
-        if (isSubmittingRef.current) return; // 중복 호출 방지
-        isSubmittingRef.current = true;
-
-        const searchText =
-            typeof inputKeyword === "string"
-                ? inputKeyword.trim()
-                : typeof keyword === "string"
-                    ? keyword.trim()
-                    : "";
-
-        // 이미지가 'File 객체'가 아니고 URL일 경우, URL 넘기기
-        const isUrl = typeof uploadedImage === "string" && uploadedImage.startsWith("http");
-
-        if (!searchText && !uploadedImage) {
-            isSubmittingRef.current = false;
-            return;
+    useEffect(() => {
+        if (imageFile instanceof File) {
+            fileRef.current = imageFile;
+        } else {
+            fileRef.current = null;
         }
-
-        try {
-            const params = new URLSearchParams();
-            if (searchText) params.append("query", searchText);
-            if (uploadedImage) params.append("image", uploadedImage); // 필요 시만
-
-            // ✅ 먼저 이동
-            navigate(`/search?${params.toString()}`);
-
-            // ✅ 그리고 초기화
-            if (searchText) dispatch(setKeyword(""));
-            dispatch(setUploadedImage(null));
-            if (typeof onCloseSearchTerm === "function") onCloseSearchTerm();
-
-            isSubmittingRef.current = false;
-
-        } catch (error) {
-            console.error("검색 실패:", error);
-            isSubmittingRef.current = false;
-        }
-    };
+    }, [imageFile]);
 
     const startVoiceSearch = () => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -147,9 +122,12 @@ const SearchInputComponent = ({
         recognition.onend = async () => {
             setIsListening(false);
             if (finalTranscript.trim()) {
+                setInputValue(finalTranscript);
                 updateKeyword(finalTranscript);
                 dispatch(setKeyword(finalTranscript));
-                await goToSearch(finalTranscript); // 음성 입력도 검색 저장과 함께 실행
+                if (typeof onSearch === "function") {
+                    await onSearch(finalTranscript); // 검색 실행
+                }
             } else {
                 console.warn("🎤 음성 결과 없음");
             }
@@ -177,9 +155,9 @@ const SearchInputComponent = ({
                 icon={<MenuIcon/>}
                 onClick={handleClickCategory}
             />
-            {imagePreviewUrl &&
+            {imagePreviewUrl && typeof imagePreviewUrl === "string" && (
                 <PreviewImage src={imagePreviewUrl} alt="Preview" />
-            }
+            )}
             <InputBox>
                 <CommonTextField
                     fontSize="base"
@@ -209,7 +187,11 @@ const SearchInputComponent = ({
             <CommonIconButton
                 type={"none"}
                 icon={<SearchIcon />}
-                onClick={() => goToSearch(inputValue)}
+                onClick={() => {
+                    if (typeof onSearch === "function") {
+                        onSearch(inputValue); // 검색 버튼 클릭 시 실행
+                    }
+                }}
             />
 
             {dialogOpen && (

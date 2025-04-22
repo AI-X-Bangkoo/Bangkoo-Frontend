@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef} from "react";
 import { useDispatch } from "react-redux";
 import { GridBox, LeftPanel, MainLayout, RightPanel, TabBox } from "./css/MyRoom.styled";
 import FurnitureController from "./FurnitureController";
@@ -33,15 +33,18 @@ import { useSaveInterior } from "@/hooks/useSaveInterior";
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [selectedIndex, setselectedIndex] = useState([]);
+    const [selectedIndex, setselectedIndex] = useState(null);
     const openDrawer = () => setIsDrawerOpen(true);
     const closeDrawer = () => setIsDrawerOpen(false);
+    const canvasRef = useRef(null);
+    const [mode, setMode] = useState(null);
+    const uploaderRef = useRef(null);
 
     // 이미지 등록 시 상태 값 체크용도 "김범석"
     const [isImageUploaded, setIsImageUploaded] = useState(false);
-    const handleImageUploaded = (uploaded) => {
-        setIsImageUploaded(uploaded);
-    };
+    // const handleImageUploaded = (uploaded) => {
+    //     setIsImageUploaded(uploaded);
+    // };
     //  여기까지
     const dispatch = useDispatch();
     const furnitureDialog = useFurnitureDialog();
@@ -51,8 +54,10 @@ function MyRoom() {
     const aiDialog = useAIDialog();
     const addFurniture = useAddFurnitureWithToast();
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
-    const handleSave = useSaveInterior(interiorSaveDialog.closeDialog);
-    
+    const handleSave = useSaveInterior(canvasRef, interiorSaveDialog.closeDialog);
+    const resetObjectPositionRef = useRef();
+    const restoreInitialImageRef = useRef();
+    const [centerArea, setCenterArea] = useState(null);
     useGlobalInertEffect([
         furnitureDialog.open,
         interiorDialog.open,
@@ -95,18 +100,21 @@ function MyRoom() {
                 <FurnitureController
                     saveClick={interiorSaveDialog.openDialog}
                     aiClick={aiDialog.openDialog}
+                    canvasRef={canvasRef}
+                    restoreInitialImageRef={restoreInitialImageRef}
+                    mode={mode}
+                    centerArea={centerArea} // ⬅️ 전달
+                    handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
                 />
                 <ImageUploader
-                    onImageUploaded={handleImageUploaded}
-                    onObjectSelect={(index) =>
-                        setselectedIndex((prev) =>
-                            prev.includes(index)
-                                ? prev.filter((i) => i !== index)
-                                : [...prev, index]
-                        )
-                    }
+                    ref={uploaderRef}
+                    canvasRef={canvasRef}
+                    onObjectSelect={(index) => setselectedIndex(index)}
+                    resetObjectPositionRef={resetObjectPositionRef}
                     selectedIndex={selectedIndex}        // ✅ 이거 꼭 추가!
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
+                    setCenterArea={setCenterArea} // ⬅️ 이거 추가
+                    restoreInitialImageRef={restoreInitialImageRef}
                 />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >
@@ -136,20 +144,18 @@ function MyRoom() {
                 <GridBox>
                     {currentTab === "my" && <MyFurnitureTab
                         onCustomRemove={furnitureDialog.openDialog}
-                        onSelect={(index) => {
-                        // 여러개 세팅
+                        // onSelect={(index) => {
+                        // selectedIndex = index;
                         // setselectedIndex(prev => {
-                        // const updated = prev.includes(index)
-                        // ? prev.filter(i => i !== index)
-                        // : [...prev, index];
-                        // console.log("🎯 setselectedIndex 호출됨!", updated);
-                        // return updated;
-                        setselectedIndex(prev => {
-                            return prev === index ? null : index; // 같은 거 누르면 해제, 아니면 새로 선택
-                        });
-
-                    }
-                    }
+                        //     return prev === index ? null : index; // 같은 거 누르면 해제, 아니면 새로 선택
+                        // });
+                        // resetObjectPositionRef={resetObjectPositionRef}
+                        onSelect={(index) => setselectedIndex(index)}
+                        setselectedIndex={setselectedIndex}  // ✅ 이거 꼭 전달!!
+                        selectedIndex={selectedIndex}
+                        resetObjectPositionRef={resetObjectPositionRef}
+                        mode={mode}
+                        setMode={setMode}
                     />}
                     {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} />}
                     {currentTab === "interior" && <InteriorTab onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}
@@ -187,7 +193,7 @@ function MyRoom() {
                 onClose={interiorSaveDialog.closeDialog}
                 onClick={handleSave}
             >
-                <InteriorSave/>
+                <InteriorSave canvasRef={canvasRef}/>
             </CommonDialog>
 
             <CommonDialog

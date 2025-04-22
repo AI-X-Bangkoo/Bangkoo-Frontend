@@ -7,6 +7,7 @@ import AISearchComponent from "../pages/furnitureSearch/SearchPage";
 import MyRoom from "../pages/myroom/MyRoom";
 import KakaoCallback from "../pages/auth/KakaoCallback";
 import AdminDashBoard from "../pages/admin/AdminDashBoard";
+import ErrorPage from "../common/ErrorPage";
 
 export default function AppRoutes() {
   return (
@@ -18,6 +19,7 @@ export default function AppRoutes() {
       <Route path="/myroom" element={<MyRoom />} />
       <Route path="/auth/callback/kakao" element={<KakaoCallback />} />
       <Route path="/admin" element={<AdminDashBoard />} />
+      <Route path="/error" element={<ErrorPage />} />
     </Routes>
   );
 }

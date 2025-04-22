@@ -1,7 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+// localStorage에서 초기 체크 상태 불러오기
+const stored = localStorage.getItem("checkedItems");
+const initialCheckedItems = stored ? JSON.parse(stored) : {};
+
 const initialState = {
-    checkedItems: {}, // key: item.id, value: true/false
+    checkedItems: initialCheckedItems, // key: item.id, value: true/false
 };
 
 const selectionSlice = createSlice({
@@ -11,13 +15,21 @@ const selectionSlice = createSlice({
         toggleItem(state, action) {
             const id = action.payload;
             state.checkedItems[id] = !state.checkedItems[id];
+
+            // 저장
+            localStorage.setItem("checkedItems", JSON.stringify(state.checkedItems));
         },
         setItemChecked(state, action) {
             const { id, checked } = action.payload;
             state.checkedItems[id] = checked;
+
+            // 저장
+            localStorage.setItem("checkedItems", JSON.stringify(state.checkedItems));
         },
         clearAllSelections(state) {
             state.checkedItems = {};
+
+            localStorage.removeItem("checkedItems"); // 삭제
         },
     },
 });

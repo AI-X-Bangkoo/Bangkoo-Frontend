@@ -1,5 +1,6 @@
 import api from "../axios";
 
+// 텍스트 기반
 export const searchByText = async (query, userId = null) => {
     const formData = new FormData();
     formData.append("query", query);
@@ -14,27 +15,23 @@ export const searchByText = async (query, userId = null) => {
     return response.data;
   };
 
-export const searchByImage = async (formData, userId = null, query = "") => {
-    const res = await api.post("/api/search", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    return res.data;
-  };
-
-export const searchByImageUrl = async (imageUrl, userId = null, query = "") => {
+// 이미지 기반 통합(파일, URL, 텍스트 조합)
+export const searchImageUnified = async ({ imageFile = null, imageUrl = null, query = "", userId = null }) => {
     const formData = new FormData();
-    formData.append("image_url", imageUrl);
-    formData.append("userId", userId ? userId : "anonymous");
+
+    if (imageFile) formData.append("image", imageFile);
+    if (imageUrl) formData.append("image_url", imageUrl);
     if (query) formData.append("query", query);
+    formData.append("userId", userId);
 
     const res = await api.post("/api/search", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
     });
-    return res.data;
-  };
-  
 
+    return res.data;
+};
   
 // 1. 최근 검색어 조회
 export const fetchRecentSearches = async (userId, limit = 10) => {

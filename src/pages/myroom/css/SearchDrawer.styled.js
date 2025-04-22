@@ -41,7 +41,7 @@ export const SearchBox = styled.div`
   }
 `;
 
-export const TextBox = styled.div`
+export const KeywordBox = styled.div`
   padding: 0 ${({ theme }) => theme.spacing.xxl};
   display: flex;
   justify-content: space-between;
@@ -87,6 +87,32 @@ export const Content = styled.div`
     border: 3px solid transparent;
   }
 `;
+
+export const NoContent = styled.div`
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.xxl};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+`;
+
+export const TextBox = styled.div`
+  height: 95px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  & p:nth-child(1){
+     margin-top: ${({ theme }) => theme.spacing.md};
+  }
+  & p:nth-child(2){
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+` ;
+
 
 export const ButtonBox = styled.div`
   display: flex;
