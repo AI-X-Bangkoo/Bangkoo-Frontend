@@ -10,7 +10,7 @@ export const StyledButton = styled.button`
   min-width: ${({ width }) => width || "auto"};
   height: ${({ height }) => height || "40px"};
   background-color: ${({ theme, $bgColor, type }) =>
-    type === "outline" ? "transparent" : theme.colors[$bgColor] || $bgColor || theme.colors.orange};
+    type === "outline" ? theme.colors.white : theme.colors[$bgColor] || $bgColor || theme.colors.orange};
   color: ${({ theme, color, type, $bgColor }) =>
     type === "outline"
         ? theme.colors[$bgColor] || $bgColor || theme.colors.orange
