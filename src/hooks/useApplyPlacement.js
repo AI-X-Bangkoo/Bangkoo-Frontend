@@ -59,11 +59,43 @@ export const useApplyPlacement = ({ mode, background, reference, canvasSize, set
     }
 
     // ✅ 1. 현재 캔버스 내용을 Blob으로 변환 (서버 전송용)
-    const blob = await extractCenterImageBlob(canvas, centerArea);
+    let blob = await extractCenterImageBlob(canvas, centerArea);
 
 
     // ✅ 2. 서버에 요청 전송 및 결과 수신 (Base64 형태 이미지)
     try {
+
+      if (mode === 'move') {
+        const blobForRemove = await extractCenterImageBlob(canvas, centerArea);
+        const base64Remove = await requestPlacement("remove", blobForRemove);
+    
+        const removeImage = new Image();
+        await new Promise((resolve) => {
+          removeImage.onload = resolve;
+          removeImage.src = `data:image/png;base64,${base64Remove}`;
+        });
+    
+        const ctx = canvas.getContext("2d");
+        const container = canvas.parentElement;
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+    
+        const transform = drawImageContainWithSideBlur(removeImage, ctx, canvas);
+        transformRef.current = transform;
+    
+        const removeFile = base64ToFile(`data:image/png;base64,${base64Remove}`, "ai_remove.png");
+        handleFileChange?.(removeFile);
+    
+        blob = await extractCenterImageBlob(canvas, centerArea);
+
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        // ✅ 모드를 다시 'move'로 복구
+        if (typeof imageUploaderRef?.current?.setMode === "function") {
+          imageUploaderRef.current.setMode("move");
+        }
+      }
+
       const base64 = await requestPlacement(mode, blob, reference);
       // openImagePreview(`data:image/png;base64,${base64}`);
 

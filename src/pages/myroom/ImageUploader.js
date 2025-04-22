@@ -15,6 +15,7 @@ import ImageRenderer from "./ImageRenderer";
 import axios from "axios";
 import { usePlacementHistory } from "@/hooks/usePlacementHistory";
 import {FaUndo, FaRedo} from "react-icons/fa";
+import { useRemoveObject } from "@/hooks/useRemoveObject";
 
     const ImageUploader = forwardRef((props, ref) => {
         const {
@@ -25,6 +26,9 @@ import {FaUndo, FaRedo} from "react-icons/fa";
             setselectedIndex,
             resetObjectPositionRef,
             setCenterArea,
+            mode, 
+            setMode,
+            className
         } = props;
     const [imageUrl, setImageUrl] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -44,24 +48,65 @@ import {FaUndo, FaRedo} from "react-icons/fa";
     const { saveState, undo, redo, clearHistory } = usePlacementHistory();
     const [sessionId, setSessionId] = useState(null);
     const transformRef = useRef(null); // 🔥 transform 기억해둠
+    
+    const [draggingThumbnailPos, setDraggingThumbnailPos] = useState(null);
+    const [finalThumbnailPos, setFinalThumbnailPos] = useState(null);
+    const [clickOffsetRatio, setClickOffsetRatio] = useState({ x: 0.5, y: 0.5 });
+    const [initialDragBbox, setInitialDragBbox] = useState(null);
+    
+    const removeObject = useRemoveObject({
+        canvas: canvasRef.current,
+        transform: transformRef.current,
+        selectedIndex,
+        detectedObjects,
+        setDetectedObjects,
+      });
 
-        const drawScene = (objects = detectedObjects) => {
-            if (!canvasRef.current || !bgImageRef.current) return;
-            const ctx = canvasRef.current.getContext("2d");
-            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    const drawMovingHint = (ctx, transform) => {
+        if (!initialDragBbox || !transform) return;
+        const [x, y, w, h] = initialDragBbox;
+      
+        const canvasX = x * transform.scaleX + transform.offsetX;
+        const canvasY = y * transform.scaleY + transform.offsetY;
+        const canvasW = w * transform.scaleX;
+        const canvasH = h * transform.scaleY;
+      
+        // 빨간 박스
+        ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
+        ctx.fillRect(canvasX, canvasY, canvasW, canvasH);
+      };
+      
 
-            const transform = transformRef.current;
-            if (!transform) {
-                console.warn("❌ transform이 비어 있음!");
-                return;
-            } // 아직 transform이 없으면 그리지 않음
-
-            drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
-
-            if (typeof selectedIndex === "number" && objects[selectedIndex]) {
-                drawMaskBorder(ctx, objects[selectedIndex], transform);
-            }
-        };
+      const drawScene = (objects = detectedObjects) => {
+        if (!canvasRef.current || !bgImageRef.current) return;
+        const ctx = canvasRef.current.getContext("2d");
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      
+        const transform = transformRef.current;
+        if (!transform) {
+          console.warn("❌ transform이 비어 있음!");
+          return;
+        }
+      
+        drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
+      
+        // 🔸 드래그 중이면 빨간 힌트 박스 표시
+        if (draggingIndex !== null && detectedObjects[draggingIndex]) {
+          if (mode === "move" && initialDragBbox) {
+            drawMovingHint(ctx, transform);
+          }
+        }
+      
+        // 🔸 마스크 윤곽선은 항상 original 위치 기준으로 그리기
+        if (typeof selectedIndex === "number" && objects[selectedIndex]) {
+          const obj = objects[selectedIndex];
+          const maskTarget = mode === "move" && initialDragBbox
+            ? { ...obj, bbox: initialDragBbox }  // 이동 중엔 원래 bbox로
+            : obj;
+          drawMaskBorder(ctx, maskTarget, transform);
+        }
+      };
+      
         
     const drawImageContainWithSideBlur = (image, ctx, canvas,reuseTransform = null) => {
         let transform;
@@ -437,38 +482,55 @@ import {FaUndo, FaRedo} from "react-icons/fa";
 
     const handleMouseDown = (e) => {
         if (!canvasRef.current) {
-            console.warn("⛔ canvasRef.current is null!");
-            return;
+          console.warn("⛔ canvasRef.current is null!");
+          return;
         }
+      
         const rect = canvasRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-
+      
         const transform = transformRef.current;
         if (!transform) return;
-
+      
         if (typeof selectedIndex !== "number" || selectedIndex < 0) {
-            console.warn("❗ selectedIndex가 유효하지 않음:", selectedIndex);
-            return;
+          console.warn("❗ selectedIndex가 유효하지 않음:", selectedIndex);
+          return;
         }
-
+      
         const obj = detectedObjects[selectedIndex];
         const canvasX = obj.bbox[0] * transform.scaleX + transform.offsetX;
         const canvasY = obj.bbox[1] * transform.scaleY + transform.offsetY;
         const canvasW = obj.bbox[2] * transform.scaleX;
         const canvasH = obj.bbox[3] * transform.scaleY;
-
+      
         if (x >= canvasX && x <= canvasX + canvasW && y >= canvasY && y <= canvasY + canvasH) {
-            setDraggingIndex(selectedIndex);
-            setOffset({
-                x: x - canvasX,
-                y: y - canvasY,
-            });
-            console.log("✅ 드래그 시작!", { index: selectedIndex, offsetX: x - canvasX, offsetY: y - canvasY });
+          setDraggingIndex(selectedIndex);
+          setOffset({
+            x: x - canvasX,
+            y: y - canvasY,
+          });
+      
+          // ✅ 비율 기반 클릭 위치 계산
+          const clickXRatio = (x - canvasX) / canvasW;
+          const clickYRatio = (y - canvasY) / canvasH;
+          setClickOffsetRatio({ x: clickXRatio, y: clickYRatio });
+          setInitialDragBbox([...obj.bbox]);
+
+          console.log("✅ 드래그 시작!", {
+            index: selectedIndex,
+            offsetX: x - canvasX,
+            offsetY: y - canvasY,
+            ratioX: clickXRatio.toFixed(2),
+            ratioY: clickYRatio.toFixed(2),
+          });
+      
+          setDraggingThumbnailPos({ x: e.clientX, y: e.clientY });
+          setMode("move");
         } else {
-            console.log("❌ 선택된 객체를 클릭하지 않았습니다.");
+          console.log("❌ 선택된 객체를 클릭하지 않았습니다.");
         }
-    };
+      };
 
     const handleMouseMove = (e) => {
         if (!canvasRef.current || draggingIndex === null) return;
@@ -486,14 +548,19 @@ import {FaUndo, FaRedo} from "react-icons/fa";
         obj.bbox[0] = (x - offset.x - transform.offsetX) / transform.scaleX;
         obj.bbox[1] = (y - offset.y - transform.offsetY) / transform.scaleY;
 
+        setDraggingThumbnailPos({ x: e.clientX, y: e.clientY });
+
         updated[draggingIndex] = obj;
+        setDetectedObjects(updated);
 
         requestAnimationFrame(() => {
+            drawScene(updated);
             const ctx = canvasRef.current.getContext("2d");
             ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
             drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
-            drawMaskBorder(ctx, obj, transform);
+            const safeBbox = obj.originalBbox ? obj.originalBbox : obj.bbox;
+            drawMaskBorder(ctx, { ...obj, bbox: obj.originalBbox}, transform);
         });
     };
 
@@ -503,7 +570,10 @@ import {FaUndo, FaRedo} from "react-icons/fa";
             return;
         }
         setDraggingIndex(null);
+        setDraggingThumbnailPos(null);
+        setFinalThumbnailPos(draggingThumbnailPos);
     };
+
     const handleDrop = (e) => {
         e.preventDefault();
         if (e.dataTransfer.files.length > 0) {
@@ -549,6 +619,7 @@ import {FaUndo, FaRedo} from "react-icons/fa";
             </UndoRedoBox>
             <DeleteBox>
                 <CommonButton
+                    className={className}
                     width="120px"
                     height="40px"
                     fontSize="xs"
@@ -566,6 +637,7 @@ import {FaUndo, FaRedo} from "react-icons/fa";
                 ref={containerRef}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
+                className={className}
                 $hasImage={!!imageUrl}
             >
                 {!imageUrl ? (
@@ -598,6 +670,75 @@ import {FaUndo, FaRedo} from "react-icons/fa";
                     accept="image/*"
                     onChange={handleFileChange}
                 />
+{/* 🔹 드래그 중 실시간 썸네일 */}
+{draggingThumbnailPos &&
+  draggingIndex !== null &&
+  transformRef.current &&
+  (() => {
+    const bbox = detectedObjects[draggingIndex].bbox;
+    const width = bbox[2] * transformRef.current.scaleX;
+    const height = bbox[3] * transformRef.current.scaleY;
+    return (
+      <img
+        src={detectedObjects[draggingIndex]?.thumbnail}
+        alt="drag-thumbnail"
+        style={{
+          position: "absolute",
+          left:
+            draggingThumbnailPos.x -
+            canvasRef.current.getBoundingClientRect().left -
+            width * clickOffsetRatio.x +
+            "px",
+          top:
+            draggingThumbnailPos.y -
+            canvasRef.current.getBoundingClientRect().top -
+            height * clickOffsetRatio.y +
+            "px",
+          width: width + "px",
+          height: height + "px",
+          pointerEvents: "none",
+          zIndex: 9999,
+        }}
+      />
+    );
+  })()}
+
+{/* 🔹 드래그 종료 후 고정된 썸네일 */}
+{finalThumbnailPos &&
+  draggingIndex === null &&
+  selectedIndex !== null &&
+  transformRef.current &&
+  canvasRef.current &&
+  (() => {
+    const bbox = detectedObjects[selectedIndex].bbox;
+    const width = bbox[2] * transformRef.current.scaleX;
+    const height = bbox[3] * transformRef.current.scaleY;
+    return (
+      <img
+        src={detectedObjects[selectedIndex]?.thumbnail}
+        alt="dropped-preview"
+        style={{
+          position: "absolute",
+          left:
+            finalThumbnailPos.x -
+            canvasRef.current.getBoundingClientRect().left -
+            width * clickOffsetRatio.x +
+            "px",
+          top:
+            finalThumbnailPos.y -
+            canvasRef.current.getBoundingClientRect().top -
+            height * clickOffsetRatio.y +
+            "px",
+          width: width + "px",
+          height: height + "px",
+          pointerEvents: "none",
+          zIndex: 9998,
+          opacity: 1,
+        }}
+      />
+    );
+  })()}
+
             </UploadContainer>
         </>
     );

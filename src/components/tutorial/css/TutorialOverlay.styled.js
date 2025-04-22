@@ -1,0 +1,42 @@
+import styled from "styled-components";
+
+export const TooltipWrapper = styled.div`
+  position: absolute;
+  z-index: 10000;
+  top: ${({ $top }) => $top}px;
+  left: ${({ $left }) => $left}px;
+`;
+
+export const TooltipBubble = styled.div`
+  position: relative;
+  background: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.black};
+  padding: 12px 16px;
+  border-radius: ${({ theme }) => theme.borderRadius.sm};
+  font-size: ${({ theme }) => theme.fontSizes.xxs};
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 260px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 10px 0 10px;
+    border-style: solid;
+    border-color: #fff transparent transparent transparent;
+  }
+`;
+
+export const ButtonBox = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: ${({ theme }) => theme.spacing.md};
+  
+  & button:last-child {
+    margin-left: ${({ theme }) => theme.spacing.sm};
+  }
+`;
