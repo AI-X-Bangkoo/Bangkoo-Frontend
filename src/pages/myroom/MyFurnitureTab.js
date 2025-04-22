@@ -10,6 +10,7 @@ import { addFurniture, removeFurniture } from "../../features/furniture/furnitur
 export default function MyFurnitureTab({
   onCustomRemove,
   onSelect,
+  onGlbSelect,
   setselectedIndex,
   selectedIndex,
   resetObjectPositionRef,
@@ -84,6 +85,17 @@ export default function MyFurnitureTab({
             if (typeof setselectedIndex === "function") {
               setselectedIndex((prev) => (prev === index ? null : index));
             }
+          }}
+          onGlbSelect={(item, index) => {
+            if (typeof setselectedIndex === "function") {
+              setselectedIndex((prev) => (prev === index ? null : index));
+            }
+            if (typeof onGlbSelect === "function") {
+              onGlbSelect(item, index);  // ✅ 여기서 props로 받은 함수를 실행해야 MyRoom까지 전달됨
+            }
+            console.log("GLB 선택됨, item.image:", item.model3dUrl);
+            // 👇 여기서 GLB 로딩 로직 추가하면 좋아요!
+            // loadGlbIntoCanvas(item.image);
           }}
         />
       )}
