@@ -10,6 +10,7 @@ export const ImageBoxStyle = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: ${({ theme }) => theme.colors.white};
 
   & img {
     width: 100%;

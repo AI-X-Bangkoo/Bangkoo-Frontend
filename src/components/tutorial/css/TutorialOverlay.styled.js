@@ -21,22 +21,21 @@ export const TooltipBubble = styled.div`
   &::after {
     content: "";
     position: absolute;
-    bottom: -10px;
-    left: 50%;
+    left: ${({ $arrowLeft }) => $arrowLeft !== undefined ? `${$arrowLeft}px` : "50%"};
     transform: translateX(-50%);
-    border-width: 10px 10px 0 10px;
-    border-style: solid;
-    border-color: #fff transparent transparent transparent;
-  }
-`;
-
-export const ButtonBox = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: ${({ theme }) => theme.spacing.md};
-  
-  & button:last-child {
-    margin-left: ${({ theme }) => theme.spacing.sm};
+    ${({ $direction }) =>
+            $direction === "up"
+                    ? `
+      top: -10px;
+      border-width: 0 10px 10px 10px;
+      border-style: solid;
+      border-color: transparent transparent #fff transparent;
+    `
+                    : `
+      bottom: -10px;
+      border-width: 10px 10px 0 10px;
+      border-style: solid;
+      border-color: #fff transparent transparent transparent;
+    `}
   }
 `;
