@@ -8,7 +8,7 @@ import { requestPlacement } from '@/api/placement';
 import { usePlacementHistory } from './usePlacementHistory';
 import base64ToFile from '../pages/myroom/event/base64ToFile';
 import {drawImageContainWithSideBlur} from './utils/drawUtils';
-
+import ImageUploader from "@/pages/myroom/ImageUploader";
 /**
  * ✅ AI 배치 요청을 처리하는 커스텀 훅
  * @param {'add' | 'remove' | 'move'} mode - 작업 모드 (추가/삭제/이동)
@@ -18,12 +18,14 @@ import {drawImageContainWithSideBlur} from './utils/drawUtils';
  * @param {Function} setShowMask - 마스킹 UI 표시 토글 함수
  * @param {Function} setShowHelper - 헬퍼 UI 토글 함수
  */
-export const useApplyPlacement = ({ mode, background, reference, canvasSize, setShowMask, setShowHelper, centerArea,handleFileChange,imageUploaderRef }) => {
-
-  const transformRef = useRef(null); // 이미지 변환 정보 저장
-  // 🔸 Redis 기반 배치 히스토리 저장 함수 (undo/redo용)
+export const useApplyPlacement = ({
+  mode, background, reference, canvasSize,
+  setShowMask, setShowHelper, centerArea,
+  handleFileChange, imageUploaderRef
+}) => {
+  const transformRef = useRef(null);
   const { saveState } = usePlacementHistory();
-  // 🔧 가운데 영역만 잘라서 Blob으로 만드는 유틸
+  
   const extractCenterImageBlob = async (canvas, centerArea) => {
     const { x, y, width, height } = centerArea;
     const tempCanvas = document.createElement("canvas");
@@ -33,101 +35,172 @@ export const useApplyPlacement = ({ mode, background, reference, canvasSize, set
     const ctx = canvas.getContext("2d");
     const imageData = ctx.getImageData(x, y, width, height);
     tempCtx.putImageData(imageData, 0, 0);
-    return new Promise((resolve) => tempCanvas.toBlob((blob) => resolve(blob), "image/png", 1.0));
+    return new Promise((resolve) =>
+      tempCanvas.toBlob((blob) => resolve(blob), "image/png", 1.0)
+    );
   };
 
+  const drawThumbnailOnCanvas = async (baseImage, {
+    thumbnail, finalPos, offsetRatio, transform, bbox, outputSize
+  }) => {
+
+    console.log("🧾 들어온 파라미터:", {
+      finalPos,
+      offsetRatio,
+      transform,
+      bbox,
+      outputSize,
+    });
+
+    const thumbImg = new Image();
+    thumbImg.src = thumbnail;
+
+    await new Promise((resolve, reject) => {
+      thumbImg.onload = () => {
+        console.log("✅ 썸네일 로딩 완료:", thumbImg.width, thumbImg.height);
+        resolve();
+      };
+      thumbImg.onerror = () => {
+        console.error("❌ 썸네일 로딩 실패", thumbnail);
+        reject(new Error("썸네일 로드 실패"));
+      };
+    });
+
+    // 🔧 캔버스 사이즈를 outputSize에 맞춤
+    const canvas = document.createElement("canvas");
+    canvas.width = outputSize.width;
+    canvas.height = outputSize.height;
+  
+    const ctx = canvas.getContext("2d");
+  
+    // 🔄 배경 이미지 가운데 영역만 잘라서 다시 그리기
+    const { x, y, width, height } = transform.centerArea;
+    ctx.drawImage(baseImage, x, y, width, height, 0, 0, canvas.width, canvas.height);
+  
+    const thumbWidth = bbox[2] * transform.scaleX;
+    const thumbHeight = bbox[3] * transform.scaleY;
+  
+    const tx = finalPos.x - thumbWidth * offsetRatio.x - x;
+    const ty = finalPos.y - thumbHeight * offsetRatio.y - y;
+  
+    console.log("🖼️ 썸네일 위치 및 크기", { tx, ty, thumbWidth, thumbHeight });
+
+    ctx.drawImage(thumbImg, tx, ty, thumbWidth, thumbHeight);
+  
+    return new Promise((resolve) =>
+      canvas.toBlob((blob) => resolve(blob), "image/png", 1.0)
+    );
+  };
 
   return async () => {
-    // ✅ UI 상태 초기화
     setShowMask(true);
     setShowHelper(false);
-    await new Promise(resolve => setTimeout(resolve, 200)); // 마스킹 전환 대기
+    await new Promise((res) => setTimeout(res, 200));
 
-    const canvasRef = background;
-
-    if (!canvasRef?.current) {
-      console.error("❌ canvasRef가 비어있습니다.");
+    const canvas = background?.current;
+    if (!canvas) {
       alert("캔버스를 찾을 수 없습니다.");
       return;
     }
 
-    const canvas = canvasRef.current;
-    console.log("mode: ", mode);
-    if (!mode) {
-      alert("작업 모드를 선택해주세요!");
-      return;
-    }
-
-    // ✅ 1. 현재 캔버스 내용을 Blob으로 변환 (서버 전송용)
     let blob = await extractCenterImageBlob(canvas, centerArea);
 
-
-    // ✅ 2. 서버에 요청 전송 및 결과 수신 (Base64 형태 이미지)
     try {
-
       if (mode === 'move') {
-        const blobForRemove = await extractCenterImageBlob(canvas, centerArea);
-        const base64Remove = await requestPlacement("remove", blobForRemove);
-    
+        const removeBase64 = await requestPlacement("remove", blob);
         const removeImage = new Image();
-        await new Promise((resolve) => {
-          removeImage.onload = resolve;
-          removeImage.src = `data:image/png;base64,${base64Remove}`;
-        });
-    
+        removeImage.src = `data:image/png;base64,${removeBase64}`;
+
+        // ✅ 이미지 로딩 완료 확인
+        // await new Promise((resolve) => {
+        //   removeImage.onload = () => {
+        //     console.log("🟢 removeImage 로드 완료:", removeImage.width, removeImage.height);
+
+        //     // 🔍 미리보기 확인용
+        //     const win = window.open();
+        //     win.document.write(`<img src="${removeImage.src}" style="max-width: 100%">`);
+        //     resolve();
+        //   };
+        //   removeImage.onerror = () => {
+        //     console.error("❌ removeImage 로딩 실패");
+        //     resolve();
+        //   };
+        // });
+
+
         const ctx = canvas.getContext("2d");
         const container = canvas.parentElement;
         canvas.width = container.clientWidth;
         canvas.height = container.clientHeight;
-    
         const transform = drawImageContainWithSideBlur(removeImage, ctx, canvas);
         transformRef.current = transform;
-    
-        const removeFile = base64ToFile(`data:image/png;base64,${base64Remove}`, "ai_remove.png");
-        handleFileChange?.(removeFile);
-    
-        blob = await extractCenterImageBlob(canvas, centerArea);
 
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        handleFileChange?.(base64ToFile(removeImage.src, "ai_removed.png"));
+        await new Promise((res) => setTimeout(res, 300));
 
-        // ✅ 모드를 다시 'move'로 복구
-        if (typeof imageUploaderRef?.current?.setMode === "function") {
-          imageUploaderRef.current.setMode("move");
+        console.log("🧾 imageUploaderRef:", imageUploaderRef);
+        console.log("🧾 imageUploaderRef.current:", imageUploaderRef?.current);
+        
+        // ✅ 썸네일 합성
+        if (imageUploaderRef?.current) {
+          const { thumbnail, finalThumbnailPos, clickOffsetRatio, transform, bbox, outputSize } = imageUploaderRef.current;
+
+          console.log("📦 확인 - thumbnail:", thumbnail);
+          console.log("📦 확인 - finalThumbnailPos:", finalThumbnailPos);
+          console.log("📦 확인 - clickOffsetRatio:", clickOffsetRatio);
+          console.log("📦 확인 - transform:", transform);
+          console.log("📦 확인 - bbox:", bbox);
+          console.log("📦 확인 - outputSize:", outputSize);
+
+          if (thumbnail && finalThumbnailPos && clickOffsetRatio && transform && bbox && outputSize) {
+            
+            const previewWindow = window.open("", "_blank"); // 먼저 창을 띄움
+            previewWindow.document.title = "합성 이미지 미리보기";
+            previewWindow.document.body.innerHTML = "<p>이미지 로딩 중...</p>";
+        
+            blob = await drawThumbnailOnCanvas(removeImage, {
+              thumbnail,
+              finalPos: finalThumbnailPos,
+              offsetRatio: clickOffsetRatio,
+              transform,
+              bbox,
+              outputSize,
+            });
+        
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              window.open(url, "_blank");
+              console.log("✅ composedBlob URL:", url);
+            } else {
+              console.error("❌ blob 생성 실패!");
+            }
+          }
         }
+
+        // 다시 move 모드 설정
+        imageUploaderRef?.current?.setMode?.("move");
       }
 
       const base64 = await requestPlacement(mode, blob, reference);
-      // openImagePreview(`data:image/png;base64,${base64}`);
 
-      const image = new Image();
-      image.onload = async () => {
+      const resultImage = new Image();
+      resultImage.onload = async () => {
         const ctx = canvas.getContext("2d");
-        const container = canvas.parentElement;
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-
-        const transform = drawImageContainWithSideBlur(image, ctx, canvas);
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+        const transform = drawImageContainWithSideBlur(resultImage, ctx, canvas);
         transformRef.current = transform;
-
-
-        // ✅ 4. Redis 히스토리로 저장 (Undo/Redo용)
         await saveState(`data:image/png;base64,${base64}`);
-        const file = base64ToFile(`data:image/png;base64,${base64}`, "ai_result.png");
-
-        if (typeof handleFileChange === 'function') {
-          handleFileChange(file);
-        }
+        handleFileChange?.(base64ToFile(resultImage.src, "ai_result.png"));
       };
-      image.src = `data:image/png;base64,${base64}`;
+      resultImage.src = `data:image/png;base64,${base64}`;
 
       alert(`AI ${mode} 처리 성공!`);
     } catch (err) {
-      // ✅ 에러 핸들링
       console.error(`AI 서버 ${mode} 처리 실패:`, err);
       alert("AI 서버로 전송 중 오류 발생!");
     }
 
-    // ✅ UI 상태 복구
     setShowMask(false);
   };
 };

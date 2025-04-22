@@ -4,13 +4,23 @@
 // - 튜토리얼, 초기화, AI 배치, 저장 버튼 등을 제공
 // - 외부에서 전달받은 canvasRef를 기반으로 AI 배치 요청 가능
 
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { ControllerBox, FlexBox } from "./css/MyRoom.styled";
 import CommonButton from "@/common/CommonButton";
 import { useApplyPlacement } from "@/hooks/useApplyPlacement";
 import { restoreInitialImageRef } from "@/pages/myroom/ImageUploader";
+import { useAiProgress } from "@/hooks/useAiProgress";
+import AiRecommended from "./dialog/AiRecommended";
+import { ModalOverlay, ModalContent } from "./dialog/css/ModalWrapper.styled";
 
-function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImageRef, onTutorialStart, mode, centerArea }) {
+function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImageRef, onTutorialStart, mode, centerArea, imageUploaderRef }) {
+
+    const [startProgress, setStartProgress] = useState(false);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [showAiRecommended, setShowAiRecommended] = useState(false);
+
+    const progress = useAiProgress(startProgress, 5, 400);
+
     // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
     const reference = null;
 
@@ -39,16 +49,26 @@ function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImag
         setShowMask: () => {},
         setShowHelper: () => {},
         centerArea,
+        imageUploaderRef,
     });
 
     /**
      * ✅ AI 이미지 생성 버튼 클릭 시 동작
-     * - useApplyPlacement 훅 호출 → AI 서버 요청
+     * - progress 시작 트리거 먼저 켜고
+     * - 100ms 뒤에 applyPlacement() 실행
      */
     const handlePlacementClick = () => {
-        console.log("배치 버튼 클릭됨");
-        applyPlacement();
-    };
+        setShowAiRecommended(true);     // ✅ 이걸로 띄움
+        setIsAnalyzing(true);
+        setStartProgress(true);
+        applyPlacement();    
+      
+        setTimeout(() => {
+          setIsAnalyzing(false);
+          setStartProgress(false);
+          setShowAiRecommended(false); // 원하면 자동 닫기도 가능
+        }, 7000);
+      };
 
     // 🔸 버튼에 공통 적용할 props 모음
     const buttonProps = {
@@ -101,6 +121,13 @@ function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImag
                     저장
                 </CommonButton>
             </FlexBox>
+            {showAiRecommended && (
+            <ModalOverlay onClick={() => setShowAiRecommended(false)}>
+                <ModalContent onClick={(e) => e.stopPropagation()}>
+                <AiRecommended onClose={() => setShowAiRecommended(false)} />
+                </ModalContent>
+            </ModalOverlay>
+)}
         </ControllerBox>
     );
 }

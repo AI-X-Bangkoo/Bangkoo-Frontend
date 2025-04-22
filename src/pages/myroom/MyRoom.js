@@ -121,6 +121,7 @@ function MyRoom() {
                     mode={mode}
                     centerArea={centerArea} // ⬅️ 전달
                     handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
+                    imageUploaderRef={uploaderRef}
                 />
                 <ImageUploader
                     ref={uploaderRef}
