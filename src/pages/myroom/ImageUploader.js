@@ -28,6 +28,7 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             setCenterArea,
             mode, 
             setMode,
+            className
         } = props;
     const [imageUrl, setImageUrl] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -612,6 +613,7 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             </UndoRedoBox>
             <DeleteBox>
                 <CommonButton
+                    className={className}
                     width="120px"
                     height="40px"
                     fontSize="xs"
@@ -629,6 +631,7 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
                 ref={containerRef}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
+                className={className}
                 $hasImage={!!imageUrl}
             >
                 {!imageUrl ? (
