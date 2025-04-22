@@ -131,6 +131,8 @@ function MyRoom() {
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
                     setCenterArea={setCenterArea} // ⬅️ 이거 추가
                     restoreInitialImageRef={restoreInitialImageRef}
+                    mode={mode}
+                    setMode={setMode}
 
                     // 튜토리얼
                     isTutorialActive={tutorialStep === 1}
