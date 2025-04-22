@@ -131,15 +131,12 @@ function MyRoom() {
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
                     setCenterArea={setCenterArea} // ⬅️ 이거 추가
                     restoreInitialImageRef={restoreInitialImageRef}
-<<<<<<< HEAD
                     mode={mode}
                     setMode={setMode}
-=======
 
                     // 튜토리얼
                     isTutorialActive={tutorialStep === 1}
                     className={tutorialStep === 1 ? "upload-area" : ""}
->>>>>>> 8a50930172f6fdec97f4b38e43889bd53fe4c2ec
                 />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >
