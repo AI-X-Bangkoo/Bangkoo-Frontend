@@ -108,7 +108,7 @@ function MyRoom() {
         { id: "recommend", label: "추천 가구" },
         { id: "interior", label: "내 인테리어" },
     ];
-    
+
     return (
         <MainLayout>
             <LeftPanel>
@@ -135,8 +135,9 @@ function MyRoom() {
                     setMode={setMode}
 
                     // 튜토리얼
-                    isTutorialActive={tutorialStep === 1}
-                    className={tutorialStep === 1 ? "upload-area" : ""}
+                    isTutorialActive={tutorialStep === "1.1"}
+                    className={tutorialStep === "1.1" ? "upload-button" : ""}
+                    setIsImageUploaded={setIsImageUploaded}
                 />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >

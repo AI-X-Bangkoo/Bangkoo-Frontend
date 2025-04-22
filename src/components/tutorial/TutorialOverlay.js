@@ -2,16 +2,12 @@ import React from "react";
 import {
     TooltipWrapper,
     TooltipBubble,
-    ButtonBox,
 } from "./css/TutorialOverlay.styled";
 
-
-
-
-function TutorialOverlay({ message, position, onPrev, onNext }) {
+function TutorialOverlay({ message, position, arrowDirection = "down", arrowLeft  }) {
     return (
         <TooltipWrapper $top={position.top} $left={position.left}>
-            <TooltipBubble>
+            <TooltipBubble $direction={arrowDirection} $arrowLeft={arrowLeft}>
                 {message}
             </TooltipBubble>
 
