@@ -30,6 +30,9 @@ import ImageUploader from "./ImageUploader";
 import { useGlobalInertEffect } from "@/hooks/dialog/useGlobalInertEffect";
 import { useSaveInterior } from "@/hooks/useSaveInterior";
 
+// 튜토리얼
+import TutorialManager from "@/components/tutorial/TutorialManager";
+
 function MyRoom() {
     const [currentTab, setCurrentTab] = useState("my");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -66,6 +69,18 @@ function MyRoom() {
         aiDialog.open,
     ]);
 
+    // 튜토리얼
+    const [tutorialForceStart, setTutorialForceStart] = useState(false);
+    const [tutorialStep, setTutorialStep] = useState(null);
+    const startTutorial = () => {
+        localStorage.removeItem("hasSeenTutorial");
+        setTutorialStep(null);            // tutorialStep 초기화
+        setTutorialForceStart(false);     // 리셋
+        setTimeout(() => {
+            setTutorialForceStart(true);    // forceStart를 다시 true로 (강제 리렌더링 유도)
+        }, 0);
+    };
+
     useEffect(() => {
         dispatch(setInitialFurniture([
             { id: 1, image: TestImage, type: "eyeOn", isCustom: false },
@@ -93,7 +108,7 @@ function MyRoom() {
         { id: "recommend", label: "추천 가구" },
         { id: "interior", label: "내 인테리어" },
     ];
-
+    
     return (
         <MainLayout>
             <LeftPanel>
@@ -102,6 +117,7 @@ function MyRoom() {
                     aiClick={aiDialog.openDialog}
                     canvasRef={canvasRef}
                     restoreInitialImageRef={restoreInitialImageRef}
+                    onTutorialStart={startTutorial}
                     mode={mode}
                     centerArea={centerArea} // ⬅️ 전달
                     handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
@@ -115,8 +131,15 @@ function MyRoom() {
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
                     setCenterArea={setCenterArea} // ⬅️ 이거 추가
                     restoreInitialImageRef={restoreInitialImageRef}
+<<<<<<< HEAD
                     mode={mode}
                     setMode={setMode}
+=======
+
+                    // 튜토리얼
+                    isTutorialActive={tutorialStep === 1}
+                    className={tutorialStep === 1 ? "upload-area" : ""}
+>>>>>>> 8a50930172f6fdec97f4b38e43889bd53fe4c2ec
                 />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >
@@ -218,6 +241,13 @@ function MyRoom() {
             >
                 <AiRecommended/>
             </CommonDialog>
+
+            {/* 튜토리얼 */}
+            <TutorialManager
+                isImageUploaded={isImageUploaded}
+                forceStart={tutorialForceStart}
+                onStepChange={(step) => setTutorialStep(step)}
+            />
         </MainLayout>
     );
 }

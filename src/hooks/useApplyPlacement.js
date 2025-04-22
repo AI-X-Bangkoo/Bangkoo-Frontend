@@ -60,8 +60,7 @@ export const useApplyPlacement = ({ mode, background, reference, canvasSize, set
 
     // ✅ 1. 현재 캔버스 내용을 Blob으로 변환 (서버 전송용)
     const blob = await extractCenterImageBlob(canvas, centerArea);
-    console.log("📦 Blob 크기:", blob.size / 1024 / 1024, "MB");
-    console.log("📨 mode:", mode, "전송 중...");
+
 
     // ✅ 2. 서버에 요청 전송 및 결과 수신 (Base64 형태 이미지)
     try {
