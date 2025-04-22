@@ -217,7 +217,7 @@ const SearchDrawer = ({ onClose }) => {
                             const selectedFurniture = list.filter(item =>
                                 selectedIds.includes(item.id)
                             );
-
+                            console.log(selectedFurniture);
                             selectedFurniture.forEach((item) => {
                                 dispatch(appendFurniture({
                                     id: item.id,     
@@ -226,6 +226,7 @@ const SearchDrawer = ({ onClose }) => {
                                     description: item.설명,
                                     price: item.할인가 ?? item.정상가,
                                     link: item.링크,
+                                    model3dUrl: item.glb이미지,
                                     type: "eyeOn",
                                     isCustom: true,
                                 }));
