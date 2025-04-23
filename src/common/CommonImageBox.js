@@ -8,7 +8,7 @@ import {
     CenterBox,
     EyeOnChip,
     EyeClosedChip,
-    HoverTextBox, BottomRightBoxPlus
+    HoverTextBox, BottomRightBoxPlus, TopRightBox, AbsoluteBox
 } from "./css/ImageBox.styled"
 import CommonIconButton from "../common/CommonIconButton"
 import { ReactComponent as EyeOnIcon } from "../assets/images/Eye.svg";
@@ -166,7 +166,7 @@ function CommonImageBox({
                 </BottomRightBoxPlus>
             )}
             {/* 하단 마이너스 버튼 (eyeOn) */}
-            {type === "eyeOn" && (
+            {(type === "eyeOn" || type === "addFurniture") && (
                 <BottomRightBox>
                     <CommonIconButton // onClick={onMinus}
                                       onClick={(e) => {

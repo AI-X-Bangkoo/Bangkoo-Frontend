@@ -1,12 +1,25 @@
 import React from "react";
-import { FurnitureGrid } from "./css/MyRoom.styled";
+import {AddItem, FurnitureGrid, ImageBox} from "./css/MyRoom.styled";
 import CommonImageBox from "@/common/CommonImageBox";
+import CommonIconButton from "../../common/CommonIconButton";
+import { ReactComponent as MinusIcon } from "../../assets/images/MinusIcon.svg";
 
 function MyFurnitureList({ furnitureList = [], onPlus, onMinus, onSelect, onGlbSelect }) {
     return (
         <FurnitureGrid>
             {furnitureList.map((item,index) => (
-                <div className={`furniture-item ${index === 0 ? "first-item" : ""}`} key={item.id}>
+                <ImageBox className={`furniture-item ${index === 0 ? "first-item" : ""}`} key={item.id}>
+                    {item.type === "addFurniture" &&
+                        <AddItem>
+                            <CommonIconButton
+                                icon={<MinusIcon />}
+                                width="28px"
+                                height="28px"
+                                type="full"
+                                color="red"
+                            />
+                        </AddItem>
+                    }
                     <CommonImageBox
                         // key={item.id}
                         image={item.image}
@@ -43,7 +56,7 @@ function MyFurnitureList({ furnitureList = [], onPlus, onMinus, onSelect, onGlbS
                         }}
 
                     />
-                </div>
+                </ImageBox>
             ))}
         </FurnitureGrid>
     );
