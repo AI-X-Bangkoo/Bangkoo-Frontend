@@ -34,8 +34,8 @@ function TutorialStep2({ phase, onNext, onPrev, onSkip }) {
             // 툴팁 위치 설정
             if (phase === "2.1" && firstBox) {
                 setTooltipPos({
-                    top: rects.firstItem.bottom + 15,
-                    left: rects.firstItem.left + rects.firstItem.width / 2 - 27
+                    top: rects.firstItem.bottom + 10,
+                    left: rects.firstItem.left + rects.firstItem.width / 2 - 80
                 });
             }
 

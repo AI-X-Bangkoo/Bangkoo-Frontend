@@ -81,14 +81,14 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
             )}
 
             {/* Step 2 */}
-            {["2.1", "2.2", "2.3"].includes(step) && (
+            {["2.1", "2.2", "2.3", "2.4"].includes(step) && (
                 <TutorialStep2
                     phase={step}
                     onNext={() => {
                         if (step === "2.1") updateStep("2.2");
                         else if (step === "2.2") updateStep("2.3");
-                        // else if (step === "2.3") handleSkip(); //  튜토리얼 종료
-                        else if (step === "2.3") updateStep("6.1"); //  튜토리얼 종료
+                        else if (step === "2.3") updateStep("2.4");
+                        else if (step === "2.4") updateStep("6.1");
                     }}
                     onPrev={() => updateStep("1.2")}
                     onSkip={handleSkip}
