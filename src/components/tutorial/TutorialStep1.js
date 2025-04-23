@@ -10,7 +10,7 @@ const buttonProps = {
     width: "40px",
     height: "24px",
     fontSize: "xxs",
-    borderRadius: 0,
+    radius: 0,
     fontWeight: 600
 };
 

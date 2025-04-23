@@ -199,7 +199,9 @@ export const useApplyPlacement = ({
         console.log("✅ 최종 이미지 반영 완료");
       };
       resultImage.src = `data:image/png;base64,${base64}`;
-      alert(`AI ${mode} 처리 성공!`);
+
+      console.log(`AI ${mode} 처리 성공!`);
+      // alert(`AI ${mode} 처리 성공!`);
     } catch (err) {
       console.error(`❌ AI 서버 ${mode} 처리 실패:`, err);
       alert("AI 서버로 전송 중 오류 발생!");

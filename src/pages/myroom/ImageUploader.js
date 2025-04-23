@@ -57,6 +57,7 @@ const ImageUploader = forwardRef((props, ref) => {
     const is3DDragging = useRef(false);
     const last3DMouse = useRef({ x: 0, y: 0 });
     const glbModelStateRef = useRef(new Map());
+    const [rendererInitialized , setRendererInitialized] = useState(false);
 
 
     
@@ -232,7 +233,28 @@ const ImageUploader = forwardRef((props, ref) => {
             console.log("✅ resetObjectPositionRef 등록 완료");
         }
     }, [resetObjectPositionRef]);
+
     const handleGlbClick = (url) => {
+        if (webglCanvasRef.current) {
+            // 3D 캔버스를 비활성화 상태에서 활성화
+            if (webglCanvasRef.current.style.pointerEvents === "none") {
+                // console.log("none 상태");
+                webglCanvasRef.current.style.pointerEvents = "auto"; // 3D 캔버스를 활성화
+                webglCanvasRef.current.style.visibility = "visible"; // 3D 캔버스를 보이게 설정
+                // console.log("초기화 시전");
+                // 렌더러 초기화가 한 번만 이루어지도록 보장
+                if (!rendererInitialized) {
+                    // console.log("초기화 시전");
+                    initRenderer();  // 렌더러 초기화 한 번만 호출
+                    setRendererInitialized(true); // 렌더러 초기화 완료 플래그 설정
+                }
+            } else {
+                // console.log("auto 상태");
+                webglCanvasRef.current.style.pointerEvents = "none"; // 3D 캔버스를 비활성화
+                webglCanvasRef.current.style.visibility = "hidden"; // 3D 캔버스를 숨김 처리
+            }
+        }
+
         const currentState = glbModelStateRef.current.get(url);
         const currentModel = getCurrentModel();
 
@@ -743,13 +765,13 @@ const ImageUploader = forwardRef((props, ref) => {
                                 onMouseUp={handleMouseUp}
                                 canvasRef={canvasRef}
                             />
-                            {/* <canvas
+                            <canvas
                                 ref={webglCanvasRef}
                                 onMouseDown={handle3DMouseDown}
                                 onMouseMove={handle3DMouseMove}
                                 onMouseUp={handle3DMouseUp}
-                                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 2, pointerEvents: "auto" }}
-                            /> */}
+                                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 2, pointerEvents: "none" }}
+                            />
                         </BlurredWrapper>
 
                     </>

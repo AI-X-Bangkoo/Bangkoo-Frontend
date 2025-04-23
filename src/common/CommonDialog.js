@@ -37,33 +37,46 @@ const CommonDialog = ({
     };
 
     return (
-        <DialogStyle open={open}>
-            <TitleBox>
-                <Text size="base" $weight={700}>{title}</Text>
-                <IconButton onClick={onClose}><CloseIcon /></IconButton>
-            </TitleBox>
-            <ContentsBox>
-                {children}
-            </ContentsBox>
-            <ControllerBox>
-                {cancel &&
-                    <CommonButton
-                        type="outline"
-                        onClick={onClose}
-                        children={"취소"}
-                        {...buttonProps}
-                    />
-                }
+        <DialogStyle
+            open={open}
+            disableEnforceFocus
+            PaperProps={{
+                style: {
+                    zIndex: 1600,
+                    pointerEvents: 'auto',
+                },
+            }}
+        >
+            <div ref={dialogRef} style={{ outline: "none" }}>
+                <TitleBox>
+                    <Text size="base" $weight={700}>{title}</Text>
+                    <IconButton onClick={onClose}><CloseIcon /></IconButton>
+                </TitleBox>
+                <ContentsBox>
+                    {children}
+                </ContentsBox>
+                <ControllerBox>
+                    {cancel &&
+                        <CommonButton
+                            type="outline"
+                            onClick={onClose}
+                            children={"취소"}
+                            {...buttonProps}
+                        />
+                    }
 
-                {submit &&
-                    <CommonButton
-                        onClick={onClick}
-                        children={submitText}
-                        {...buttonProps}
-                    />
-                }
+                    {submit &&
+                        <CommonButton
+                            onClick={onClick}
+                            className="dialog-submit-button"
+                            children={submitText}
+                            {...buttonProps}
+                        />
+                    }
 
-            </ControllerBox>
+                </ControllerBox>
+            </div>
+
         </DialogStyle>
     );
 };

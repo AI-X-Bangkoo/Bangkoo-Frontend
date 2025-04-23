@@ -30,6 +30,7 @@ import ImageUploader from "./ImageUploader";
 import { useGlobalInertEffect } from "@/hooks/dialog/useGlobalInertEffect";
 import { useSaveInterior } from "@/hooks/useSaveInterior";
 
+
 // 튜토리얼
 import TutorialManager from "@/components/tutorial/TutorialManager";
 
@@ -42,6 +43,8 @@ function MyRoom() {
     const canvasRef = useRef(null);
     const [mode, setMode] = useState(null);
     const uploaderRef = useRef(null);
+
+    const [showAiRecommended, setShowAiRecommended] = useState(false);
 
     // 이미지 등록 시 상태 값 체크용도 "김범석"
     const [isImageUploaded, setIsImageUploaded] = useState(false);
@@ -57,7 +60,7 @@ function MyRoom() {
     const aiDialog = useAIDialog();
     const addFurniture = useAddFurnitureWithToast();
     const { handleConfirmDelete, handleConfirmInteriorDelete } = useMyRoomLogic(furnitureDialog, interiorDialog);
-    const handleSave = useSaveInterior(canvasRef, interiorSaveDialog.closeDialog);
+    const saveInterior = useSaveInterior(canvasRef, interiorSaveDialog.closeDialog);
     const resetObjectPositionRef = useRef();
     const restoreInitialImageRef = useRef();
     const [centerArea, setCenterArea] = useState(null);
@@ -79,6 +82,16 @@ function MyRoom() {
         setTimeout(() => {
             setTutorialForceStart(true);    // forceStart를 다시 true로 (강제 리렌더링 유도)
         }, 0);
+    };
+
+    const handleSave = () => {
+        // 기존 저장 로직
+        saveInterior(); // Hook에서 리턴된 함수 실행(태원님)
+
+        // 튜토리얼 단계일 경우 다음 단계로
+        if (tutorialStep === "6.2") {
+            setTutorialStep("6.3");
+        }
     };
 
     useEffect(() => {
@@ -124,6 +137,9 @@ function MyRoom() {
                     onTutorialAdvance={() => {
                         if (tutorialStep === "2.2") setTutorialStep("2.3");
                     }}
+                    tutorialStep={tutorialStep}
+                    setTutorialStep={setTutorialStep}
+                    setShowAiRecommended={setShowAiRecommended}
                 />
                 <ImageUploader
                     ref={uploaderRef}
@@ -169,10 +185,17 @@ function MyRoom() {
                 {/* 검색 drawer 영역*/}
                 {isDrawerOpen && <SearchDrawer onClose={closeDrawer} />}
 
-                <TabBox>
-                    <CommonTabs tabs={tabList} current={currentTab} onChange={setCurrentTab} />
+                <TabBox className={tutorialStep === "6.3" ? "tabs-container" : ""}>
+                    <CommonTabs
+                        tabs={tabList}
+                        current={currentTab}
+                        onChange={setCurrentTab}
+                        getTabProps={(tab) => ({
+                            className: tab.id === "interior" ? "tab-interior" : ""
+                        })}
+                    />
                 </TabBox>
-                <GridBox>
+                <GridBox className="grid-container">
                     {currentTab === "my" && <MyFurnitureTab
                         onCustomRemove={furnitureDialog.openDialog}
                         onGlbSelect={(item, index) => {
@@ -241,12 +264,12 @@ function MyRoom() {
             </CommonDialog>
 
             <CommonDialog
-                open={aiDialog.open}
+                open={showAiRecommended}
                 title="AI 추천 가구"
                 submitText="설정"
                 cancel={false}
                 submit={false}
-                onClose={aiDialog.closeDialog}
+                onClose={() => setShowAiRecommended(false)}
             >
                 <AiRecommended/>
             </CommonDialog>

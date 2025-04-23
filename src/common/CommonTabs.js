@@ -1,7 +1,7 @@
 import React from "react";
 import {TabMenu, Tab, TabLineStyle} from "./css/Tabs.styled";
 
-function CommonTabs({ tabs = [], current, onChange, fontSize }) {
+function CommonTabs({ tabs = [], current, onChange, fontSize, getTabProps }) {
 
     return (
         <TabMenu>
@@ -11,6 +11,7 @@ function CommonTabs({ tabs = [], current, onChange, fontSize }) {
                     $active={current === id}
                     onClick={() => onChange(id)}
                     fontSize={fontSize}
+                    {...(getTabProps ? getTabProps({ id, label }) : {})}
                 >
                     {label}
                 </Tab>
