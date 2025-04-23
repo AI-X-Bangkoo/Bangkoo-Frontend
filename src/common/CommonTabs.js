@@ -11,6 +11,7 @@ function CommonTabs({ tabs = [], current, onChange, fontSize, className }) {
                     $active={current === id}
                     onClick={() => onChange(id)}
                     fontSize={fontSize}
+                    className={id === "interior" ? "tab-interior" : ""}
                 >
                     {label}
                 </Tab>

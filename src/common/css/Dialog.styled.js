@@ -6,6 +6,9 @@ export const DialogStyle = styled(Dialog)`
         min-width: 300px;
         max-width: 1200px;
         border-radius: ${({ theme }) => theme.borderRadius.sm};
+        z-index: 1600 !important;
+        pointer-events: auto;
+        position: relative;
     }
 `;
 
