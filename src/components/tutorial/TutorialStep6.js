@@ -18,7 +18,6 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
     const [highlightRects, setHighlightRects] = useState({});
     const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
 
-    // zIndex 적용
     useEffect(() => {
         const preview = document.querySelector(".preview-area");
         const saveBtn = document.querySelector(".save-button");
@@ -26,6 +25,8 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
         const dialogSubmit = document.querySelector(".dialog-submit-button");
         const interiorTab = document.querySelector(".tab-interior");
         const interiorItem = document.querySelector(".interior-item");
+        const tabsContainer = document.querySelector(".tabs-container");
+        const gridContainer = document.querySelector(".grid-container");
 
         const elevateEls = [];
 
@@ -35,13 +36,17 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
         if (phase === "6.1" && saveBtn) elevateEls.push(saveBtn);
         if (phase === "6.2" && descInput) elevateEls.push(descInput);
         if (phase === "6.2" && dialogSubmit) elevateEls.push(dialogSubmit);
-        if (phase === "6.3" && interiorTab) elevateEls.push(interiorTab);
+        if (phase === "6.3") {
+            if (tabsContainer) elevateEls.push(tabsContainer);
+            if (gridContainer) elevateEls.push(gridContainer);
+            if (preview) elevateEls.push(preview);
+        }
         if (phase === "6.4" && interiorItem) elevateEls.push(interiorItem);
 
         elevateEls.forEach(el => {
             el.dataset.prevZIndex = el.style.zIndex;
             el.dataset.prevPosition = el.style.position;
-            el.style.zIndex = "1500";
+            el.style.zIndex = "1600";
             el.style.position = "relative";
         });
 
@@ -53,7 +58,6 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
         };
     }, [phase]);
 
-    // 위치 계산
     useEffect(() => {
         const getRects = () => {
             const preview = document.querySelector(".preview-area");
@@ -62,6 +66,8 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
             const dialogSubmit = document.querySelector(".dialog-submit-button");
             const interiorTab = document.querySelector(".tab-interior");
             const interiorItem = document.querySelector(".interior-item");
+            const tabsContainer = document.querySelector(".tabs-container");
+            const gridContainer = document.querySelector(".grid-container");
 
             const rects = {};
 
@@ -71,6 +77,8 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
             if (dialogSubmit) rects.submit = dialogSubmit.getBoundingClientRect();
             if (interiorTab) rects.tab = interiorTab.getBoundingClientRect();
             if (interiorItem) rects.item = interiorItem.getBoundingClientRect();
+            if (tabsContainer) rects.tabs = tabsContainer.getBoundingClientRect();
+            if (gridContainer) rects.grid = gridContainer.getBoundingClientRect();
 
             setHighlightRects(rects);
 
@@ -93,9 +101,10 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
                     break;
                 case "6.3":
                     if (interiorTab) {
+                        // 🔽 툴팁을 "탭 아래"로 위치
                         setTooltipPos({
-                            top: rects.tab.top + 55,
-                            left: rects.tab.left + rects.tab.width / 2 - 100
+                            top: rects.tab.bottom + 15,
+                            left: rects.tab.left + rects.tab.width / 2 - 90
                         });
                     }
                     break;
@@ -129,7 +138,9 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
             {phase === "6.1" && highlightRects.save && highlight(highlightRects.save)}
             {phase === "6.2" && highlightRects.input && highlight(highlightRects.input)}
             {phase === "6.2" && highlightRects.submit && highlight(highlightRects.submit)}
-            {phase === "6.3" && highlightRects.tab && highlight(highlightRects.tab)}
+            {phase === "6.3" && highlightRects.preview && highlight(highlightRects.preview)}
+            {phase === "6.3" && highlightRects.tabs && highlight(highlightRects.tabs)}
+            {phase === "6.3" && highlightRects.grid && highlight(highlightRects.grid)}
             {phase === "6.4" && highlightRects.item && highlight(highlightRects.item)}
 
             {/* 툴팁 */}
@@ -138,7 +149,7 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
                     message={<span>저장버튼을 눌러주세요</span>}
                     position={tooltipPos}
                     arrowDirection="up"
-                    style={{ zIndex: 1500 }}
+                    style={{ zIndex: 1600 }}
                 />
             )}
             {phase === "6.2" && (
@@ -146,15 +157,20 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
                     message={<span>간단한 설명을 입력 후 저장버튼을 눌러주세요</span>}
                     position={tooltipPos}
                     arrowDirection="up"
-                    style={{ zIndex: 1500 }}
+                    style={{ zIndex: 1600 }}
                 />
             )}
             {phase === "6.3" && (
                 <TutorialOverlay
-                    message={<span>"내 인테리어" 탭을 눌러 <br/>저장된 사진을 확인하세요</span>}
+                    message={
+                        <span>
+                          "내 인테리어" 탭을 눌러<br />
+                          저장된 사진을 확인하세요
+                        </span>
+                    }
                     position={tooltipPos}
                     arrowDirection="up"
-                    style={{ zIndex: 1500 }}
+                    style={{ zIndex: 1600 }}
                 />
             )}
 
@@ -167,7 +183,7 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
                     display: "flex",
                     zIndex: 2000,
                     gap: 16,
-                    pointerEvents: "auto !important"
+                    pointerEvents: "auto"
                 }}
             >
                 <CommonButton
