@@ -181,6 +181,18 @@ export const FurnitureGrid = styled.div`
   `}
 `;
 
+export const ImageBox = styled.div`
+  position: relative;
+`;
+
+export const AddItem = styled.div`
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  z-index: 10;
+  
+`;
+
 export const TextBox = styled.div`
 
   & p:nth-child(2){

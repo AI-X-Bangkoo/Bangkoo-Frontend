@@ -227,7 +227,7 @@ const SearchDrawer = ({ onClose }) => {
                                     price: item.할인가 ?? item.정상가,
                                     link: item.링크,
                                     model3dUrl: item.glb이미지,
-                                    type: "eyeOn",
+                                    type: "addFurniture",
                                     isCustom: true,
                                 }));
                             });

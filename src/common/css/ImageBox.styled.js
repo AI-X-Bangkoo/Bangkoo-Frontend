@@ -98,6 +98,18 @@ export const CenterBox = styled.div.attrs(() => ({
   transition: opacity 0.2s ease;
 `;
 
+export const TopRightBox = styled.div`
+  position: absolute;
+  top: 20px;
+  right: ${({ theme }) => theme.spacing.sm};
+  
+  & svg {
+    width: 14px;
+    height: 14px;
+  }
+`;
+
+
 export const BottomRightBox = styled.div`
   position: absolute;
   bottom: ${({ theme }) => theme.spacing.sm};
