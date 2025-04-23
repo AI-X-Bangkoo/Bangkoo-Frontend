@@ -24,11 +24,11 @@ function FurnitureController({
                                  onTutorialAdvance,
                                  tutorialStep,
                                  setTutorialStep,
+                                 setShowAiRecommended
 }) {
 
     const [startProgress, setStartProgress] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
-    const [showAiRecommended, setShowAiRecommended] = useState(false);
 
     // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
     const reference = null;
@@ -76,7 +76,7 @@ function FurnitureController({
              setTimeout(() => {
                  setIsAnalyzing(false);
                  setStartProgress(false);
-                 setShowAiRecommended(false);
+                 // setShowAiRecommended(false);
              }, 7000);
         
              if (typeof onTutorialAdvance === "function") {
@@ -142,13 +142,6 @@ function FurnitureController({
                     저장
                 </CommonButton>
             </FlexBox>
-            {showAiRecommended && (
-                <ModalOverlay onClick={() => setShowAiRecommended(false)}>
-                    <ModalContent onClick={(e) => e.stopPropagation()}>
-                    <AiRecommended onClose={() => setShowAiRecommended(false)} />
-                    </ModalContent>
-                </ModalOverlay>
-            )}
         </ControllerBox>
     );
 }

@@ -17,6 +17,10 @@ export const Backdrop = styled.div`
   z-index: 9998;
 `;
 
+export const Backdrop6 = styled(Backdrop)`
+  pointer-events: none;
+`;
+
 export const Modal = styled.div`
   width: 600px;
   position: fixed;

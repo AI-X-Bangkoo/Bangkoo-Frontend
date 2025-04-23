@@ -10,7 +10,7 @@ const buttonProps = {
     width: "40px",
     height: "24px",
     fontSize: "xxs",
-    radius: 0,
+    borderRadius: 0,
     fontWeight: 600
 };
 
@@ -94,7 +94,7 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
                 case "6.3":
                     if (interiorTab) {
                         setTooltipPos({
-                            top: rects.tab.top - 60,
+                            top: rects.tab.top + 55,
                             left: rects.tab.left + rects.tab.width / 2 - 100
                         });
                     }
@@ -124,7 +124,7 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
 
     return (
         <>
-            <Backdrop style={{ zIndex: 1300, pointerEvents: "none"  }} />
+            <Backdrop style={{ zIndex: 1300 }} />
 
             {phase === "6.1" && highlightRects.save && highlight(highlightRects.save)}
             {phase === "6.2" && highlightRects.input && highlight(highlightRects.input)}
@@ -146,12 +146,12 @@ function TutorialStep6({ phase, onNext, onPrev, onSkip }) {
                     message={<span>간단한 설명을 입력 후 저장버튼을 눌러주세요</span>}
                     position={tooltipPos}
                     arrowDirection="up"
-                    style={{ zIndex: 9999 }}
+                    style={{ zIndex: 1500 }}
                 />
             )}
             {phase === "6.3" && (
                 <TutorialOverlay
-                    message={<span>내 인테리어 탭을 눌러 저장된 사진을 확인하세요</span>}
+                    message={<span>"내 인테리어" 탭을 눌러 <br/>저장된 사진을 확인하세요</span>}
                     position={tooltipPos}
                     arrowDirection="up"
                     style={{ zIndex: 1500 }}
