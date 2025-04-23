@@ -560,7 +560,7 @@ const ImageUploader = forwardRef((props, ref) => {
                 setTimeout(() => {
                     if (webglCanvasRef.current) {
                         console.log("🌟 이미지 로딩 이후 WebGL 초기화!");
-                        initRenderer();
+                        // initRenderer();
                     }
                 }, 0); // 💡 또는 requestAnimationFrame으로 시점 밀어줘도 OK
             };
@@ -753,13 +753,13 @@ const ImageUploader = forwardRef((props, ref) => {
                                 onMouseUp={handleMouseUp}
                                 canvasRef={canvasRef}
                             />
-                            <canvas
+                            {/* <canvas
                                 ref={webglCanvasRef}
                                 onMouseDown={handle3DMouseDown}
                                 onMouseMove={handle3DMouseMove}
                                 onMouseUp={handle3DMouseUp}
                                 style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 2, pointerEvents: "auto" }}
-                            />
+                            /> */}
                         </BlurredWrapper>
 
                     </>
