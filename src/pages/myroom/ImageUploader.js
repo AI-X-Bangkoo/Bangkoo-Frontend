@@ -341,6 +341,8 @@ const ImageUploader = forwardRef((props, ref) => {
 
             useImperativeHandle(ref, () => ({
                 handleFileChange,
+                setFinalThumbnailPos,
+                setDraggingThumbnailPos,
                 loadGlbModel: (url) => {
                     handleGlbClick(url);
                 },
@@ -774,6 +776,7 @@ const ImageUploader = forwardRef((props, ref) => {
 {/* 🔹 드래그 중 실시간 썸네일 */}
 {draggingThumbnailPos &&
   draggingIndex !== null &&
+  mode === "move" &&
   transformRef.current &&
   (() => {
     const bbox = detectedObjects[draggingIndex].bbox;
@@ -808,6 +811,7 @@ const ImageUploader = forwardRef((props, ref) => {
 {finalThumbnailPos &&
   draggingIndex === null &&
   selectedIndex !== null &&
+  mode === "move" &&
   transformRef.current &&
   canvasRef.current &&
   (() => {

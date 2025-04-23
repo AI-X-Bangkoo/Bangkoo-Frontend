@@ -160,6 +160,9 @@ export const useApplyPlacement = ({
 
         // 다시 move 모드 설정
         imageUploaderRef?.current?.setMode?.("move");
+
+        imageUploaderRef?.current?.setFinalThumbnailPos?.(null);
+        imageUploaderRef?.current?.setDraggingThumbnailPos?.(null);
       }
 
       const base64 = await requestPlacement(mode, blob, reference);
