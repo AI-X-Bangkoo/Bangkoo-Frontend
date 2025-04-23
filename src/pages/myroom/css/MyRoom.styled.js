@@ -9,8 +9,9 @@ export const MainLayout = styled.div`
 `;
 
 export const LeftPanel = styled.div`
-  width: 70%;
-  min-width: calc(100vw - 500px);
+  width: calc(100vw - 500px);
+  //width: 70%;
+  //min-width: calc(100vw - 500px);
   padding: ${({ theme }) => theme.spacing.md};
   box-sizing: border-box;
   border-right: 1px solid ${({ theme }) => theme.colors.grey};
@@ -25,10 +26,10 @@ export const LeftPanel = styled.div`
 `;
 
 export const RightPanel = styled.div`
-  min-width: 346px;
+  //min-width: 346px;
   //width: 30%;
-  width: 490px;
-  max-width: 500px;
+  width: 500px;
+  //max-width: 500px;
   height: 100%;
   padding: ${({ theme }) => theme.spacing.md};
   padding-bottom: 0;

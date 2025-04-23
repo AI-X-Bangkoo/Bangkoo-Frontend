@@ -23,7 +23,7 @@ import useCheckedFurniture from "@/hooks/furniture/useCheckedFurniture";
 import useCachedSearch from "@/hooks/search/useCachedSearch";
 import LoadingSpinner from "@/common/LoadingSpinner";
 
-const SearchDrawer = ({ onClose }) => {
+const SearchDrawer = ({ onClose, tutorialStep, setTutorialStep }) => {
     const [isOpen, setIsOpen] = useState(false); // 애니메이션 제어용
     const dispatch = useDispatch();
     const myFurniture = useSelector((state) => state.furniture.list);
@@ -47,6 +47,15 @@ const SearchDrawer = ({ onClose }) => {
     } = useCachedSearch();
 
     const list = rawList;
+
+    useEffect(() => {
+        if (tutorialStep === "3.2") {
+            const timeout = setTimeout(() => {
+                setTutorialStep("3.3");
+            }, 5000);
+            return () => clearTimeout(timeout);
+        }
+    }, [tutorialStep]);
 
     useEffect(() => {
         // mount 후 슬라이드 인
@@ -186,6 +195,8 @@ const SearchDrawer = ({ onClose }) => {
                             cachedChecked?.forEach(id => {
                                 if (!checkedItems[id]) toggle(id);
                             });
+
+                            if (tutorialStep === "3.3") setTutorialStep("3.4");
                         }}
                     />
                 </SearchBox>
@@ -231,6 +242,7 @@ const SearchDrawer = ({ onClose }) => {
                                     isCustom: true,
                                 }));
                             });
+                            if (tutorialStep === "3.4") setTutorialStep("3.5");
 
                             clearAll();
                             onClose();

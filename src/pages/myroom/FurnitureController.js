@@ -24,7 +24,7 @@ function FurnitureController({
                                  onTutorialAdvance,
                                  tutorialStep,
                                  setTutorialStep,
-                                 setShowAiRecommended
+                                 setShowAiRecommended,
 }) {
 
     const [startProgress, setStartProgress] = useState(false);

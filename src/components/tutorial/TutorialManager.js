@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import TutorialStart from "./TutorialStart";
 import TutorialStep1 from "./TutorialStep1";
 import TutorialStep2 from "./TutorialStep2";
+import TutorialStep3 from "./TutorialStep3";
 import TutorialStep6 from "./TutorialStep6";
 
 function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalStep }) {
@@ -88,13 +89,34 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
                         if (step === "2.1") updateStep("2.2");
                         else if (step === "2.2") updateStep("2.3");
                         else if (step === "2.3") updateStep("2.4");
-                        else if (step === "2.4") updateStep("6.1");
+                        else if (step === "2.4") updateStep("3.1");
                     }}
                     onPrev={() => updateStep("1.2")}
                     onSkip={handleSkip}
                 />
             )}
 
+            {/* Step 3 */}
+            {["3.1", "3.2", "3.3", "3.4", "3.5"].includes(step) && (
+                <TutorialStep3
+                    phase={step}
+                    onNext={() => {
+                        if (step === "3.1") updateStep("3.2");
+                        else if (step === "3.2") updateStep("3.3");
+                        else if (step === "3.3") updateStep("3.4");
+                        else if (step === "3.4") updateStep("3.5");
+                        else if (step === "3.5") updateStep("6.1"); // 다음 단계로
+                    }}
+                    onPrev={() => {
+                        if (step === "3.5") updateStep("3.4");
+                        else if (step === "3.4") updateStep("3.3");
+                        else if (step === "3.3") updateStep("3.2");
+                        else if (step === "3.2") updateStep("3.1");
+                        else if (step === "3.1") updateStep("2.4");
+                    }}
+                    onSkip={handleSkip}
+                />
+            )}
             {/* Step 6 */}
             {["6.1", "6.2", "6.3", "6.4"].includes(step) && (
                 <TutorialStep6
@@ -116,7 +138,7 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
                         if (step === "6.4") updateStep("6.3");
                         else if (step === "6.3") updateStep("6.2");
                         else if (step === "6.2") updateStep("6.1");
-                        else if (step === "6.1") updateStep("5.3"); // 👉 이전 스텝으로 돌아가게 설정
+                        else if (step === "6.1") updateStep("3.5");
                     }}
                     onSkip={handleSkip}
                 />

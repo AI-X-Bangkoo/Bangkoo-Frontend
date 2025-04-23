@@ -14,7 +14,8 @@ import useAuth from "@/hooks/login/useAuth";
 function AISearchComponent({
     mode = "redirect", // "redirect" or "inline"
     onSearchResults, // 검색 결과 콜백 (inline 모드 전용)
-    onSearchStart
+    onSearchStart,
+    tutorialStep
 }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -218,7 +219,9 @@ function AISearchComponent({
             </div>
 
             {/* 검색창 마우스 hover시 */}
-            <SearchExplanation visible={isHover}/>
+            <SearchExplanation
+                visible={tutorialStep === "3.3" ? true : isHover}
+            />
             {/* 검색창 클릭시 */}
             {isFocused && (
                 <SearchTerm

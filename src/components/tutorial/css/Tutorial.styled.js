@@ -75,3 +75,18 @@ export const HighlightStyle = styled.div`
   animation: ${pulse} 1.5s infinite;
   transition: width 0.2s, height 0.2s;
 `;
+
+export const FixedMessage = styled.div`
+  position: fixed;
+  top: 160px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-weight: 700;
+  font-size: 16px;
+  z-index: 1500;
+  pointer-events: none;
+`;

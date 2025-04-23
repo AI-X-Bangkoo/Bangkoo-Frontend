@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MyFurnitureList from "./MyFurnitureList";
 import { toggleFurniture } from "@/features/furniture/furnitureSlice";
@@ -6,6 +6,7 @@ import useCheckedFurniture from "@/hooks/furniture/useCheckedFurniture";
 import { Text } from "../../common/Typography";
 import { EmptyBox } from "./css/MyRoom.styled";
 import { addFurniture, removeFurniture } from "../../features/furniture/furnitureSlice";
+import { useApplyPlacement } from "@/hooks/useApplyPlacement";
 
 export default function MyFurnitureTab({
   onCustomRemove,
@@ -16,7 +17,13 @@ export default function MyFurnitureTab({
   resetObjectPositionRef,
   mode,
   setMode,
-  setTutorialStep
+  setTutorialStep,
+
+  //
+  setShowAiRecommended,
+  canvasRef,
+  centerArea,
+  onTutorialAdvance,
 }) {
   const dispatch = useDispatch();
   const furnitureList = useSelector((state) => state.furniture.list);
@@ -46,13 +53,43 @@ export default function MyFurnitureTab({
     }
   };
 
-  const handleDelete = (item, index) => {
-    if (Array.isArray(selectedIndex)) {
-      if (!selectedIndex.includes(index)) {
-        setselectedIndex((prev) => [...prev, index]);
-      } else {
-        resetObjectPositionRef(index);
-      }
+  // const handleDelete = (item, index) => {
+  //   if (Array.isArray(selectedIndex)) {
+  //     if (!selectedIndex.includes(index)) {
+  //       setselectedIndex((prev) => [...prev, index]);
+  //     } else {
+  //       resetObjectPositionRef(index);
+  //     }
+  //   }
+  // };
+
+  // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
+  const reference = null;
+
+  // 🔹 캔버스 사이즈 정보 (현재는 고정값 사용)
+  const canvasSize = { width: 1024, height: 720 };
+
+  const applyPlacement = useApplyPlacement({
+    mode,
+    background: canvasRef,
+    reference,
+    canvasSize,
+    setShowMask: () => {},
+    setShowHelper: () => {},
+    centerArea,
+  });
+
+  const MyFurnitureDelete = () => {
+    console.log("배치 버튼 클릭됨");
+    setShowAiRecommended(true);
+    applyPlacement();
+
+    setTimeout(() => {
+      // setShowAiRecommended(false);
+    }, 7000);
+
+    if (typeof onTutorialAdvance === "function") {
+      onTutorialAdvance();
     }
   };
 
@@ -68,6 +105,7 @@ export default function MyFurnitureTab({
         <MyFurnitureList
           furnitureList={furnitureList}
           onPlus={handleClick}
+          setMode={setMode}
           onMinus={(item, index) => {
             console.log("🧹 클릭한 가구 index", index);
 
@@ -80,7 +118,9 @@ export default function MyFurnitureTab({
 
             setselectedIndex((prev) => (prev === index ? null : index));
             setTimeout(() => setselectedIndex(index), 0); // ✅ 강제 리렌더
-            setMode("remove"); // ✅ 휴지통 클릭 시 모드 설정
+            // setMode("remove"); // ✅ 휴지통 클릭 시 모드 설정
+
+            MyFurnitureDelete();
 
             // 튜토리얼
             if (typeof setTutorialStep === "function") {

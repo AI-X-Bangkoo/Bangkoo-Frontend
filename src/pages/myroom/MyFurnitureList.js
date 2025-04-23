@@ -4,11 +4,14 @@ import CommonImageBox from "@/common/CommonImageBox";
 import CommonIconButton from "../../common/CommonIconButton";
 import { ReactComponent as MinusIcon } from "../../assets/images/MinusIcon.svg";
 
-function MyFurnitureList({ furnitureList = [], onPlus, onMinus, onSelect, onGlbSelect }) {
+function MyFurnitureList({ furnitureList = [], onPlus, onMinus, onSelect, onGlbSelect, setMode }) {
     return (
         <FurnitureGrid>
             {furnitureList.map((item,index) => (
-                <ImageBox className={`furniture-item ${index === 0 ? "first-item" : ""}`} key={item.id}>
+                <ImageBox
+                    className={`furniture-item ${index === 0 ? "first-item" : ""} ${index === furnitureList.length - 1 ? "last-item" : ""}`}
+                    key={item.id}
+                >
                     {item.type === "addFurniture" &&
                         <AddItem>
                             <CommonIconButton
@@ -26,6 +29,7 @@ function MyFurnitureList({ furnitureList = [], onPlus, onMinus, onSelect, onGlbS
                         type={item.type}
                         item={item}                     // ✅ 추가
                         index={index}                   // ✅ 추가
+                        setMode={setMode}
                         onPlus={(e) => onPlus(item,index)}
                         onMinus={(item, index) => onMinus(item, index)}
                         // onMinus={(e) => onMinus(item,index)}
