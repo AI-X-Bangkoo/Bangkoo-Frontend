@@ -1,17 +1,17 @@
 import React from "react";
 import {TabMenu, Tab, TabLineStyle} from "./css/Tabs.styled";
 
-function CommonTabs({ tabs = [], current, onChange, fontSize, className }) {
+function CommonTabs({ tabs = [], current, onChange, fontSize, getTabProps }) {
 
     return (
-        <TabMenu className={className}>
+        <TabMenu>
             {tabs.map(({ id, label }) => (
                 <Tab
                     key={id}
                     $active={current === id}
                     onClick={() => onChange(id)}
                     fontSize={fontSize}
-                    className={id === "interior" ? "tab-interior" : ""}
+                    {...(getTabProps ? getTabProps({ id, label }) : {})}
                 >
                     {label}
                 </Tab>

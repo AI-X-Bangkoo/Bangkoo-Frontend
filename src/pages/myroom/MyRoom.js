@@ -185,15 +185,17 @@ function MyRoom() {
                 {/* 검색 drawer 영역*/}
                 {isDrawerOpen && <SearchDrawer onClose={closeDrawer} />}
 
-                <TabBox>
+                <TabBox className={tutorialStep === "6.3" ? "tabs-container" : ""}>
                     <CommonTabs
                         tabs={tabList}
                         current={currentTab}
                         onChange={setCurrentTab}
-                        className={tutorialStep === "6.3" ? "tabs-container" : ""}
+                        getTabProps={(tab) => ({
+                            className: tab.id === "interior" ? "tab-interior" : ""
+                        })}
                     />
                 </TabBox>
-                <GridBox className={tutorialStep === "6.3" ? "tabs-container" : ""}>
+                <GridBox className="grid-container">
                     {currentTab === "my" && <MyFurnitureTab
                         onCustomRemove={furnitureDialog.openDialog}
                         onGlbSelect={(item, index) => {

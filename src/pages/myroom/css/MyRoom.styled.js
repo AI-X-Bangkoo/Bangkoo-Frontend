@@ -42,6 +42,7 @@ export const GridBox = styled.div`
   overflow-x: hidden;
   box-sizing: border-box;
   overflow-y: auto;
+  background-color: ${({ theme }) => theme.colors.white};
 
   /* 스크롤바 전체 영역 */
   &::-webkit-scrollbar {
