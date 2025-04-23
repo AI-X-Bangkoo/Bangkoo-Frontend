@@ -84,7 +84,6 @@ export const usePlacementHistory = (sessionId) => {
     try {
       await clearPlacementSession(sessionId);
       setCurrentImage(null); // 프론트 상태도 초기화
-      console.log("🧹 히스토리 삭제 완료");
     } catch (err) {
       console.error("히스토리 삭제 실패:", err);
     }

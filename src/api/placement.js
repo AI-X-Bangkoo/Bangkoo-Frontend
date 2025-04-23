@@ -17,11 +17,6 @@ import api from "./axios";
  */
 export async function requestPlacement(mode, backgroundBlob, referenceBlob = null) {
 
-  if (mode === "move") {
-    console.warn("🚫 'move' 모드는 requestPlacement에서 차단되었습니다.");
-    return null; // 또는 throw new Error("Not supported") 등
-  }
-
   const formData = new FormData();
   formData.append("mode", mode);
   formData.append("background", backgroundBlob, "bg.png");
