@@ -37,7 +37,19 @@ const CommonDialog = ({
     };
 
     return (
-        <DialogStyle open={open}>
+        <div style={{ pointerEvents: "auto" }}>
+        <DialogStyle
+            open={open}
+            // disablePortal
+            // // disableEnforceFocus
+            // // ModalProps={{ keepMounted: true }}
+            // PaperProps={{
+            //     style: {
+            //         zIndex: 1600,
+            //         pointerEvents: "auto"
+            //     }
+            // }}
+        >
             <TitleBox>
                 <Text size="base" $weight={700}>{title}</Text>
                 <IconButton onClick={onClose}><CloseIcon /></IconButton>
@@ -58,6 +70,7 @@ const CommonDialog = ({
                 {submit &&
                     <CommonButton
                         onClick={onClick}
+                        className="dialog-submit-button"
                         children={submitText}
                         {...buttonProps}
                     />
@@ -65,6 +78,7 @@ const CommonDialog = ({
 
             </ControllerBox>
         </DialogStyle>
+        </div>
     );
 };
 

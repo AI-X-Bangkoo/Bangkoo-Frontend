@@ -15,7 +15,7 @@ export const TooltipBubble = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.sm};
   font-size: ${({ theme }) => theme.fontSizes.xxs};
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px -2px 16px rgba(0, 0, 0, 0.2);
   max-width: 260px;
 
   &::after {

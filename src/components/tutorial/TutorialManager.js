@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import TutorialStart from "./TutorialStart";
 import TutorialStep1 from "./TutorialStep1";
 import TutorialStep2 from "./TutorialStep2";
+import TutorialStep6 from "./TutorialStep6";
 
 function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalStep }) {
     const [step, setStep] = useState(null);
@@ -14,6 +15,11 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
             onStepChange(newStep);
         }
     };
+
+    // 현재 튜토리얼 단계 디버깅 로그
+    useEffect(() => {
+        if (step) console.log("🎯 튜토리얼 현재 단계:", step);
+    }, [step]);
 
     // 외부에서 step이 바뀌면 내부도 반영
     useEffect(() => {
@@ -81,9 +87,37 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
                     onNext={() => {
                         if (step === "2.1") updateStep("2.2");
                         else if (step === "2.2") updateStep("2.3");
-                        else if (step === "2.3") handleSkip(); //  튜토리얼 종료
+                        // else if (step === "2.3") handleSkip(); //  튜토리얼 종료
+                        else if (step === "2.3") updateStep("6.1"); //  튜토리얼 종료
                     }}
                     onPrev={() => updateStep("1.2")}
+                    onSkip={handleSkip}
+                />
+            )}
+
+            {/* Step 6 */}
+            {["6.1", "6.2", "6.3", "6.4"].includes(step) && (
+                <TutorialStep6
+                    phase={step}
+                    onNext={() => {
+                        if (step === "6.1") updateStep("6.2");
+                        else if (step === "6.2") updateStep("6.3");
+                        else if (step === "6.3") updateStep("6.4");
+                        else if (step === "6.4") {
+                            // 튜토리얼 종료
+                            setIsRunning(false);
+                            localStorage.setItem("hasSeenTutorial", "true");
+                            updateStep(null);
+                            hasForced.current = false;
+                            onStepChange?.(null);
+                        }
+                    }}
+                    onPrev={() => {
+                        if (step === "6.4") updateStep("6.3");
+                        else if (step === "6.3") updateStep("6.2");
+                        else if (step === "6.2") updateStep("6.1");
+                        else if (step === "6.1") updateStep("5.3"); // 👉 이전 스텝으로 돌아가게 설정
+                    }}
                     onSkip={handleSkip}
                 />
             )}
