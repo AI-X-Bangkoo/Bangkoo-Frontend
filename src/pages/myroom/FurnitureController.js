@@ -9,7 +9,6 @@ import { ControllerBox, FlexBox } from "./css/MyRoom.styled";
 import CommonButton from "@/common/CommonButton";
 import { useApplyPlacement } from "@/hooks/useApplyPlacement";
 import { restoreInitialImageRef } from "@/pages/myroom/ImageUploader";
-import { useAiProgress } from "@/hooks/useAiProgress";
 import AiRecommended from "./dialog/AiRecommended";
 import { ModalOverlay, ModalContent } from "./dialog/css/ModalWrapper.styled";
 
@@ -18,8 +17,6 @@ function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImag
     const [startProgress, setStartProgress] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [showAiRecommended, setShowAiRecommended] = useState(false);
-
-    const progress = useAiProgress(startProgress, 5, 400);
 
     // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
     const reference = null;
