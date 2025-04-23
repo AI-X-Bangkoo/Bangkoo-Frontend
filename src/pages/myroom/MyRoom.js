@@ -270,13 +270,7 @@ function MyRoom() {
                 submitText="설정"
                 cancel={false}
                 submit={false}
-                onClose={() => {
-                    // aiDialog.closeDialog();
-                    setShowAiRecommended(false);
-                    if (tutorialStep === "2.3") {
-                        setTutorialStep("2.4");
-                    }
-                }}
+                onClose={() => setShowAiRecommended(false)}
             >
                 <AiRecommended/>
             </CommonDialog>
