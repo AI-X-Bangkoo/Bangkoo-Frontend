@@ -3,7 +3,7 @@ import TutorialStart from "./TutorialStart";
 import TutorialStep1 from "./TutorialStep1";
 import TutorialStep2 from "./TutorialStep2";
 
-function TutorialManager({ isImageUploaded, forceStart, onStepChange }) {
+function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalStep }) {
     const [step, setStep] = useState(null);
     const [isRunning, setIsRunning] = useState(false);
     const hasForced = useRef(false);
@@ -14,6 +14,13 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange }) {
             onStepChange(newStep);
         }
     };
+
+    // 외부에서 step이 바뀌면 내부도 반영
+    useEffect(() => {
+        if (externalStep && externalStep !== step) {
+            setStep(externalStep);
+        }
+    }, [externalStep]);
 
     // 강제로 튜토리얼 시작 요청 시
     useEffect(() => {
@@ -54,23 +61,29 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange }) {
 
     return (
         <>
+            {/* 튜토리얼 시작 화면 */}
             {step === "0" && <TutorialStart onStart={handleStart} onSkip={handleSkip} />}
 
+            {/* Step 1 */}
             {(step === "1.1" || step === "1.2") && (
                 <TutorialStep1
                     phase={step}
-                    onNext={() => updateStep("2")}
+                    onNext={() => updateStep("2.1")} // ✅ Step2로 이동
                     onPrev={() => updateStep("0")}
                     onSkip={handleSkip}
                 />
             )}
 
-            {step === "2" && (
+            {/* Step 2 */}
+            {["2.1", "2.2", "2.3"].includes(step) && (
                 <TutorialStep2
+                    phase={step}
                     onNext={() => {
-                        handleSkip(); // 튜토리얼 종료
+                        if (step === "2.1") updateStep("2.2");
+                        else if (step === "2.2") updateStep("2.3");
+                        else if (step === "2.3") handleSkip(); //  튜토리얼 종료
                     }}
-                    onPrev={() => updateStep("1.1")}
+                    onPrev={() => updateStep("1.2")}
                     onSkip={handleSkip}
                 />
             )}

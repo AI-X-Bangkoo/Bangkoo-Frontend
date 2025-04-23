@@ -121,7 +121,9 @@ function MyRoom() {
                     mode={mode}
                     centerArea={centerArea} // ⬅️ 전달
                     handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
-                    imageUploaderRef={uploaderRef}
+                    onTutorialAdvance={() => {
+                        if (tutorialStep === "2.2") setTutorialStep("2.3");
+                    }}
                 />
                 <ImageUploader
                     ref={uploaderRef}
@@ -182,6 +184,9 @@ function MyRoom() {
                         resetObjectPositionRef={resetObjectPositionRef}
                         mode={mode}
                         setMode={setMode}
+
+                        // 튜토리얼
+                        setTutorialStep={setTutorialStep}
                     />}
                     {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} />}
                     {currentTab === "interior" && <InteriorTab onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}
@@ -248,6 +253,7 @@ function MyRoom() {
                 isImageUploaded={isImageUploaded}
                 forceStart={tutorialForceStart}
                 onStepChange={(step) => setTutorialStep(step)}
+                externalStep={tutorialStep}
             />
         </MainLayout>
     );

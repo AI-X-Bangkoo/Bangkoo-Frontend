@@ -13,7 +13,7 @@ import { useAiProgress } from "@/hooks/useAiProgress";
 import AiRecommended from "./dialog/AiRecommended";
 import { ModalOverlay, ModalContent } from "./dialog/css/ModalWrapper.styled";
 
-function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImageRef, onTutorialStart, mode, centerArea, imageUploaderRef }) {
+function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImageRef, onTutorialStart, mode, centerArea, imageUploaderRef, onTutorialAdvance }) {
 
     const [startProgress, setStartProgress] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -57,18 +57,23 @@ function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImag
      * - progress 시작 트리거 먼저 켜고
      * - 100ms 뒤에 applyPlacement() 실행
      */
-    const handlePlacementClick = () => {
-        setShowAiRecommended(true);     // ✅ 이걸로 띄움
-        setIsAnalyzing(true);
-        setStartProgress(true);
-        applyPlacement();    
-      
-        setTimeout(() => {
-          setIsAnalyzing(false);
-          setStartProgress(false);
-          setShowAiRecommended(false); // 원하면 자동 닫기도 가능
-        }, 7000);
-      };
+     const handlePlacementClick = () => {
+             console.log("배치 버튼 클릭됨");
+             setShowAiRecommended(true);
+             setIsAnalyzing(true);
+             setStartProgress(true);
+             applyPlacement();    
+         
+             setTimeout(() => {
+                 setIsAnalyzing(false);
+                 setStartProgress(false);
+                 setShowAiRecommended(false);
+             }, 7000);
+        
+             if (typeof onTutorialAdvance === "function") {
+                 onTutorialAdvance();
+             }
+         };
 
     // 🔸 버튼에 공통 적용할 props 모음
     const buttonProps = {
@@ -103,6 +108,7 @@ function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImag
 
                 {/* ✅ AI 이미지 생성 버튼 */}
                 <CommonButton
+                    className="generate-image-button"
                     width="135px"
                     type="outline"
                     onClick={handlePlacementClick}
