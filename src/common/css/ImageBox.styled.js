@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const ImageBoxStyle = styled.div`
   width: 100%;
   aspect-ratio: 4 / 3;
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  border-radius: ${({ theme }) => theme.borderRadius.xs};
   border: 1px solid ${({ theme }) => theme.colors.grey};
   overflow: hidden;
   position: relative;
@@ -11,6 +11,7 @@ export const ImageBoxStyle = styled.div`
   justify-content: center;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.white};
+  box-sizing: border-box;
 
   & img {
     width: 100%;
@@ -25,23 +26,27 @@ export const ImageBoxStyle = styled.div`
 `;
 
 export const AiChip = styled.div`
-  width: 50px;
-  height: 50px;
   position: absolute;
   top: 0;
   left: 0;
   background-color: ${({ theme }) => theme.colors.orange};
   border-radius: 0;
   color: #fff;
-  font-size:  ${({ theme }) => theme.fontSizes.xxs};
+  font-size:  12px;
   font-weight: 700;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 4px 6px;
+  gap: 2px;
+  padding: 4px 8px 4px 6px;
   box-sizing: border-box;
+  
+  & svg {
+    width: 10px;
+    height: 10px;
+  }
 `;
+
 // eyeOn 과 eyeClosed 사용 AI Chip과 유사 (김범석)
 export const EyeOnChip = styled.div`
   width: 50px;
@@ -93,10 +98,34 @@ export const CenterBox = styled.div.attrs(() => ({
   transition: opacity 0.2s ease;
 `;
 
+export const TopRightBox = styled.div`
+  position: absolute;
+  top: 20px;
+  right: ${({ theme }) => theme.spacing.sm};
+  
+  & svg {
+    width: 14px;
+    height: 14px;
+  }
+`;
+
+
 export const BottomRightBox = styled.div`
   position: absolute;
   bottom: ${({ theme }) => theme.spacing.sm};
   right: ${({ theme }) => theme.spacing.sm};
+  
+  & svg {
+    width: 14px;
+    height: 14px;
+  }
+`;
+
+export const BottomRightBoxPlus = styled(BottomRightBox)`
+  & svg {
+    width: 10px;
+    height: 10px;
+  }
 `;
 
 export const CheckboxArea = styled.div`

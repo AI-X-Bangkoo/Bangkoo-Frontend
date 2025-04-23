@@ -26,7 +26,8 @@ export const LeftPanel = styled.div`
 
 export const RightPanel = styled.div`
   min-width: 346px;
-  width: 30%;
+  //width: 30%;
+  width: 490px;
   max-width: 500px;
   height: 100%;
   padding: ${({ theme }) => theme.spacing.md};
@@ -165,7 +166,7 @@ export const TabBox = styled.div`
 
 export const FurnitureGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
   gap: ${({ theme }) => theme.spacing.md};
   padding-bottom: ${({ theme }) => theme.spacing.md};
   padding-right: 10px;
@@ -178,6 +179,18 @@ export const FurnitureGrid = styled.div`
   ${media.tablet`
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   `}
+`;
+
+export const ImageBox = styled.div`
+  position: relative;
+`;
+
+export const AddItem = styled.div`
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  z-index: 10;
+  
 `;
 
 export const TextBox = styled.div`
