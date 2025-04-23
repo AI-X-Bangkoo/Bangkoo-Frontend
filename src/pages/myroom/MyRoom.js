@@ -224,7 +224,7 @@ function MyRoom() {
                             if (tutorialStep === "2.2") setTutorialStep("2.3");
                         }}
                         setShowAiRecommended={setShowAiRecommended}
-
+                        uploaderRef={uploaderRef}
                         // 튜토리얼
                         setTutorialStep={setTutorialStep}
                     />}

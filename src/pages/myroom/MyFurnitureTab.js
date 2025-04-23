@@ -24,6 +24,7 @@ export default function MyFurnitureTab({
   canvasRef,
   centerArea,
   onTutorialAdvance,
+  uploaderRef
 }) {
   const dispatch = useDispatch();
   const furnitureList = useSelector((state) => state.furniture.list);
@@ -70,19 +71,20 @@ export default function MyFurnitureTab({
   const canvasSize = { width: 1024, height: 720 };
 
   const applyPlacement = useApplyPlacement({
-    mode,
     background: canvasRef,
     reference,
     canvasSize,
     setShowMask: () => {},
     setShowHelper: () => {},
     centerArea,
+    handleFileChange: (file) => uploaderRef.current?.handleFileChange(file),
+    imageUploaderRef: uploaderRef,
   });
 
   const MyFurnitureDelete = () => {
     console.log("배치 버튼 클릭됨");
     setShowAiRecommended(true);
-    applyPlacement();
+    applyPlacement("remove");
 
     setTimeout(() => {
       // setShowAiRecommended(false);
