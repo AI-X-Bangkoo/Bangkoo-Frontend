@@ -111,20 +111,20 @@ export const useApplyPlacement = ({
         removeImage.src = `data:image/png;base64,${removeBase64}`;
 
         // ✅ 이미지 로딩 완료 확인
-        // await new Promise((resolve) => {
-        //   removeImage.onload = () => {
-        //     console.log("🟢 removeImage 로드 완료:", removeImage.width, removeImage.height);
+        await new Promise((resolve) => {
+          removeImage.onload = () => {
+            console.log("🟢 removeImage 로드 완료:", removeImage.width, removeImage.height);
 
-        //     // 🔍 미리보기 확인용
-        //     const win = window.open();
-        //     win.document.write(`<img src="${removeImage.src}" style="max-width: 100%">`);
-        //     resolve();
-        //   };
-        //   removeImage.onerror = () => {
-        //     console.error("❌ removeImage 로딩 실패");
-        //     resolve();
-        //   };
-        // });
+            // 🔍 미리보기 확인용
+            const win = window.open();
+            win.document.write(`<img src="${removeImage.src}" style="max-width: 100%">`);
+            resolve();
+          };
+          removeImage.onerror = () => {
+            console.error("❌ removeImage 로딩 실패");
+            resolve();
+          };
+        });
 
 
         const ctx = canvas.getContext("2d");

@@ -238,18 +238,18 @@ const ImageUploader = forwardRef((props, ref) => {
         if (webglCanvasRef.current) {
             // 3D 캔버스를 비활성화 상태에서 활성화
             if (webglCanvasRef.current.style.pointerEvents === "none") {
-                console.log("none 상태");
+                // console.log("none 상태");
                 webglCanvasRef.current.style.pointerEvents = "auto"; // 3D 캔버스를 활성화
                 webglCanvasRef.current.style.visibility = "visible"; // 3D 캔버스를 보이게 설정
-                console.log("초기화 시전");
+                // console.log("초기화 시전");
                 // 렌더러 초기화가 한 번만 이루어지도록 보장
                 if (!rendererInitialized) {
-                    console.log("초기화 시전");
+                    // console.log("초기화 시전");
                     initRenderer();  // 렌더러 초기화 한 번만 호출
                     setRendererInitialized(true); // 렌더러 초기화 완료 플래그 설정
                 }
             } else {
-                console.log("auto 상태");
+                // console.log("auto 상태");
                 webglCanvasRef.current.style.pointerEvents = "none"; // 3D 캔버스를 비활성화
                 webglCanvasRef.current.style.visibility = "hidden"; // 3D 캔버스를 숨김 처리
             }
@@ -260,7 +260,6 @@ const ImageUploader = forwardRef((props, ref) => {
 
         // 🔴 현재 보이고 있으면 => 상태 저장하고 숨김
         if (currentModel && currentState?.visible) {
-            console.log("숨김처리");
             glbModelStateRef.current.set(url, {
                 visible: false,
                 position: currentModel.position.clone(),
@@ -273,7 +272,6 @@ const ImageUploader = forwardRef((props, ref) => {
 
         // 🟡 숨겨져 있고 모델 존재 => 상태 복원해서 다시 보이기
         if (currentState && currentModel) {
-            console.log("보임처리");
             currentModel.visible = true;
             currentModel.position.copy(currentState.position);
             currentModel.scale.copy(currentState.scale);
@@ -298,7 +296,6 @@ const ImageUploader = forwardRef((props, ref) => {
             });
         }, 500);
     };
-
 
 
     const handleUndo = async () => {
