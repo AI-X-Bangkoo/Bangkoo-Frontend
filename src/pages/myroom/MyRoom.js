@@ -140,6 +140,7 @@ function MyRoom() {
                     tutorialStep={tutorialStep}
                     setTutorialStep={setTutorialStep}
                     setShowAiRecommended={setShowAiRecommended}
+                    imageUploaderRef={uploaderRef}
                 />
                 <ImageUploader
                     ref={uploaderRef}
