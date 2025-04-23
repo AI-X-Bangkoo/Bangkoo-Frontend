@@ -128,18 +128,18 @@ function MyRoom() {
                 <FurnitureController
                     saveClick={interiorSaveDialog.openDialog}
                     aiClick={aiDialog.openDialog}
-                    canvasRef={canvasRef}
+                    canvasRef={canvasRef} //
                     restoreInitialImageRef={restoreInitialImageRef}
                     onTutorialStart={startTutorial}
                     mode={mode}
-                    centerArea={centerArea} // ⬅️ 전달
+                    centerArea={centerArea} // ⬅️ 전달 //
                     handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
                     onTutorialAdvance={() => {
                         if (tutorialStep === "2.2") setTutorialStep("2.3");
-                    }}
+                    }} //
                     tutorialStep={tutorialStep}
                     setTutorialStep={setTutorialStep}
-                    setShowAiRecommended={setShowAiRecommended}
+                    setShowAiRecommended={setShowAiRecommended} //
                 />
                 <ImageUploader
                     ref={uploaderRef}
@@ -183,7 +183,13 @@ function MyRoom() {
                     onSearchClick={openDrawer}
                 />
                 {/* 검색 drawer 영역*/}
-                {isDrawerOpen && <SearchDrawer onClose={closeDrawer} />}
+                {isDrawerOpen && (
+                    <SearchDrawer
+                        onClose={closeDrawer}
+                        tutorialStep={tutorialStep}
+                        setTutorialStep={setTutorialStep}
+                    />
+                )}
 
                 <TabBox className={tutorialStep === "6.3" ? "tabs-container" : ""}>
                     <CommonTabs
@@ -210,6 +216,13 @@ function MyRoom() {
                         resetObjectPositionRef={resetObjectPositionRef}
                         mode={mode}
                         setMode={setMode}
+
+                        canvasRef={canvasRef}
+                        centerArea={centerArea}
+                        onTutorialAdvance={() => {
+                            if (tutorialStep === "2.2") setTutorialStep("2.3");
+                        }}
+                        setShowAiRecommended={setShowAiRecommended}
 
                         // 튜토리얼
                         setTutorialStep={setTutorialStep}
