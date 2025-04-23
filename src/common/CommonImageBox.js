@@ -35,7 +35,8 @@ function CommonImageBox({
             onClick,
             recommendationReason,
             item,   //Gemini 전달 값으로 사용
-            index   //Gemini 전달 값으로 사용
+            index,   //Gemini 전달 값으로 사용
+            setMode,
         }) {
 
     if (type === "basic" && onLink) {
@@ -172,7 +173,12 @@ function CommonImageBox({
                                       onClick={(e) => {
                                           e.stopPropagation(); // ✅ 공통 처리
                                           // onMinus?.(item,index);
-                                          if (onMinus) onMinus(item, index); // 직접 props로 넘긴 item/index 사용
+                                          setMode("remove"); // ✅ 휴지통 클릭 시 모드 설정
+
+                                          setTimeout(() => {
+                                              if (onMinus) onMinus(item, index); // 직접 props로 넘긴 item/index 사용
+                                          }, 500);
+
                                       }}
                                       icon={<EyeOnIcon />} {...buttonProps}/>
                 </BottomRightBox>
