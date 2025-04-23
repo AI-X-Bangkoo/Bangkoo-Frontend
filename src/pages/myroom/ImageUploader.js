@@ -57,6 +57,7 @@ const ImageUploader = forwardRef((props, ref) => {
     const is3DDragging = useRef(false);
     const last3DMouse = useRef({ x: 0, y: 0 });
     const glbModelStateRef = useRef(new Map());
+    const [rendererInitialized , setRendererInitialized] = useState(false);
 
 
     
@@ -232,12 +233,34 @@ const ImageUploader = forwardRef((props, ref) => {
             console.log("✅ resetObjectPositionRef 등록 완료");
         }
     }, [resetObjectPositionRef]);
+
     const handleGlbClick = (url) => {
+        if (webglCanvasRef.current) {
+            // 3D 캔버스를 비활성화 상태에서 활성화
+            if (webglCanvasRef.current.style.pointerEvents === "none") {
+                console.log("none 상태");
+                webglCanvasRef.current.style.pointerEvents = "auto"; // 3D 캔버스를 활성화
+                webglCanvasRef.current.style.visibility = "visible"; // 3D 캔버스를 보이게 설정
+                console.log("초기화 시전");
+                // 렌더러 초기화가 한 번만 이루어지도록 보장
+                if (!rendererInitialized) {
+                    console.log("초기화 시전");
+                    initRenderer();  // 렌더러 초기화 한 번만 호출
+                    setRendererInitialized(true); // 렌더러 초기화 완료 플래그 설정
+                }
+            } else {
+                console.log("auto 상태");
+                webglCanvasRef.current.style.pointerEvents = "none"; // 3D 캔버스를 비활성화
+                webglCanvasRef.current.style.visibility = "hidden"; // 3D 캔버스를 숨김 처리
+            }
+        }
+
         const currentState = glbModelStateRef.current.get(url);
         const currentModel = getCurrentModel();
 
         // 🔴 현재 보이고 있으면 => 상태 저장하고 숨김
         if (currentModel && currentState?.visible) {
+            console.log("숨김처리");
             glbModelStateRef.current.set(url, {
                 visible: false,
                 position: currentModel.position.clone(),
@@ -250,6 +273,7 @@ const ImageUploader = forwardRef((props, ref) => {
 
         // 🟡 숨겨져 있고 모델 존재 => 상태 복원해서 다시 보이기
         if (currentState && currentModel) {
+            console.log("보임처리");
             currentModel.visible = true;
             currentModel.position.copy(currentState.position);
             currentModel.scale.copy(currentState.scale);
@@ -274,6 +298,7 @@ const ImageUploader = forwardRef((props, ref) => {
             });
         }, 500);
     };
+
 
 
     const handleUndo = async () => {
@@ -560,7 +585,7 @@ const ImageUploader = forwardRef((props, ref) => {
                 setTimeout(() => {
                     if (webglCanvasRef.current) {
                         console.log("🌟 이미지 로딩 이후 WebGL 초기화!");
-                        initRenderer();
+                        // initRenderer();
                     }
                 }, 0); // 💡 또는 requestAnimationFrame으로 시점 밀어줘도 OK
             };
@@ -758,7 +783,7 @@ const ImageUploader = forwardRef((props, ref) => {
                                 onMouseDown={handle3DMouseDown}
                                 onMouseMove={handle3DMouseMove}
                                 onMouseUp={handle3DMouseUp}
-                                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 2, pointerEvents: "auto" }}
+                                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 2, pointerEvents: "none" }}
                             />
                         </BlurredWrapper>
 
