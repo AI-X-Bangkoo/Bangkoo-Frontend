@@ -15,73 +15,67 @@ const buttonProps = {
 };
 
 function TutorialStep2({ phase, onNext, onPrev, onSkip }) {
-    const [firstBoxRect, setFirstBoxRect] = useState(null);
-    const [generateBtnRect, setGenerateBtnRect] = useState(null);
-    const [previewBox, setPreviewBox] = useState(null);
+    const [highlightRects, setHighlightRects] = useState({});
     const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
 
-
     useEffect(() => {
-        const firstBox = document.querySelector(".furniture-item.first-item");
-        const preview = document.querySelector(".preview-area");
+        const getRects = () => {
+            const preview = document.querySelector(".preview-area");
+            const firstBox = document.querySelector(".furniture-item.first-item");
+            const generateBtn = document.querySelector(".generate-image-button");
 
-        if (preview) {
-            const rect = preview.getBoundingClientRect();
-            setPreviewBox({
-                top: rect.top + window.scrollY,
-                left: rect.left + window.scrollX,
-                width: rect.width,
-                height: rect.height,
-            });
-        }
+            const rects = {};
+            if (preview) rects.preview = preview.getBoundingClientRect();
+            if (firstBox) rects.firstItem = firstBox.getBoundingClientRect();
+            if (generateBtn) rects.generate = generateBtn.getBoundingClientRect();
 
-        if (phase === "2.1" && firstBox) {
-            const rect = firstBox.getBoundingClientRect();
-            setFirstBoxRect({
-                top: rect.top + window.scrollY,
-                left: rect.left + window.scrollX,
-                width: rect.width,
-                height: rect.height,
-            });
-            setTooltipPos({
-                top: rect.bottom + 15,
-                left: rect.left + rect.width / 2 ,
-            });
-        }
+            setHighlightRects(rects);
 
-        if (phase === "2.2") {
-            // ⏳ render 완료 이후에 접근
-            requestAnimationFrame(() => {
-                const generateBtn = document.querySelector(".generate-image-button");
-                if (generateBtn) {
-                    const rect = generateBtn.getBoundingClientRect();
-                    setGenerateBtnRect({
-                        top: rect.top + window.scrollY,
-                        left: rect.left + window.scrollX,
-                        width: rect.width,
-                        height: rect.height,
-                    });
-                    setTooltipPos({
-                        top: rect.bottom + 15,
-                        left: rect.left + rect.width / 2 - 100,
-                    });
-                }
-            });
-        }
+            // 툴팁 위치 설정
+            if (phase === "2.1" && firstBox) {
+                setTooltipPos({
+                    top: rects.firstItem.bottom + 15,
+                    left: rects.firstItem.left + rects.firstItem.width / 2 - 27
+                });
+            }
+
+            if (phase === "2.2" && generateBtn) {
+                setTooltipPos({
+                    top: rects.generate.bottom + 10,
+                    left: rects.generate.left + rects.generate.width / 2 - 100
+                });
+            }
+
+            if (phase === "2.4" && preview) {
+                setTooltipPos({
+                    top: rects.preview.bottom + 12,
+                    left: rects.preview.left + rects.preview.width / 2 - 120
+                });
+            }
+
+            // 2.3에서는 강조 없이 툴팁/하이라이트 모두 제거
+            if (phase === "2.3") {
+                setHighlightRects({});
+            }
+        };
+
+        getRects();
+        const interval = setInterval(getRects, 500);
+        return () => clearInterval(interval);
     }, [phase]);
 
+    // zIndex 적용
     useEffect(() => {
-        const firstBox = document.querySelector(".furniture-item.first-item");
         const preview = document.querySelector(".preview-area");
+        const firstBox = document.querySelector(".furniture-item.first-item");
         const generateBtn = document.querySelector(".generate-image-button");
 
-        const elementsToElevate = [];
+        const elevateEls = [];
+        if (["2.1", "2.2", "2.4"].includes(phase) && preview) elevateEls.push(preview);
+        if (phase === "2.1" && firstBox) elevateEls.push(firstBox);
+        if (phase === "2.2" && generateBtn) elevateEls.push(generateBtn);
 
-        if (["1.1", "1.2", "2.1", "2.2", "2.3"].includes(phase) && preview) elementsToElevate.push(preview);
-        if (phase === "2.1" && firstBox) elementsToElevate.push(firstBox);
-        if (phase === "2.2" && generateBtn) elementsToElevate.push(generateBtn);
-
-        elementsToElevate.forEach(el => {
+        elevateEls.forEach(el => {
             el.dataset.prevZIndex = el.style.zIndex;
             el.dataset.prevPosition = el.style.position;
             el.style.zIndex = "9999";
@@ -89,61 +83,83 @@ function TutorialStep2({ phase, onNext, onPrev, onSkip }) {
         });
 
         return () => {
-            elementsToElevate.forEach(el => {
+            elevateEls.forEach(el => {
                 el.style.zIndex = el.dataset.prevZIndex || "";
                 el.style.position = el.dataset.prevPosition || "";
             });
         };
     }, [phase]);
 
+    const highlight = (rect) =>
+        rect && (
+            <HighlightStyle
+                style={{
+                    top: rect.top + window.scrollY,
+                    left: rect.left + window.scrollX,
+                    width: rect.width,
+                    height: rect.height
+                }}
+            />
+        );
+
     return (
         <>
-            <Backdrop />
+            {/* ✅ 다이얼로그보다 뒤로 가야 하므로 2.3일 때 zIndex 낮게 */}
+            <Backdrop style={{ zIndex: phase === "2.3" ? 1000 : 1300 }} />
 
-            {/* 항상 강조되는 preview-area */}
-            {previewBox && <HighlightStyle style={previewBox} />}
+            {/* ✅ 공통 강조 영역 */}
+            {(phase === "2.1" || phase === "2.2" || phase === "2.4") &&
+                highlightRects.preview &&
+                highlight(highlightRects.preview)}
 
-            {/* 단계별 강조 박스 */}
-            {phase === "2.1" && firstBoxRect && <HighlightStyle style={firstBoxRect} />}
-            {phase === "2.2" && generateBtnRect && <HighlightStyle style={generateBtnRect} />}
+            {/* ✅ 2.1: 첫 번째 가구 강조 */}
+            {phase === "2.1" && highlightRects.firstItem && highlight(highlightRects.firstItem)}
 
-            {/* 툴팁 */}
-            {phase === "2.1" && firstBoxRect && (
+            {/* ✅ 2.2: 이미지 생성 버튼 강조 */}
+            {phase === "2.2" && highlightRects.generate && highlight(highlightRects.generate)}
+
+            {/* ✅ 툴팁 */}
+            {phase === "2.1" && (
                 <TutorialOverlay
                     message={<span>가구를 삭제해보세요</span>}
                     position={tooltipPos}
                     arrowDirection="up"
                 />
             )}
-            {phase === "2.2" && generateBtnRect && (
+            {phase === "2.2" && (
                 <TutorialOverlay
                     message={<span>이미지 생성 버튼을 눌러주세요</span>}
                     position={tooltipPos}
                     arrowDirection="up"
                 />
             )}
+            {phase === "2.4" && (
+                <TutorialOverlay
+                    message={<span>AI가 배치한 결과를 확인하세요</span>}
+                    position={tooltipPos}
+                    arrowDirection="up"
+                />
+            )}
 
-            {/* 상단 네비게이션 */}
-            <div style={{
-                position: "fixed",
-                top: "24px",
-                right: "24px",
-                display: "flex",
-                zIndex: 9999,
-                gap: 16
-            }}>
+            {/* ✅ 상단 네비게이션 */}
+            <div
+                style={{
+                    position: "fixed",
+                    top: "24px",
+                    right: "24px",
+                    display: "flex",
+                    zIndex: 9999,
+                    gap: 16
+                }}
+            >
                 <CommonButton
                     type="outline"
-                    bgColor={"orange"}
+                    bgColor="orange"
                     onClick={onPrev}
                     children="이전"
                     {...buttonProps}
                 />
-                <CommonButton
-                    onClick={onNext}
-                    children="다음"
-                    {...buttonProps}
-                />
+                <CommonButton onClick={onNext} children="다음" {...buttonProps} />
                 <button onClick={onSkip}>종료</button>
             </div>
         </>

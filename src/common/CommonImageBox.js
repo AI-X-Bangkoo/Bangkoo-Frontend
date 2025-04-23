@@ -8,7 +8,7 @@ import {
     CenterBox,
     EyeOnChip,
     EyeClosedChip,
-    HoverTextBox
+    HoverTextBox, BottomRightBoxPlus
 } from "./css/ImageBox.styled"
 import CommonIconButton from "../common/CommonIconButton"
 import { ReactComponent as EyeOnIcon } from "../assets/images/Eye.svg";
@@ -98,10 +98,11 @@ function CommonImageBox({
     }
 
     const buttonProps = {
-        width: "34px",
-        height: "34px",
+        width: "28px",
+        height: "28px",
         type: "full",
     };
+
     const handleClick = (e) => {
         e.stopPropagation();
         if (onClick) onClick(e);
@@ -113,22 +114,22 @@ function CommonImageBox({
             {/* AI Chip */}
             {type === "aiPlus" && (
                 <AiChip>
-                    <AiIcon />
+                    {/*<AiIcon />*/}
                     <span>AI</span>
                 </AiChip>
             )}
-            {/* Eye On */}
-            {type === "eyeOn" && (
-                <EyeOnChip>
-                    <EyeOnIcon />
-                </EyeOnChip>
-            )}
+            {/*/!* Eye On *!/*/}
+            {/*{type === "eyeOn" && (*/}
+            {/*    <EyeOnChip>*/}
+            {/*        <EyeOnIcon />*/}
+            {/*    </EyeOnChip>*/}
+            {/*)}*/}
             {/* Eye Closed */}
-            {type === "eyeClosed" && (
-                <EyeClosedChip>
-                    <EyeClosedIcon />
-                </EyeClosedChip>
-            )}
+            {/*{type === "eyeClosed" && (*/}
+            {/*    <EyeClosedChip>*/}
+            {/*        <EyeClosedIcon />*/}
+            {/*    </EyeClosedChip>*/}
+            {/*)}*/}
 
             {type === "hoverPlus" && (
                 <CenterBox>
@@ -160,9 +161,9 @@ function CommonImageBox({
 
             {/* 하단 플러스 버튼 (aiPlus) */}
             {type === "aiPlus" && (
-                <BottomRightBox>
+                <BottomRightBoxPlus>
                     <CommonIconButton onClick={onPlus} color="orange" icon={<PlusIcon />} {...buttonProps}/>
-                </BottomRightBox>
+                </BottomRightBoxPlus>
             )}
             {/* 하단 마이너스 버튼 (eyeOn) */}
             {type === "eyeOn" && (
@@ -173,7 +174,7 @@ function CommonImageBox({
                                           // onMinus?.(item,index);
                                           if (onMinus) onMinus(item, index); // 직접 props로 넘긴 item/index 사용
                                       }}
-                                      color="red" icon={<TrashIcon />} {...buttonProps}/>
+                                      icon={<EyeOnIcon />} {...buttonProps}/>
                 </BottomRightBox>
             )}
             {/* 하단 플러스 버튼 (eyeClosed) */}
@@ -184,7 +185,7 @@ function CommonImageBox({
                                           e.stopPropagation(); // ✅ 공통 처리
                                           onPlus?.(e);
                                       }}
-                                      color="orange" icon={<PlusIcon />} {...buttonProps}/>
+                                      icon={<EyeClosedIcon />} {...buttonProps}/>
                 </BottomRightBox>
             )}
 
