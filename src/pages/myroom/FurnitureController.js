@@ -18,6 +18,19 @@ function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImag
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [showAiRecommended, setShowAiRecommended] = useState(false);
 
+function FurnitureController({
+                                 saveClick,
+                                 aiClick,
+                                 canvasRef,
+                                 restoreInitialImageRef,
+                                 onTutorialStart,
+                                 mode,
+                                 centerArea,
+                                 onTutorialAdvance,
+                                 tutorialStep,
+                                 setTutorialStep,
+}) {
+
     // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
     const reference = null;
 
@@ -116,9 +129,15 @@ function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImag
 
                 {/* ✅ 인테리어 저장 버튼 (외부에서 전달받은 함수 실행) */}
                 <CommonButton
+                    className={`save-button ${tutorialStep === "6.1" ? "highlight" : ""}`}
                     width="80px"
                     type="outline"
-                    onClick={saveClick}
+                    onClick={() => {
+                        saveClick(); // 원래 저장 열기 동작
+                        if (tutorialStep === "6.1" && typeof setTutorialStep === "function") {
+                            setTutorialStep("6.2"); // 다음 단계로 이동!
+                        }
+                    }}
                     {...buttonProps}
                 >
                     저장

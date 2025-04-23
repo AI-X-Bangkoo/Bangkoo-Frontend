@@ -124,6 +124,8 @@ function MyRoom() {
                     onTutorialAdvance={() => {
                         if (tutorialStep === "2.2") setTutorialStep("2.3");
                     }}
+                    tutorialStep={tutorialStep}
+                    setTutorialStep={setTutorialStep}
                 />
                 <ImageUploader
                     ref={uploaderRef}
@@ -170,7 +172,12 @@ function MyRoom() {
                 {isDrawerOpen && <SearchDrawer onClose={closeDrawer} />}
 
                 <TabBox>
-                    <CommonTabs tabs={tabList} current={currentTab} onChange={setCurrentTab} />
+                    <CommonTabs
+                        tabs={tabList}
+                        current={currentTab}
+                        onChange={setCurrentTab}
+                        className={tutorialStep === "6.3" ? "tab-interior" : ""}
+                    />
                 </TabBox>
                 <GridBox>
                     {currentTab === "my" && <MyFurnitureTab

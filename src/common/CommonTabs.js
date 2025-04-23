@@ -1,10 +1,10 @@
 import React from "react";
 import {TabMenu, Tab, TabLineStyle} from "./css/Tabs.styled";
 
-function CommonTabs({ tabs = [], current, onChange, fontSize }) {
+function CommonTabs({ tabs = [], current, onChange, fontSize, className }) {
 
     return (
-        <TabMenu>
+        <TabMenu className={className}>
             {tabs.map(({ id, label }) => (
                 <Tab
                     key={id}

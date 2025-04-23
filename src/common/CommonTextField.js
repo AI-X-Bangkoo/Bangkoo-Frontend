@@ -20,12 +20,19 @@ const CommonTextField = ({
                              onClearAll,
                              onEnter,
                              onKeyDown,
+                             className,
                          }) => {
 
     const shouldShowClear = value !== "" || imagePreviewUrl;
 
     return (
-        <InputWrapper width={width} height={height} $line={line} $custom={custom}>
+        <InputWrapper
+            width={width}
+            height={height}
+            $line={line}
+            $custom={custom}
+            className={`your-default-styles ${className || ""}`}
+        >
             <InputStyle
                 type={type}
                 placeholder={placeholder}
