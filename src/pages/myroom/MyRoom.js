@@ -139,7 +139,8 @@ function MyRoom() {
                     }} //
                     tutorialStep={tutorialStep}
                     setTutorialStep={setTutorialStep}
-                    setShowAiRecommended={setShowAiRecommended} //
+                    setShowAiRecommended={setShowAiRecommended}
+                    imageUploaderRef={uploaderRef}
                 />
                 <ImageUploader
                     ref={uploaderRef}
@@ -223,7 +224,7 @@ function MyRoom() {
                             if (tutorialStep === "2.2") setTutorialStep("2.3");
                         }}
                         setShowAiRecommended={setShowAiRecommended}
-
+                        uploaderRef={uploaderRef}
                         // 튜토리얼
                         setTutorialStep={setTutorialStep}
                     />}
@@ -282,13 +283,7 @@ function MyRoom() {
                 submitText="설정"
                 cancel={false}
                 submit={false}
-                onClose={() => {
-                    // aiDialog.closeDialog();
-                    setShowAiRecommended(false);
-                    if (tutorialStep === "2.3") {
-                        setTutorialStep("2.4");
-                    }
-                }}
+                onClose={() => setShowAiRecommended(false)}
             >
                 <AiRecommended/>
             </CommonDialog>

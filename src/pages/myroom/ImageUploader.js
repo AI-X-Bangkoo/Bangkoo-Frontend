@@ -363,6 +363,8 @@ const ImageUploader = forwardRef((props, ref) => {
 
             useImperativeHandle(ref, () => ({
                 handleFileChange,
+                setFinalThumbnailPos,
+                setDraggingThumbnailPos,
                 loadGlbModel: (url) => {
                     handleGlbClick(url);
                 },
@@ -470,70 +472,58 @@ const ImageUploader = forwardRef((props, ref) => {
             alert("업로드 또는 탐지 중 오류가 발생했습니다.");
         }
     };
+    
     const drawMaskBorder = (ctx, obj, transform = {
         scaleX: 1,
         scaleY: 1,
         offsetX: 0,
         offsetY: 0
-    }) => {
+      }) => {
         const [x, y, w, h] = obj.bbox;
         const mask = obj.mask;
         if (!mask || mask.length === 0 || mask[0].length === 0) return;
-    
+      
         const rows = mask.length;
         const cols = mask[0].length;
         const dx = w / cols;
         const dy = h / rows;
-    
+      
         const { scaleX, scaleY, offsetX, offsetY } = transform;
-    
-        const isBorder = (j, i) => {
-            if (!mask[j][i]) return false;
-            const up = j > 0 ? mask[j - 1][i] : false;
-            const down = j < rows - 1 ? mask[j + 1][i] : false;
-            const left = i > 0 ? mask[j][i - 1] : false;
-            const right = i < cols - 1 ? mask[j][i + 1] : false;
-            return !(up && down && left && right);
-        };
-    
-        const hatchSpacing = 3; // ✅ 더 촘촘하게
-        ctx.lineWidth = 1.2;
+      
         ctx.strokeStyle = "red";
-        
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
+      
+        const isBorder = (j, i) => {
+          if (!mask[j][i]) return false;
+          const up = j > 0 ? mask[j - 1][i] : false;
+          const down = j < rows - 1 ? mask[j + 1][i] : false;
+          const left = i > 0 ? mask[j][i - 1] : false;
+          const right = i < cols - 1 ? mask[j][i + 1] : false;
+          return !(up && down && left && right);
+        };
+      
         for (let j = 0; j < rows; j++) {
-            for (let i = 0; i < cols; i++) {
-                if (!isBorder(j, i)) continue;
-    
-                const px = x + i * dx;
-                const py = y + j * dy;
-    
-                const canvasX = px * scaleX + offsetX;
-                const canvasY = py * scaleY + offsetY;
-                const canvasDX = dx * scaleX;
-                const canvasDY = dy * scaleY;
-    
-                // ✅ 셀 사각형 내부에 빗금 그리기
-                ctx.save();
-                ctx.beginPath();
-                ctx.rect(canvasX, canvasY, canvasDX, canvasDY);
-                ctx.clip(); // ✅ 이 셀 안에서만 그리게 clip 설정
-    
-                ctx.beginPath();
-                for (let d = -canvasDY; d < canvasDX + canvasDY; d += hatchSpacing) {
-                    ctx.moveTo(canvasX + d, canvasY);
-                    ctx.lineTo(canvasX, canvasY + d);
-                }
-                ctx.stroke();
-                ctx.restore();
-    
-                // ✅ 테두리 윤곽선
-                ctx.beginPath();
-                ctx.rect(canvasX, canvasY, canvasDX, canvasDY);
-                ctx.stroke();
-            }
+          for (let i = 0; i < cols; i++) {
+            if (!isBorder(j, i)) continue;
+      
+            const px = x + i * dx;
+            const py = y + j * dy;
+      
+            const canvasX = px * scaleX + offsetX;
+            const canvasY = py * scaleY + offsetY;
+            const canvasDX = dx * scaleX;
+            const canvasDY = dy * scaleY;
+      
+            // ✅ 빠르고 간결하게 셀 채우기
+            ctx.fillRect(canvasX, canvasY, canvasDX, canvasDY);
+      
+            // ✅ 테두리도 얇게
+            ctx.strokeRect(canvasX, canvasY, canvasDX, canvasDY);
+          }
         }
-    };
-    
+      };
+      
 
     
     useEffect(() => {
@@ -796,6 +786,7 @@ const ImageUploader = forwardRef((props, ref) => {
 {/* 🔹 드래그 중 실시간 썸네일 */}
 {draggingThumbnailPos &&
   draggingIndex !== null &&
+  mode === "move" &&
   transformRef.current &&
   (() => {
     const bbox = detectedObjects[draggingIndex].bbox;
@@ -830,6 +821,7 @@ const ImageUploader = forwardRef((props, ref) => {
 {finalThumbnailPos &&
   draggingIndex === null &&
   selectedIndex !== null &&
+  mode === "move" &&
   transformRef.current &&
   canvasRef.current &&
   (() => {
@@ -855,7 +847,7 @@ const ImageUploader = forwardRef((props, ref) => {
           width: width + "px",
           height: height + "px",
           pointerEvents: "none",
-          zIndex: 9998,
+          zIndex: 2,
           opacity: 1,
         }}
       />
