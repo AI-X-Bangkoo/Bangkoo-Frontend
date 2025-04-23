@@ -12,12 +12,6 @@ import { restoreInitialImageRef } from "@/pages/myroom/ImageUploader";
 import AiRecommended from "./dialog/AiRecommended";
 import { ModalOverlay, ModalContent } from "./dialog/css/ModalWrapper.styled";
 
-function FurnitureController({ saveClick, aiClick, canvasRef, restoreInitialImageRef, onTutorialStart, mode, centerArea, imageUploaderRef, onTutorialAdvance }) {
-
-    const [startProgress, setStartProgress] = useState(false);
-    const [isAnalyzing, setIsAnalyzing] = useState(false);
-    const [showAiRecommended, setShowAiRecommended] = useState(false);
-
 function FurnitureController({
                                  saveClick,
                                  aiClick,
@@ -26,10 +20,15 @@ function FurnitureController({
                                  onTutorialStart,
                                  mode,
                                  centerArea,
+                                 imageUploaderRef,
                                  onTutorialAdvance,
                                  tutorialStep,
                                  setTutorialStep,
 }) {
+
+    const [startProgress, setStartProgress] = useState(false);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [showAiRecommended, setShowAiRecommended] = useState(false);
 
     // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
     const reference = null;
@@ -144,12 +143,12 @@ function FurnitureController({
                 </CommonButton>
             </FlexBox>
             {showAiRecommended && (
-            <ModalOverlay onClick={() => setShowAiRecommended(false)}>
-                <ModalContent onClick={(e) => e.stopPropagation()}>
-                <AiRecommended onClose={() => setShowAiRecommended(false)} />
-                </ModalContent>
-            </ModalOverlay>
-)}
+                <ModalOverlay onClick={() => setShowAiRecommended(false)}>
+                    <ModalContent onClick={(e) => e.stopPropagation()}>
+                    <AiRecommended onClose={() => setShowAiRecommended(false)} />
+                    </ModalContent>
+                </ModalOverlay>
+            )}
         </ControllerBox>
     );
 }
