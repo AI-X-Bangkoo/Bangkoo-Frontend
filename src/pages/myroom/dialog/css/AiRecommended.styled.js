@@ -1,3 +1,5 @@
+// pages/myroom/dialog/css/AiRecommended.styled.js
+
 import styled from "styled-components";
 import Slider from "react-slick";
 
