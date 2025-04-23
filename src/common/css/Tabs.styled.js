@@ -5,6 +5,7 @@ export const TabMenu = styled.div`
   display: flex;
   align-items: center;
   position: relative;
+  background-color: ${({ theme }) => theme.colors.white};
 `;
 
 export const TabLineStyle = styled.div`
@@ -28,7 +29,7 @@ export const Tab = styled.button`
     $active ? `3px solid ${theme.colors.orange}` : "3px solid transparent"};
   cursor: pointer;
   transition: all 0.2s ease;
-  z-index: 10;
+  z-index: 10;\
 
   &:hover {
    

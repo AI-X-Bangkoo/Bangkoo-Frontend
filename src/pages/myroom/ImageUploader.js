@@ -1,7 +1,7 @@
 import React, { useImperativeHandle, forwardRef, useRef, useState , useEffect } from "react";
 import { ReactComponent as ImageUploaderIcon } from "@/assets/images/ImageUploaderIcon.svg";
 import {Text} from "@/common/Typography";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { setInitialFurniture } from "@/features/furniture/furnitureSlice";
 import {
     BlurredCanvas, BlurredWrapper,MaskCanvas,
@@ -16,8 +16,11 @@ import axios from "axios";
 import { usePlacementHistory } from "@/hooks/usePlacementHistory";
 import {FaUndo, FaRedo} from "react-icons/fa";
 import { useRemoveObject } from "@/hooks/useRemoveObject";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { useThreeRenderer } from "./utils/useThreeRenderer";
 
-    const ImageUploader = forwardRef((props, ref) => {
+const ImageUploader = forwardRef((props, ref) => {
         const {
             canvasRef,
             onImageUploaded,
@@ -28,7 +31,8 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             setCenterArea,
             mode, 
             setMode,
-            className
+            className,
+            setIsImageUploaded,
         } = props;
     const [imageUrl, setImageUrl] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -47,7 +51,15 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
     const [imageHeight, setImageHeight] = useState(0);
     const { saveState, undo, redo, clearHistory } = usePlacementHistory();
     const [sessionId, setSessionId] = useState(null);
+    const webglCanvasRef = useRef(null); // 3D Canvas
+    const { initRenderer,loadModel,moveModel, zoom, focusModel, getCurrentModel  } = useThreeRenderer(webglCanvasRef); // 💡 초기화
     const transformRef = useRef(null); // 🔥 transform 기억해둠
+    const is3DDragging = useRef(false);
+    const last3DMouse = useRef({ x: 0, y: 0 });
+    const glbModelStateRef = useRef(new Map());
+    const [rendererInitialized , setRendererInitialized] = useState(false);
+
+
     
     const [draggingThumbnailPos, setDraggingThumbnailPos] = useState(null);
     const [finalThumbnailPos, setFinalThumbnailPos] = useState(null);
@@ -61,20 +73,6 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
         detectedObjects,
         setDetectedObjects,
       });
-
-    const drawMovingHint = (ctx, transform) => {
-        if (!initialDragBbox || !transform) return;
-        const [x, y, w, h] = initialDragBbox;
-      
-        const canvasX = x * transform.scaleX + transform.offsetX;
-        const canvasY = y * transform.scaleY + transform.offsetY;
-        const canvasW = w * transform.scaleX;
-        const canvasH = h * transform.scaleY;
-      
-        // 빨간 박스
-        ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
-        ctx.fillRect(canvasX, canvasY, canvasW, canvasH);
-      };
       
 
       const drawScene = (objects = detectedObjects) => {
@@ -89,14 +87,7 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
         }
       
         drawImageContainWithSideBlur(bgImageRef.current, ctx, canvasRef.current, transform);
-      
-        // 🔸 드래그 중이면 빨간 힌트 박스 표시
-        if (draggingIndex !== null && detectedObjects[draggingIndex]) {
-          if (mode === "move" && initialDragBbox) {
-            drawMovingHint(ctx, transform);
-          }
-        }
-      
+       
         // 🔸 마스크 윤곽선은 항상 original 위치 기준으로 그리기
         if (typeof selectedIndex === "number" && objects[selectedIndex]) {
           const obj = objects[selectedIndex];
@@ -199,11 +190,27 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             drawImageContainWithSideBlur(bgImageRef.current, ctx, canvas, transform);
 
             // 2. 선택된 마스크만 덧그리기
-            if (typeof selectedIndex === "number" && detectedObjects[selectedIndex]) {
+            if (typeof selectedIndex === "number" && detectedObjects[selectedIndex]?.bbox) {
                 drawMaskBorder(ctx, detectedObjects[selectedIndex], transform);
             }
         };
+    const handle3DMouseDown = (e) => {
+        is3DDragging.current = true;
+        last3DMouse.current = { x: e.clientX, y: e.clientY };
+    };
+    const handle3DMouseMove = (e) => {
+        if (!is3DDragging.current) return;
 
+        const dx = (e.clientX - last3DMouse.current.x) * 0.01;
+        const dy = (e.clientY - last3DMouse.current.y) * 0.01;
+        last3DMouse.current = { x: e.clientX, y: e.clientY };
+
+        moveModel(dx, dy); // useThreeRenderer에서 가져온 함수
+    };
+
+    const handle3DMouseUp = () => {
+        is3DDragging.current = false;
+    };
     useEffect(() => {
         if (resetObjectPositionRef) {
             resetObjectPositionRef.current = (index) => {
@@ -226,6 +233,70 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             console.log("✅ resetObjectPositionRef 등록 완료");
         }
     }, [resetObjectPositionRef]);
+
+    const handleGlbClick = (url) => {
+        if (webglCanvasRef.current) {
+            // 3D 캔버스를 비활성화 상태에서 활성화
+            if (webglCanvasRef.current.style.pointerEvents === "none") {
+                // console.log("none 상태");
+                webglCanvasRef.current.style.pointerEvents = "auto"; // 3D 캔버스를 활성화
+                webglCanvasRef.current.style.visibility = "visible"; // 3D 캔버스를 보이게 설정
+                // console.log("초기화 시전");
+                // 렌더러 초기화가 한 번만 이루어지도록 보장
+                if (!rendererInitialized) {
+                    // console.log("초기화 시전");
+                    initRenderer();  // 렌더러 초기화 한 번만 호출
+                    setRendererInitialized(true); // 렌더러 초기화 완료 플래그 설정
+                }
+            } else {
+                // console.log("auto 상태");
+                webglCanvasRef.current.style.pointerEvents = "none"; // 3D 캔버스를 비활성화
+                webglCanvasRef.current.style.visibility = "hidden"; // 3D 캔버스를 숨김 처리
+            }
+        }
+
+        const currentState = glbModelStateRef.current.get(url);
+        const currentModel = getCurrentModel();
+
+        // 🔴 현재 보이고 있으면 => 상태 저장하고 숨김
+        if (currentModel && currentState?.visible) {
+            glbModelStateRef.current.set(url, {
+                visible: false,
+                position: currentModel.position.clone(),
+                scale: currentModel.scale.clone(),
+                rotation: currentModel.rotation.clone(),
+            });
+            currentModel.visible = false;
+            return;
+        }
+
+        // 🟡 숨겨져 있고 모델 존재 => 상태 복원해서 다시 보이기
+        if (currentState && currentModel) {
+            currentModel.visible = true;
+            currentModel.position.copy(currentState.position);
+            currentModel.scale.copy(currentState.scale);
+            currentModel.rotation.copy(currentState.rotation);
+            glbModelStateRef.current.set(url, { ...currentState, visible: true });
+            return;
+        }
+
+        // 🔵 최초 로딩
+        loadModel(url);
+        setTimeout(() => {
+            const model = getCurrentModel();
+            if (!model) return;
+
+            focusModel();
+
+            glbModelStateRef.current.set(url, {
+                visible: true,
+                position: model.position.clone(),
+                scale: model.scale.clone(),
+                rotation: model.rotation.clone(),
+            });
+        }, 500);
+    };
+
 
     const handleUndo = async () => {
         const base64 = await undo(); // ⬅️ 훅에서 base64 받아옴
@@ -283,13 +354,28 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
                 };
                 image.src = base64;
             };
+
             useEffect(() => {
                 if (restoreInitialImageRef) {
                     restoreInitialImageRef.current = restoreOriginalImage;
                 }
             }, [restoreInitialImageRef]);
+
             useImperativeHandle(ref, () => ({
                 handleFileChange,
+                loadGlbModel: (url) => {
+                    handleGlbClick(url);
+                },
+                focusModel: focusModel,
+                finalThumbnailPos,
+                clickOffsetRatio,
+                transform: transformRef.current,
+                thumbnail: detectedObjects[selectedIndex]?.thumbnail,
+                bbox: detectedObjects[selectedIndex]?.bbox,
+                outputSize: {
+                    width: canvasRef.current?.width ?? 0,
+                    height: canvasRef.current?.height ?? 0,
+                }
             }));
     const applyAiImage = (aiBase64) => {
         setImageBase64(aiBase64);
@@ -307,6 +393,10 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
         // const file = e.target.files[0];
         const file = e.target?.files?.[0] || e; // e가 File이면 직접 사용
         if (!file || !containerRef.current) return;
+
+        if (setIsImageUploaded) {
+            setIsImageUploaded(true);
+        }
 
           // ✅ 기존 세션 히스토리 삭제
         clearHistory();
@@ -351,6 +441,14 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
                 setDetectedObjects(filtered);
                 setImageBase64(res.data.original_image_base64);
 
+                const img = new Image();
+                img.onload = () => {
+                    // if (setIsImageUploaded) {
+                    //     setIsImageUploaded(true);
+                    // }
+                };
+                img.src = res.data.original_image_base64; // base64로 trigger
+
             if (!sessionId) {
                 const generated = crypto.randomUUID();
                 setSessionId(generated);
@@ -372,7 +470,6 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             alert("업로드 또는 탐지 중 오류가 발생했습니다.");
         }
     };
-
     const drawMaskBorder = (ctx, obj, transform = {
         scaleX: 1,
         scaleY: 1,
@@ -382,54 +479,63 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
         const [x, y, w, h] = obj.bbox;
         const mask = obj.mask;
         if (!mask || mask.length === 0 || mask[0].length === 0) return;
-
+    
         const rows = mask.length;
         const cols = mask[0].length;
         const dx = w / cols;
         const dy = h / rows;
-
+    
         const { scaleX, scaleY, offsetX, offsetY } = transform;
-
-        ctx.beginPath();
+    
+        const isBorder = (j, i) => {
+            if (!mask[j][i]) return false;
+            const up = j > 0 ? mask[j - 1][i] : false;
+            const down = j < rows - 1 ? mask[j + 1][i] : false;
+            const left = i > 0 ? mask[j][i - 1] : false;
+            const right = i < cols - 1 ? mask[j][i + 1] : false;
+            return !(up && down && left && right);
+        };
+    
+        const hatchSpacing = 3; // ✅ 더 촘촘하게
+        ctx.lineWidth = 1.2;
         ctx.strokeStyle = "red";
-        ctx.lineWidth = 1;
-
+        
         for (let j = 0; j < rows; j++) {
             for (let i = 0; i < cols; i++) {
-                if (!mask[j][i]) continue;
-
+                if (!isBorder(j, i)) continue;
+    
                 const px = x + i * dx;
                 const py = y + j * dy;
-
+    
                 const canvasX = px * scaleX + offsetX;
                 const canvasY = py * scaleY + offsetY;
                 const canvasDX = dx * scaleX;
                 const canvasDY = dy * scaleY;
-
-                if (j === 0 || !mask[j - 1][i]) {
-                    ctx.moveTo(canvasX, canvasY);
-                    ctx.lineTo(canvasX + canvasDX, canvasY);
+    
+                // ✅ 셀 사각형 내부에 빗금 그리기
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(canvasX, canvasY, canvasDX, canvasDY);
+                ctx.clip(); // ✅ 이 셀 안에서만 그리게 clip 설정
+    
+                ctx.beginPath();
+                for (let d = -canvasDY; d < canvasDX + canvasDY; d += hatchSpacing) {
+                    ctx.moveTo(canvasX + d, canvasY);
+                    ctx.lineTo(canvasX, canvasY + d);
                 }
-                if (j === rows - 1 || !mask[j + 1][i]) {
-                    ctx.moveTo(canvasX, canvasY + canvasDY);
-                    ctx.lineTo(canvasX + canvasDX, canvasY + canvasDY);
-                }
-                if (i === 0 || !mask[j][i - 1]) {
-                    ctx.moveTo(canvasX, canvasY);
-                    ctx.lineTo(canvasX, canvasY + canvasDY);
-                }
-                if (i === cols - 1 || !mask[j][i + 1]) {
-                    ctx.moveTo(canvasX + canvasDX, canvasY);
-                    ctx.lineTo(canvasX + canvasDX, canvasY + canvasDY);
-                }
+                ctx.stroke();
+                ctx.restore();
+    
+                // ✅ 테두리 윤곽선
+                ctx.beginPath();
+                ctx.rect(canvasX, canvasY, canvasDX, canvasDY);
+                ctx.stroke();
             }
         }
-
-        ctx.stroke();
     };
+    
 
-
-
+    
     useEffect(() => {
         if (imageBase64) drawScene();
     }, [imageBase64,selectedIndex, imageWidth, imageHeight]);
@@ -450,34 +556,40 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
     };
 
     useEffect(() => {
-        if (!imageBase64 || !canvasRef.current) return;
-
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d");
-        const container = containerRef.current;
-
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-
-        const image = new Image();
-        image.onload = () => {
-            bgImageRef.current = image;
-            // canvas.width = image.width;
-            // canvas.height = image.height;
-            setImageWidth(image.width);
-            setImageHeight(image.height);
-            // const transform = drawImageContainWithSideBlur(image, canvasRef.current.getContext("2d"), canvasRef.current);
+        if (!imageBase64 || !canvasRef.current ) return;
+        setTimeout(() => {
+            const canvas = canvasRef.current;
             const ctx = canvas.getContext("2d");
-            // transformRef.current = drawImageContainWithSideBlur(image, ctx, canvasRef.current);
-            const transform = drawImageContainWithSideBlur(image, ctx, canvas);
-            transformRef.current = transform;
-            console.log("imageUploader : " ,image.width, image.height);
-            // ctx.drawImage(image, 0, 0, image.width, image.height);
-            // ctx.drawImage(bgImageRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-            drawScene();
-        };
-        image.src = imageBase64;
-        console.log("image Uploader",image.src);
+            const container = containerRef.current;
+
+            if (!canvas || !container) return;
+
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+
+            const image = new Image();
+            image.onload = () => {
+                bgImageRef.current = image;
+
+                setImageWidth(image.width);
+                setImageHeight(image.height);
+
+                const ctx = canvas.getContext("2d");
+                const transform = drawImageContainWithSideBlur(image, ctx, canvas);
+                transformRef.current = transform;
+
+                drawScene();
+                setTimeout(() => {
+                    if (webglCanvasRef.current) {
+                        console.log("🌟 이미지 로딩 이후 WebGL 초기화!");
+                        // initRenderer();
+                    }
+                }, 0); // 💡 또는 requestAnimationFrame으로 시점 밀어줘도 OK
+            };
+
+            image.src = imageBase64;
+
+        }, 0); // ✅ DOM layout 반영 후 실행
     }, [imageBase64]);
 
     const handleMouseDown = (e) => {
@@ -499,6 +611,10 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
         }
       
         const obj = detectedObjects[selectedIndex];
+        if (!obj || obj.isGlb || !obj.bbox) {
+            console.warn("❗ 선택된 객체는 bbox 정보가 없거나 3D 모델입니다.");
+            return;
+        }
         const canvasX = obj.bbox[0] * transform.scaleX + transform.offsetX;
         const canvasY = obj.bbox[1] * transform.scaleY + transform.offsetY;
         const canvasW = obj.bbox[2] * transform.scaleX;
@@ -619,7 +735,7 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
             </UndoRedoBox>
             <DeleteBox>
                 <CommonButton
-                    className={className}
+                    className={`upload-button ${className}`}
                     width="120px"
                     height="40px"
                     fontSize="xs"
@@ -637,7 +753,7 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
                 ref={containerRef}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
-                className={className}
+                className={`preview-area ${className}`}
                 $hasImage={!!imageUrl}
             >
                 {!imageUrl ? (
@@ -658,6 +774,13 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
                                 onMouseMove={handleMouseMove}
                                 onMouseUp={handleMouseUp}
                                 canvasRef={canvasRef}
+                            />
+                            <canvas
+                                ref={webglCanvasRef}
+                                onMouseDown={handle3DMouseDown}
+                                onMouseMove={handle3DMouseMove}
+                                onMouseUp={handle3DMouseUp}
+                                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 2, pointerEvents: "none" }}
                             />
                         </BlurredWrapper>
 

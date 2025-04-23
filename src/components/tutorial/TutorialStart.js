@@ -26,7 +26,7 @@ function TutorialStart({ onStart, onSkip }) {
         setDisplayedText("");
         setIsComplete(false);
 
-        const speed = 80;
+        const speed = 50;
         const interval = setInterval(() => {
             if (index >= fullText.length) {
                 clearInterval(interval);

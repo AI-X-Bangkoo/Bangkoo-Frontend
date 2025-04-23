@@ -23,6 +23,7 @@ export default function InteriorTab({ onDelete, onDeleteAll }) {
                     interiorList={interiorList}
                     onDelete={onDelete}
                     onDeleteAll={onDeleteAll}
+                    className="interior-item"
                 />
             }
 

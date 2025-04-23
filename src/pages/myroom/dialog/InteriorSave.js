@@ -59,6 +59,7 @@ function InteriorSave({ canvasRef }) {
       {/* 📝 사용자에게 설명 입력 필드 제공 */}
       <Text size="xxs" $weight={600}>인테리어 설명</Text>
       <CommonTextField
+        className="interior-desc-input"
         placeholder="내방 인테리어 설명을 간단하게 작성해 주세요."
         height="34px"
         value={explanation}

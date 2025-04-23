@@ -22,7 +22,7 @@ function AiRecommended() {
 
         const timer = setInterval(() => {
             setProgress((prev) => {
-                const next = prev + 5;
+                const next = prev + 8;
                 if (next >= 100) {
                     clearInterval(timer);
                     dispatch(endAnalysis()); // 분석 종료

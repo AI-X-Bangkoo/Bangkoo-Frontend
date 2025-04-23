@@ -10,7 +10,7 @@ export const StyledButton = styled.button`
   min-width: ${({ width }) => width || "auto"};
   height: ${({ height }) => height || "40px"};
   background-color: ${({ theme, $bgColor, type }) =>
-    type === "outline" ? "transparent" : theme.colors[$bgColor] || $bgColor || theme.colors.orange};
+    type === "outline" ? theme.colors.white : theme.colors[$bgColor] || $bgColor || theme.colors.orange};
   color: ${({ theme, color, type, $bgColor }) =>
     type === "outline"
         ? theme.colors[$bgColor] || $bgColor || theme.colors.orange
@@ -18,7 +18,7 @@ export const StyledButton = styled.button`
   font-size: ${({ theme, fontSize }) =>
     theme.fontSizes[fontSize] || fontSize || theme.fontSizes.base};
   font-weight: ${({ fontWeight }) => fontWeight || 500};
-  border-radius: ${({ theme, radius }) => theme.borderRadius[radius] || radius || "6px"};
+  border-radius: ${({ theme, $borderRadius }) => theme.borderRadius[$borderRadius] || $borderRadius || "6px"};
   border: ${({ theme, type, $bgColor }) =>
     type === "outline" ? `1px solid ${theme.colors[$bgColor] || $bgColor || theme.colors.orange}` : "none"};
   cursor: pointer;

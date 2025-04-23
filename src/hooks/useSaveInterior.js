@@ -17,6 +17,7 @@ export const useSaveInterior = (canvasRef, closeDialog) => {
    */
   const handleSave = async () => {
     try {
+      if (closeDialog) closeDialog(); // 다이얼로그 닫기
       // ✅ 1. 캔버스 요소 접근 (ref가 연결되어 있어야 함)
       const canvas = canvasRef?.current;
 
@@ -40,8 +41,8 @@ export const useSaveInterior = (canvasRef, closeDialog) => {
         // ✅ 4. 서버에 저장 요청
         await requestPlacementSave(formData);
 
-        alert("저장 요청 전송 완료!");
-        if (closeDialog) closeDialog(); // 다이얼로그 닫기
+        // alert("저장 요청 전송 완료!");
+        console.log("저장 요청 전송 완료!");
       }, "image/png");
 
     } catch (err) {
