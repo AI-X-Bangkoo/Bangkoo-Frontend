@@ -341,6 +341,10 @@ const ImageUploader = forwardRef((props, ref) => {
 
             useImperativeHandle(ref, () => ({
                 handleFileChange,
+                loadGlbModel: (url) => {
+                    handleGlbClick(url);
+                },
+                focusModel: focusModel,
                 finalThumbnailPos,
                 clickOffsetRatio,
                 transform: transformRef.current,
