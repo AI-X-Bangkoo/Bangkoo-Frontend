@@ -108,6 +108,7 @@ export default function MyFurnitureTab({
           furnitureList={furnitureList}
           onPlus={handleClick}
           setMode={setMode}
+          setTutorialStep={setTutorialStep}
           onMinus={(item, index) => {
             console.log("🧹 클릭한 가구 index", index);
 

@@ -6,7 +6,7 @@ import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
 import {Text} from "@/common/Typography";
 import CommonIconButton from "@/common/CommonIconButton";
 
-function FurnitureAIController({settingClick, onSearchClick}) {
+function FurnitureAIController({settingClick, onSearchClick, tutorialStep, setTutorialStep}) {
     const [isTooltipVisible, setIsTooltipVisible] = useState(true);
 
     const handleCloseTooltip = () => {
@@ -48,7 +48,15 @@ function FurnitureAIController({settingClick, onSearchClick}) {
             }
 
 
-            <AISearchButton onClick={onSearchClick}>
+            <AISearchButton
+                className="search-button"
+                onClick={() => {
+                    onSearchClick();
+                    if (tutorialStep === "3.1") {
+                        setTutorialStep("3.2");
+                    }
+                }}
+            >
                 <SearchIcon/>
                 검색
             </AISearchButton>

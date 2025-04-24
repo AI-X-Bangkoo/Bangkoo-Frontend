@@ -181,7 +181,12 @@ function MyRoom() {
             <RightPanel>
                 <FurnitureAIController
                     settingClick={settingDialog.openDialog}
-                    onSearchClick={openDrawer}
+                    onSearchClick={() => {
+                        openDrawer(); // 기존 동작
+                        if (tutorialStep === "3.1") {
+                            setTutorialStep("3.2"); // ✅ 튜토리얼 스텝 전환
+                        }
+                    }}
                 />
                 {/* 검색 drawer 영역*/}
                 {isDrawerOpen && (
