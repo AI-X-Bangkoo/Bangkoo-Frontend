@@ -389,87 +389,117 @@ const ImageUploader = forwardRef((props, ref) => {
         };
         image.src = aiBase64;
     };
+
     const handleFileChange = async (e) => {
-        // const file = e.target.files[0];
-        const file = e.target?.files?.[0] || e; // e가 File이면 직접 사용
-        if (!file || !containerRef.current) return;
+    const file = e.target?.files?.[0] || e; // e가 File이면 직접 사용
+    if (!file || !containerRef.current) return;
 
-        if (setIsImageUploaded) {
-            setIsImageUploaded(true);
+    if (setIsImageUploaded) {
+        setIsImageUploaded(true);
+    }
+
+    // ✅ 기존 세션 히스토리 삭제
+    clearHistory();
+
+    // ✅ 현재 div의 실제 보이는 크기 가져오기
+    const divWidth = containerRef.current.clientWidth;
+    const divHeight = containerRef.current.clientHeight;
+
+    // ✅ 원본 이미지 크기 추출
+    const imageBitmap = await createImageBitmap(file);
+    const originalWidth = imageBitmap.width;
+    const originalHeight = imageBitmap.height;
+
+    setImageUrl(file);
+    setPreviewUrl(URL.createObjectURL(file));
+
+    const formData = new FormData();
+    formData.append("file", file); // ⬅️ 원본 그대로 전송
+    formData.append("canvasWidth", originalWidth);   // ⬅️ 원본 해상도 사용
+    formData.append("canvasHeight", originalHeight); // ⬅️ 원본 해상도 사용
+
+    console.log("현재 백엔드에서 보내는 file:",file);
+
+    const formDataRecommend = new FormData();
+    formDataRecommend.append("file",file);
+    console.log("AI서버로 보낼 데이터:",formDataRecommend);
+
+    try {
+     // 두 개의 요청을 병렬로 보내기 위해 Promise.all 사용
+     console.group("📡 [detect_all_base64 요청 및 응답]");
+     console.log("요청 전송: /api/detect_all_base64");
+     const resDetect = await axios.post("http://localhost:8080/api/detect_all_base64", formData);
+     console.log("응답:", resDetect);
+     console.groupEnd();
+
+     console.group("📡 [recommend/from_image 요청 및 응답]");
+     console.log("요청 전송: /api/recommend/from_image");
+     const resRecommend = await axios.post("http://localhost:8080/api/recommend/from_image", formDataRecommend);
+     console.log("응답:", resRecommend);
+     console.groupEnd();
+
+        // 첫 번째 요청 응답 처리 (detect_all_base64)
+        originalImageRef.current = resDetect.data.original_image_base64;
+        
+
+        const results = resDetect.data.results.map((obj, idx) => ({
+            ...obj,
+            x: obj.bbox?.[0],
+            y: obj.bbox?.[1],
+            width: obj.bbox?.[2],
+            height: obj.bbox?.[3],
+            bbox: obj.bbox,
+            originalBbox: [...obj.bbox], // ✅ 초기 위치 보존
+            mask: obj.mask,
+            thumbIndex: idx,
+            thumbnail: resDetect.data.thumbnails_base64[idx],
+            flipHorizontal: false,
+        }));
+
+        // 결과에서 중복 항목을 필터링 (선택적으로 적용)
+        const filtered = smartFilterDuplicates(results, 0.5);
+
+        // 두 번째 요청 응답 처리 (recommend/from-image)
+        const recommendedProducts = resRecommend.data; // 추천된 가구 리스트
+
+        console.log("추천된 제품:", recommendedProducts);
+        console.log("분석된 결과:", filtered);
+
+        // 이후 작업 (예: 상태 업데이트 등)
+        setDetectedObjects(filtered);
+        setImageBase64(resDetect.data.original_image_base64);
+
+        const img = new Image();
+        img.onload = () => {
+            // 처리 로직
+        };
+        img.src = resDetect.data.original_image_base64; // base64로 trigger
+
+        if (!sessionId) {
+            const generated = crypto.randomUUID();
+            setSessionId(generated);
+            console.log("🎯 생성된 세션 ID:", generated);
         }
 
-          // ✅ 기존 세션 히스토리 삭제
-        clearHistory();
+        saveState(resDetect.data.original_image_base64, sessionId);
 
-        // ✅ 현재 div의 실제 보이는 크기 가져오기
-        const divWidth = containerRef.current.clientWidth;
-        const divHeight = containerRef.current.clientHeight;
-        // console.log("📏 div 영역:", divWidth, divHeight);
+        dispatch(setInitialFurniture(
+            filtered.map((item, index) => ({
+                id: Date.now() + index,
+                image: item.thumbnail,
+                type: "eyeOn",
+                isCustom: true,
+            }))
+        ));
 
-        // ✅ 원본 이미지 크기 추출
-        const imageBitmap = await createImageBitmap(file);
-        const originalWidth = imageBitmap.width;
-        const originalHeight = imageBitmap.height;
+    } catch (error) {
+        console.error("자동 업로드 또는 탐지 실패:", error);
+        alert("업로드 또는 탐지 중 오류가 발생했습니다.");
+    }
+};
 
-        setImageUrl(file);
-        setPreviewUrl(URL.createObjectURL(file));
+    
 
-        const formData = new FormData();
-        formData.append("file", file); // ⬅️ 원본 그대로 전송
-        formData.append("canvasWidth", originalWidth);   // ⬅️ 원본 해상도 사용
-        formData.append("canvasHeight", originalHeight); // ⬅️ 원본 해상도 사용
-
-            try {
-                const res = await axios.post("http://localhost:8080/api/detect_all_base64", formData);
-                originalImageRef.current = res.data.original_image_base64;
-                const results = res.data.results.map((obj, idx) => ({
-
-                    ...obj,
-                    x: obj.bbox?.[0],
-                    y: obj.bbox?.[1],
-                    width: obj.bbox?.[2],
-                    height: obj.bbox?.[3],
-                    bbox: obj.bbox,
-                    originalBbox: [...obj.bbox],  // ✅ 초기 위치 보존
-                    mask: obj.mask,
-                    thumbIndex: idx,
-                    thumbnail: res.data.thumbnails_base64[idx],
-                    flipHorizontal: false,
-                }));
-                const filtered = smartFilterDuplicates(results, 0.5);
-
-                setDetectedObjects(filtered);
-                setImageBase64(res.data.original_image_base64);
-
-                const img = new Image();
-                img.onload = () => {
-                    // if (setIsImageUploaded) {
-                    //     setIsImageUploaded(true);
-                    // }
-                };
-                img.src = res.data.original_image_base64; // base64로 trigger
-
-            if (!sessionId) {
-                const generated = crypto.randomUUID();
-                setSessionId(generated);
-                console.log("🎯 생성된 세션 ID:", generated);
-            }
-
-            saveState(res.data.original_image_base64, sessionId);
-
-            dispatch(setInitialFurniture(
-                filtered.map((item, index) => ({
-                    id: Date.now() + index,
-                    image: item.thumbnail,
-                    type: "eyeOn",
-                    isCustom: true,
-                }))
-            ));
-        } catch (error) {
-            console.error("자동 업로드 또는 탐지 실패:", error);
-            alert("업로드 또는 탐지 중 오류가 발생했습니다.");
-        }
-    };
     const drawMaskBorder = (ctx, obj, transform = {
         scaleX: 1,
         scaleY: 1,
