@@ -128,18 +128,19 @@ function MyRoom() {
                 <FurnitureController
                     saveClick={interiorSaveDialog.openDialog}
                     aiClick={aiDialog.openDialog}
-                    canvasRef={canvasRef}
+                    canvasRef={canvasRef} //
                     restoreInitialImageRef={restoreInitialImageRef}
                     onTutorialStart={startTutorial}
                     mode={mode}
-                    centerArea={centerArea} // ⬅️ 전달
+                    centerArea={centerArea} // ⬅️ 전달 //
                     handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
                     onTutorialAdvance={() => {
                         if (tutorialStep === "2.2") setTutorialStep("2.3");
-                    }}
+                    }} //
                     tutorialStep={tutorialStep}
                     setTutorialStep={setTutorialStep}
                     setShowAiRecommended={setShowAiRecommended}
+                    imageUploaderRef={uploaderRef}
                 />
                 <ImageUploader
                     ref={uploaderRef}
@@ -180,10 +181,21 @@ function MyRoom() {
             <RightPanel>
                 <FurnitureAIController
                     settingClick={settingDialog.openDialog}
-                    onSearchClick={openDrawer}
+                    onSearchClick={() => {
+                        openDrawer(); // 기존 동작
+                        if (tutorialStep === "3.1") {
+                            setTutorialStep("3.2"); // ✅ 튜토리얼 스텝 전환
+                        }
+                    }}
                 />
                 {/* 검색 drawer 영역*/}
-                {isDrawerOpen && <SearchDrawer onClose={closeDrawer} />}
+                {isDrawerOpen && (
+                    <SearchDrawer
+                        onClose={closeDrawer}
+                        tutorialStep={tutorialStep}
+                        setTutorialStep={setTutorialStep}
+                    />
+                )}
 
                 <TabBox className={tutorialStep === "6.3" ? "tabs-container" : ""}>
                     <CommonTabs
@@ -211,6 +223,13 @@ function MyRoom() {
                         mode={mode}
                         setMode={setMode}
 
+                        canvasRef={canvasRef}
+                        centerArea={centerArea}
+                        onTutorialAdvance={() => {
+                            if (tutorialStep === "2.2") setTutorialStep("2.3");
+                        }}
+                        setShowAiRecommended={setShowAiRecommended}
+                        uploaderRef={uploaderRef}
                         // 튜토리얼
                         setTutorialStep={setTutorialStep}
                     />}
@@ -269,13 +288,7 @@ function MyRoom() {
                 submitText="설정"
                 cancel={false}
                 submit={false}
-                onClose={() => {
-                    // aiDialog.closeDialog();
-                    setShowAiRecommended(false);
-                    if (tutorialStep === "2.3") {
-                        setTutorialStep("2.4");
-                    }
-                }}
+                onClose={() => setShowAiRecommended(false)}
             >
                 <AiRecommended/>
             </CommonDialog>

@@ -14,7 +14,8 @@ import useAuth from "@/hooks/login/useAuth";
 function AISearchComponent({
     mode = "redirect", // "redirect" or "inline"
     onSearchResults, // 검색 결과 콜백 (inline 모드 전용)
-    onSearchStart
+    onSearchStart,
+    tutorialStep
 }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -30,29 +31,39 @@ function AISearchComponent({
     const [imagePreviewUrl, setImagePreviewUrl] = useState("");
     const [imageFile, setImageFile] = useState(null);
     const [inputValue, setInputValue] = useState("");
+    const [overrideHover, setOverrideHover] = useState(true); // tutorialStep === "3.2"일 때만 true
 
     const containerRef = useRef(null); // 전체 검색 영역 감싸는 div
     const isSubmittingRef = useRef(false);
+
+    useEffect(() => {
+        if (tutorialStep === "3.2") {
+            setOverrideHover(true);
+        }
+    }, [tutorialStep]);
 
     const handleClickCategory = () => {
         setCategory(!category);
         setIsHover(false);
         setIsFocused(false);
-        setShowImageSearchBox(false)
+        setShowImageSearchBox(false);
+        setOverrideHover(false);
     };
 
     const handleClickIsFocused = () => {
         setIsFocused(true);
         setIsHover(false);
         setShowImageSearchBox(false);
-        setCategory(false)
+        setCategory(false);
+        setOverrideHover(false);
     };
 
     const handleClickImageSearch = () => {
         setShowImageSearchBox(!showImageSearchBox);
         setIsHover(false);
         setIsFocused(false);
-        setCategory(false)
+        setCategory(false);
+        setOverrideHover(false);
     };
 
     // 카테고리 클릭시 검색
@@ -218,7 +229,9 @@ function AISearchComponent({
             </div>
 
             {/* 검색창 마우스 hover시 */}
-            <SearchExplanation visible={isHover}/>
+            <SearchExplanation
+                visible={tutorialStep === "3.2" && overrideHover ? true : isHover}
+            />
             {/* 검색창 클릭시 */}
             {isFocused && (
                 <SearchTerm

@@ -13,7 +13,6 @@ import {
 import {Text} from "@/common/Typography";
 import AISearchComponent from "../search/AISearchComponent";
 import CommonImageBox from "@/common/CommonImageBox";
-import TestImage from "@/assets/images/TestImage.png";
 import CommonButton from "@/common/CommonButton";
 import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
 
@@ -23,7 +22,7 @@ import useCheckedFurniture from "@/hooks/furniture/useCheckedFurniture";
 import useCachedSearch from "@/hooks/search/useCachedSearch";
 import LoadingSpinner from "@/common/LoadingSpinner";
 
-const SearchDrawer = ({ onClose }) => {
+const SearchDrawer = ({ onClose, tutorialStep, setTutorialStep }) => {
     const [isOpen, setIsOpen] = useState(false); // 애니메이션 제어용
     const dispatch = useDispatch();
     const myFurniture = useSelector((state) => state.furniture.list);
@@ -118,30 +117,45 @@ const SearchDrawer = ({ onClose }) => {
             );
         }
         return (
-            <Content>
-                {list.map((item) => (
+            <Content className="search-result-box">
+                {(tutorialStep === "3.3") && (
+                    <div className="drawer-backdrop"
+                        style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            background: "rgba(0, 0, 0, 0.85)",
+                            zIndex: 1500
+                        }}
+                    />
+                )}
+                {list.map((item, index) => (
                     <div key={item.id}>
-                        <CommonImageBox
-                            image={item.이미지}
-                            type="checkbox"
-                            isChecked={!!checkedItems[item.id] || isInMyFurniture(item.id)}
-                            onLink={item.링크}
-                            onCheck={(e) => {
-                                toggle(item.id);
+                        <div className={`search-result-item ${index === 0 ? "first-result" : ""}`}>
+                            <CommonImageBox
+                                image={item.이미지}
+                                type="checkbox"
+                                isChecked={!!checkedItems[item.id] || isInMyFurniture(item.id)}
+                                onLink={item.링크}
+                                onCheck={(e) => {
+                                    toggle(item.id);
 
-                                // 체크 상태 저장
-                                const updatedChecked = {
-                                    ...checkedItems,
-                                    [item.id]: !checkedItems[item.id] // toggle 후 상태
-                                };
-                                const checkedIds = Object.entries(updatedChecked)
-                                    .filter(([_, isChecked]) => isChecked)
-                                    .map(([id]) => id);
+                                    // 체크 상태 저장
+                                    const updatedChecked = {
+                                        ...checkedItems,
+                                        [item.id]: !checkedItems[item.id] // toggle 후 상태
+                                    };
+                                    const checkedIds = Object.entries(updatedChecked)
+                                        .filter(([_, isChecked]) => isChecked)
+                                        .map(([id]) => id);
 
-                                saveCheckedIds(confirmedKeyword, checkedIds);
-                            }}
-                            recommendationReason={item.추천이유}
-                        />
+                                    saveCheckedIds(confirmedKeyword, checkedIds);
+                                }}
+                                recommendationReason={item.추천이유}
+                            />
+                        </div>
                         <TextBox>
                             <Text size="xs" $weight={800}>{item.이름}</Text>
                             <Text size="xs" $weight={600}>{item.설명}</Text>
@@ -158,7 +172,7 @@ const SearchDrawer = ({ onClose }) => {
     };
 
     return (
-        <DrawerRoot onClick={handleOverlayClick}>
+        <DrawerRoot onClick={handleOverlayClick} className="drawer-root">
             <DrawerWrapper $isOpen={isOpen}>
                 <Text size="base" $weight={800}>가구검색</Text>
 
@@ -169,6 +183,7 @@ const SearchDrawer = ({ onClose }) => {
                             setIsLoading(true);
                             setRawList([]);
                         }}
+                        tutorialStep={tutorialStep}
                         onSearchResults={(result, keyword) => {
                             const resultWithId = result.map((item, index) => ({
                                 ...item,
@@ -186,6 +201,8 @@ const SearchDrawer = ({ onClose }) => {
                             cachedChecked?.forEach(id => {
                                 if (!checkedItems[id]) toggle(id);
                             });
+
+                            if (tutorialStep === "3.2") setTutorialStep("3.3");
                         }}
                     />
                 </SearchBox>
@@ -204,6 +221,7 @@ const SearchDrawer = ({ onClose }) => {
 
                 <ButtonBox>
                     <CommonButton
+                        className="place-button"
                         width="120px"
                         height="44px"
                         fontSize="xs"
@@ -220,8 +238,8 @@ const SearchDrawer = ({ onClose }) => {
                             console.log(selectedFurniture);
                             selectedFurniture.forEach((item) => {
                                 dispatch(appendFurniture({
-                                    id: item.id,     
-                                    image: item.이미지,    
+                                    id: item.id,
+                                    image: item.이미지,
                                     name: item.이름,
                                     description: item.설명,
                                     price: item.할인가 ?? item.정상가,
@@ -231,6 +249,7 @@ const SearchDrawer = ({ onClose }) => {
                                     isCustom: true,
                                 }));
                             });
+                            if (tutorialStep === "3.3") setTutorialStep("3.4");
 
                             clearAll();
                             onClose();
@@ -240,7 +259,10 @@ const SearchDrawer = ({ onClose }) => {
                     </CommonButton>
                 </ButtonBox>
 
-                <CloseButton onClick={handleOverlayClick}>
+                <CloseButton
+                    onClick={handleOverlayClick}
+                    style={tutorialStep === "3.3" ? { display:"none" } : {}}
+                >
                     <CloseIcon/>
                     닫기
                 </CloseButton>

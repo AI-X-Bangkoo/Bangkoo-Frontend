@@ -1,4 +1,16 @@
 import styled, { keyframes } from "styled-components";
+import { createGlobalStyle } from "styled-components";
+
+// export const TutorialGlobalStyle = createGlobalStyle`
+//   .tutorial-highlight {
+//     border: 3px solid ${({ theme }) => theme.colors.orange};
+//     box-shadow: 0 0 12px ${({ theme }) => theme.colors.orange};
+//     box-sizing: border-box;
+//     position: relative;
+//     z-index: 1700;
+//     height: 100%;
+//   }
+// `;
 
 const glow = keyframes`
   0% { opacity: 0.2; text-shadow: 0 0 2px #f90; }
@@ -74,4 +86,17 @@ export const HighlightStyle = styled.div`
   box-sizing: border-box;
   animation: ${pulse} 1.5s infinite;
   transition: width 0.2s, height 0.2s;
+`;
+
+export const FixedMessage = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  font-size: ${({ theme }) => theme.fontSizes.md};
+  color: ${({ theme }) => theme.colors.white};
+  font-weight: 600;
+  border-radius: 8px;
+  z-index: 1700;
 `;

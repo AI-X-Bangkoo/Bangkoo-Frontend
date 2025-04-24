@@ -9,8 +9,9 @@ export const MainLayout = styled.div`
 `;
 
 export const LeftPanel = styled.div`
-  width: 70%;
-  min-width: calc(100vw - 500px);
+  width: calc(100vw - 500px);
+  //width: 70%;
+  //min-width: calc(100vw - 500px);
   padding: ${({ theme }) => theme.spacing.md};
   box-sizing: border-box;
   border-right: 1px solid ${({ theme }) => theme.colors.grey};
@@ -25,10 +26,10 @@ export const LeftPanel = styled.div`
 `;
 
 export const RightPanel = styled.div`
-  min-width: 346px;
+  //min-width: 346px;
   //width: 30%;
-  width: 490px;
-  max-width: 500px;
+  width: 500px;
+  //max-width: 500px;
   height: 100%;
   padding: ${({ theme }) => theme.spacing.md};
   padding-bottom: 0;
@@ -40,9 +41,11 @@ export const RightPanel = styled.div`
 
 export const GridBox = styled.div`
   flex: 1;
+  position: relative;
   overflow-x: hidden;
   box-sizing: border-box;
   overflow-y: auto;
+  height: 100%;
   background-color: ${({ theme }) => theme.colors.white};
 
   /* 스크롤바 전체 영역 */
@@ -167,10 +170,14 @@ export const TabBox = styled.div`
 export const FurnitureGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  //grid-template-columns: repeat(3, 1fr);
+  //align-items: stretch;
   gap: ${({ theme }) => theme.spacing.md};
   padding-bottom: ${({ theme }) => theme.spacing.md};
   padding-right: 10px;
   box-sizing: border-box;
+  //align-content: start;
+  background-color: ${({ theme }) => theme.colors.white};
   
   & > * {
     min-width: 0;
