@@ -112,7 +112,7 @@ function FurnitureController({
             </CommonButton>
 
             <FlexBox>
-                {/* ✅ 초기 이미지로 되돌리기 버튼 (아직 동작 없음) */}
+                {/* ✅ 초기 이미지로 되돌리기 버튼 */}
                 <CommonButton
                     width="135px"
                     type="outline"

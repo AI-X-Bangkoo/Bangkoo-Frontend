@@ -57,7 +57,7 @@ const ImageUploader = forwardRef((props, ref) => {
 
     const { currentImage, saveState, undo, redo, clearHistory } = usePlacementHistory(sessionIdRef);
     const [isFirstUpload, setIsFirstUpload] = useState(true);
-
+    const furnitureList = useSelector((state) => state.furniture.list);
     // 히스토리용 currentImage가 바뀌면 imageBase64도 덮어써서
     // [imageBase64] useEffect 를 다시 트리거하도록 함
     useEffect(() => {
@@ -80,6 +80,7 @@ const ImageUploader = forwardRef((props, ref) => {
     const [finalThumbnailPos, setFinalThumbnailPos] = useState(null);
     const [clickOffsetRatio, setClickOffsetRatio] = useState({ x: 0.5, y: 0.5 });
     const [initialDragBbox, setInitialDragBbox] = useState(null);
+    const [finalImagePos, setFinalImagePos] = useState(null);
     
     const removeObject = useRemoveObject({
         canvas: canvasRef.current,
@@ -391,7 +392,7 @@ const ImageUploader = forwardRef((props, ref) => {
                 finalThumbnailPos,
                 clickOffsetRatio,
                 transform: transformRef.current,
-                thumbnail: detectedObjects[selectedIndex]?.thumbnail,
+                thumbnail: detectedObjects?.[selectedIndex]?.thumbnail ?? null,
                 bbox: detectedObjects[selectedIndex]?.bbox,
                 outputSize: {
                     width: canvasRef.current?.width ?? 0,
@@ -491,6 +492,9 @@ const ImageUploader = forwardRef((props, ref) => {
                             image: item.thumbnail,
                             type: "eyeOn",
                             isCustom: true,
+                            bbox: item.bbox,
+                            originalBbox: [...item.bbox],
+                            mask: item.mask,
                         }))
                     ));
                     setIsFirstUpload(false);
@@ -686,23 +690,25 @@ const ImageUploader = forwardRef((props, ref) => {
           return;
         }
       
-        const originalBBox = initialDragBbox ?? obj.bbox;
-        const objWidth = originalBBox[2] * transform.scaleX;
-        const objHeight = originalBBox[3] * transform.scaleY;
+        const newBbox = [...(initialDragBbox ?? obj.bbox)];
+
+        const objWidth = newBbox[2] * transform.scaleX;
+        const objHeight = newBbox[3] * transform.scaleY;
       
         // 실제 드래그된 bbox 위치 업데이트
         const newCanvasX = (mouseX - objWidth * clickOffsetRatio.x - transform.offsetX) / transform.scaleX;
         const newCanvasY = (mouseY - objHeight * clickOffsetRatio.y - transform.offsetY) / transform.scaleY;
       
-        obj.bbox[0] = newCanvasX;
-        obj.bbox[1] = newCanvasY;
+        newBbox[0] = newCanvasX;
+        newBbox[1] = newCanvasY;
       
         // 🔥 마우스 커서 기준으로 썸네일 위치 지정
         setDraggingThumbnailPos({
           x: e.clientX,
           y: e.clientY
         });
-      
+        
+        obj.bbox = newBbox;
         updated[draggingIndex] = obj;
         setDetectedObjects(updated);
       
@@ -717,51 +723,45 @@ const ImageUploader = forwardRef((props, ref) => {
       
       
       
-      const getThumbnailStyle = (pos, bbox, transform, ratio, zIndex = 9999) => {
-        if (!pos || !bbox || !transform) return { display: "none" };
-
-        const containerRect = containerRef.current.getBoundingClientRect();
-        const width = bbox[2] * transform.scaleX;
-        const height = bbox[3] * transform.scaleY;
-      
+      const getThumbnailStyle = (pos, bbox, transform, ratio, zIndex = 2) => {
+        if (!pos || !bbox || !transform || !ratio) {
+            console.warn("⚠️ getThumbnailStyle called with invalid params", { pos, bbox, transform, ratio });
+            return {}; // 안전하게 빈 스타일 반환
+          }
+        const w = bbox[2] * transform.scaleX;
+        const h = bbox[3] * transform.scaleY;
         return {
-          position: "absolute",
-          left:     `${pos.x - width  * ratio.x - containerRect.left}px`,
-          top:      `${pos.y - height * ratio.y - containerRect.top}px`,
-          width:   `${width}px`,
-          height:  `${height}px`,
-          pointerEvents: "none",
-          zIndex: zIndex,
+          position:    "absolute",
+          left:        `${pos.x - w * ratio.x}px`,
+          top:         `${pos.y - h * ratio.y}px`,
+          width:       `${w}px`,
+          height:      `${h}px`,
+          pointerEvents:"none",
+          zIndex,
         };
       };
       
       
 
       const handleMouseUp = () => {
-        if (!canvasRef.current || draggingIndex === null) return;
+        if (draggingIndex === null || !transformRef.current) return;
         const transform = transformRef.current;
-        if (!transform) return;
-      
-        // 1) 컨테이너의 화면 내 위치
-        const containerRect = containerRef.current.getBoundingClientRect();
-      
-        // 2) 객체의 bbox → 캔버스 내부 픽셀 좌표
         const [bx, by, bw, bh] = detectedObjects[draggingIndex].bbox;
+      
+        // ① 캔버스 내부 픽셀 좌표로 변환
         const canvasX = bx * transform.scaleX + transform.offsetX;
         const canvasY = by * transform.scaleY + transform.offsetY;
+        const width   = bw * transform.scaleX;
+        const height  = bh * transform.scaleY;
       
-        // 3) 클릭한 지점 비율만큼 더해 뷰포트 좌표로 변환
-        const width  = bw * transform.scaleX;
-        const height = bh * transform.scaleY;
-        const finalX = containerRect.left + canvasX + width  * clickOffsetRatio.x;
-        const finalY = containerRect.top  + canvasY + height * clickOffsetRatio.y;
+        // ② 클릭했던 비율 만큼 더해 컨테이너 내부 좌표로 계산 (뷰포트 오프셋 NO)
+        const finalX = canvasX + width  * clickOffsetRatio.x;
+        const finalY = canvasY + height * clickOffsetRatio.y;
       
-        // 4) 이걸 그대로 세팅
         setFinalThumbnailPos({ x: finalX, y: finalY });
         setDraggingIndex(null);
         setDraggingThumbnailPos(null);
       };
-      
 
     const handleDrop = (e) => {
         e.preventDefault();
@@ -882,7 +882,10 @@ const ImageUploader = forwardRef((props, ref) => {
                     onChange={handleFileChange}
                 />
 {/* 🔹 드래그 중 실시간 썸네일 */}
-{draggingThumbnailPos && draggingIndex !== null && transformRef.current && (() => {
+{draggingThumbnailPos && 
+draggingIndex !== null && 
+detectedObjects?.[draggingIndex]?.thumbnail &&
+transformRef.current && (() => {
   const style = getThumbnailStyle(
     finalThumbnailPos,
     draggingThumbnailPos,
@@ -896,15 +899,17 @@ const ImageUploader = forwardRef((props, ref) => {
 
 
 {/* 🔹 드래그 종료 후 고정된 썸네일 */}
-{finalThumbnailPos && selectedIndex !== null && transformRef.current && (
+{finalThumbnailPos != null && 
+selectedIndex != null && 
+detectedObjects?.[selectedIndex]?.thumbnail && (
   <img
     src={detectedObjects[selectedIndex].thumbnail}
     style={getThumbnailStyle(
-      finalThumbnailPos,                      // 1) 뷰포트 좌표
-      detectedObjects[selectedIndex].bbox,    // 2) bbox
-      transformRef.current,                   // 3) transform
-      clickOffsetRatio,                       // 4) 클릭 위치 비율 (offset)
-      2                                       // 5) z-index
+      finalThumbnailPos,
+      detectedObjects[selectedIndex].bbox,
+      transformRef.current,
+      clickOffsetRatio,
+      2
     )}
     alt="final"
   />

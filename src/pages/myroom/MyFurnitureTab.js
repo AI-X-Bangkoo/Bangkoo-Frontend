@@ -123,7 +123,6 @@ export default function MyFurnitureTab({
 
             setselectedIndex((prev) => (prev === index ? null : index));
             setTimeout(() => setselectedIndex(index), 0); // ✅ 강제 리렌더
-            // setMode("remove"); // ✅ 휴지통 클릭 시 모드 설정
 
             MyFurnitureDelete();
 
