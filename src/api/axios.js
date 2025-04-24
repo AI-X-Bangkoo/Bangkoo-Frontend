@@ -3,7 +3,8 @@ import axios from "axios"
 import Cookies from "js-cookie";
 
 const api = axios.create({
-    baseURL: "http://localhost:8080",   //백엔드 주소
+    // baseURL: "http://localhost:8080",   //백엔드 주소
+    baseURL: "https://api.bangkoo.store",
     withCredentials: true,  //쿠키를 포함한 요청 허용
 })
 
