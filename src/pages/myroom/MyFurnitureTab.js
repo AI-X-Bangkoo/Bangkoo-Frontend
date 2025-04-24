@@ -24,7 +24,8 @@ export default function MyFurnitureTab({
   canvasRef,
   centerArea,
   onTutorialAdvance,
-  uploaderRef
+  uploaderRef,
+  sessionIdRef
 }) {
   const dispatch = useDispatch();
   const furnitureList = useSelector((state) => state.furniture.list);
@@ -79,6 +80,7 @@ export default function MyFurnitureTab({
     centerArea,
     handleFileChange: (file) => uploaderRef.current?.handleFileChange(file),
     imageUploaderRef: uploaderRef,
+    sessionIdRef: sessionIdRef,
   });
 
   const MyFurnitureDelete = () => {

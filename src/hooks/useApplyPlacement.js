@@ -6,7 +6,7 @@
 //  - AI 서버에 전송 후 받은 결과를 다시 캔버스에 반영하며
 //  - 썸네일 합성 등 전처리 작업을 포함한 전체 흐름을 처리한다.
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { requestPlacement } from '@/api/placement';
 import { usePlacementHistory } from './usePlacementHistory';
 import base64ToFile from '../pages/myroom/event/base64ToFile';
@@ -14,18 +14,20 @@ import { drawImageContainWithSideBlur } from './utils/drawUtils';
 import { isoContours } from 'marchingsquares';
 
 export const useApplyPlacement = ({
-  mode,
-  background,
-  reference,
-  canvasSize,
-  setShowMask,
-  setShowHelper,
-  centerArea,
-  handleFileChange,
-  imageUploaderRef
+  mode,                  // 현재 모드: add | remove | move
+  background,            // 캔버스 Ref (AI 처리 대상)
+  reference,             // 추가 시 사용할 참조 이미지 (add 모드에서만 사용)
+  canvasSize,            // (미사용) 캔버스 사이즈
+  setShowMask,           // 마스킹 UI 표시 토글 함수
+  setShowHelper,         // 헬퍼 UI 표시 토글 함수
+  centerArea,            // centerArea: 이미지 처리 범위 (x,y,w,h)
+  handleFileChange,      // 이미지 업데이트 처리 함수
+  imageUploaderRef,      // ImageUploader의 ref: 썸네일, 위치, 크기 등 접근용
+  sessionIdRef,          // 세션 ID 참조
 }) => {
   const transformRef = useRef(null);
-  const { saveState } = usePlacementHistory();
+
+  const { saveState } = usePlacementHistory(sessionIdRef);
 
   // 🔹 centerArea 부분 캡처 후 Blob으로 변환
   const extractCenterImageBlob = async (canvas, centerArea) => {
@@ -63,7 +65,7 @@ export const useApplyPlacement = ({
 
     // 배경 이미지 그리기
     const { x, y, width, height } = transform.centerArea;
-    ctx.drawImage(baseImage, x, y, width, height, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(baseImage, x, y, width, height, 0, 0, width, height);
 
     // 썸네일 위치 계산
     const thumbWidth = bbox[2] * transform.scaleX;
@@ -168,6 +170,10 @@ export const useApplyPlacement = ({
         const transform = drawImageContainWithSideBlur(resultImage, ctx, canvas);
         transformRef.current = transform;
 
+             if (!sessionIdRef.current) {
+                sessionIdRef.current = crypto.randomUUID();
+                console.log("🎯 applyPlacement onload 세션 ID:", sessionIdRef.current);
+              }
         await saveState(`data:image/png;base64,${base64}`);
         handleFileChange?.(base64ToFile(resultImage.src, "ai_result.png"));
       };

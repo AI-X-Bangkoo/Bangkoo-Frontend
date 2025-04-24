@@ -41,7 +41,13 @@ function MyRoom() {
     const openDrawer = () => setIsDrawerOpen(true);
     const closeDrawer = () => setIsDrawerOpen(false);
     const canvasRef = useRef(null);
+    const modeRef = useRef(null);
     const [mode, setMode] = useState(null);
+    const syncedSetMode = (val) => {
+        modeRef.current = val;
+        setMode(val);
+      };
+    const sessionIdRef = useRef(null);
     const uploaderRef = useRef(null);
 
     const [showAiRecommended, setShowAiRecommended] = useState(false);
@@ -131,7 +137,7 @@ function MyRoom() {
                     canvasRef={canvasRef} //
                     restoreInitialImageRef={restoreInitialImageRef}
                     onTutorialStart={startTutorial}
-                    mode={mode}
+                    mode={modeRef.current}
                     centerArea={centerArea} // ⬅️ 전달 //
                     handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
                     onTutorialAdvance={() => {
@@ -141,6 +147,7 @@ function MyRoom() {
                     setTutorialStep={setTutorialStep}
                     setShowAiRecommended={setShowAiRecommended}
                     imageUploaderRef={uploaderRef}
+                    sessionIdRef={sessionIdRef}
                 />
                 <ImageUploader
                     ref={uploaderRef}
@@ -156,13 +163,14 @@ function MyRoom() {
 
                     setCenterArea={setCenterArea} // ⬅️ 이거 추가
                     restoreInitialImageRef={restoreInitialImageRef}
+                    setMode={syncedSetMode}
                     mode={mode}
-                    setMode={setMode}
 
                     // 튜토리얼
                     isTutorialActive={tutorialStep === "1.1"}
                     className={tutorialStep === "1.1" ? "upload-button" : ""}
                     setIsImageUploaded={setIsImageUploaded}
+                    sessionIdRef={sessionIdRef}
                 />
                 {!isImageUploaded ? (
                     <Text size="sm" $weight={600} >
@@ -203,7 +211,8 @@ function MyRoom() {
                     />
                 </TabBox>
                 <GridBox className="grid-container">
-                    {currentTab === "my" && <MyFurnitureTab
+                    {currentTab === "my" && 
+                    <MyFurnitureTab
                         onCustomRemove={furnitureDialog.openDialog}
                         onGlbSelect={(item, index) => {
                             console.log("🔥 GLB 클릭 감지됨:", item);
@@ -216,7 +225,7 @@ function MyRoom() {
                         selectedIndex={selectedIndex}
                         resetObjectPositionRef={resetObjectPositionRef}
                         mode={mode}
-                        setMode={setMode}
+                        setMode={syncedSetMode}
 
                         canvasRef={canvasRef}
                         centerArea={centerArea}
@@ -227,6 +236,7 @@ function MyRoom() {
                         uploaderRef={uploaderRef}
                         // 튜토리얼
                         setTutorialStep={setTutorialStep}
+                        sessionIdRef={sessionIdRef}
                     />}
                     {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} />}
                     {currentTab === "interior" && <InteriorTab onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}
