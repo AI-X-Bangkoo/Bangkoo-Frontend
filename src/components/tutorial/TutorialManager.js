@@ -75,7 +75,7 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
             {(step === "1.1" || step === "1.2") && (
                 <TutorialStep1
                     phase={step}
-                    onNext={() => updateStep("2.1")} // ✅ Step2로 이동
+                    onNext={() => updateStep("2.1")} // Step2로 이동
                     onPrev={() => updateStep("0")}
                     onSkip={handleSkip}
                 />
@@ -115,6 +115,7 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
                         else if (step === "3.1") updateStep("2.4");
                     }}
                     onSkip={handleSkip}
+                    setTutorialStep={updateStep}
                 />
             )}
             {/* Step 6 */}
