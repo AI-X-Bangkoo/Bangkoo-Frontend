@@ -6,7 +6,7 @@ export const DrawerRoot = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, ${({ $isOpen }) => ($isOpen ? 0 : 0.5)});
+  background: rgba(0, 0, 0, ${({ $isOpen }) => ($isOpen ? 0 : 0.85)});
   transition: background 0.4s ease-in-out;
   z-index: 998;
 `;
