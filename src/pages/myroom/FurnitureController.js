@@ -135,13 +135,13 @@ function FurnitureController({
 
                 {/* ✅ 인테리어 저장 버튼 (외부에서 전달받은 함수 실행) */}
                 <CommonButton
-                    className={`save-button ${tutorialStep === "6.1" ? "highlight" : ""}`}
+                    className={`save-button ${tutorialStep === "4.1" ? "highlight" : ""}`}
                     width="80px"
                     type="outline"
                     onClick={() => {
                         saveClick(); // 원래 저장 열기 동작
-                        if (tutorialStep === "6.1" && typeof setTutorialStep === "function") {
-                            setTutorialStep("6.2"); // 다음 단계로 이동!
+                        if (tutorialStep === "4.1" && typeof setTutorialStep === "function") {
+                            setTutorialStep("4.2"); // 다음 단계로 이동!
                         }
                     }}
                     {...buttonProps}

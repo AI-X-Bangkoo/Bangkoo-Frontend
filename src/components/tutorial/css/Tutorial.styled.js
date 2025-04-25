@@ -30,7 +30,7 @@ export const Backdrop = styled.div`
 `;
 
 export const Backdrop6 = styled(Backdrop)`
-  pointer-events: none;
+  background: rgba(0,0,0,0.75) !important;
 `;
 
 export const Modal = styled.div`

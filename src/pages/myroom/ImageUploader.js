@@ -5,11 +5,11 @@ import {Text} from "@/common/Typography";
 import { useDispatch,useSelector } from "react-redux";
 import { setInitialFurniture } from "@/features/furniture/furnitureSlice";
 import {
-    BlurredCanvas, BlurredWrapper,MaskCanvas,
+    BlurredCanvas, BlurredWrapper, MaskCanvas,
     DeleteBox, MainCanvas,
     UploadBox,
     UploadContainer,
-    UploadInput, UndoRedoBox
+    UploadInput, UndoRedoBox, LoadingBox
 } from "./css/ImageUploader.styled";
 import CommonButton from "@/common/CommonButton";
 import ImageRenderer from "./ImageRenderer";
@@ -20,6 +20,7 @@ import {FaUndo, FaRedo} from "react-icons/fa";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useThreeRenderer } from "./utils/useThreeRenderer";
+import LoadingSpinner from "../../common/LoadingSpinner";
 import { current } from "@reduxjs/toolkit";
 import ThumbnailControls from "@/components/ThumbnailControls";
 
@@ -80,8 +81,9 @@ const ImageUploader = forwardRef((props, ref) => {
     const glbModelStateRef = useRef(new Map());
     const [rendererInitialized , setRendererInitialized] = useState(false);
 
+    const [isUploading, setIsUploading] = useState(false); // 업로드 상태 관리
+    const [loadingDots, setLoadingDots] = useState("");
 
-    
     const [draggingThumbnailPos, setDraggingThumbnailPos] = useState(null);
     const [finalThumbnailPos, setFinalThumbnailPos] = useState(null);
     const [clickOffsetRatio, setClickOffsetRatio] = useState({ x: 0.5, y: 0.5 });
@@ -92,6 +94,14 @@ const ImageUploader = forwardRef((props, ref) => {
         width: containerRef.current?.clientWidth || 1024,
         height: containerRef.current?.clientHeight || 720,
     }
+
+    useEffect(() => {
+        if (!isUploading) return;
+        const interval = setInterval(() => {
+            setLoadingDots(prev => prev === "..." ? "" : prev + ".");
+        }, 500);
+        return () => clearInterval(interval);
+    }, [isUploading]);
 
       const drawScene = (objects = detectedObjects) => {
         if (!canvasRef.current || !bgImageRef.current) return;
@@ -482,6 +492,9 @@ const ImageUploader = forwardRef((props, ref) => {
         const file = e.target?.files?.[0] || e; // e가 File이면 직접 사용
         if (!file || !containerRef.current) return;
 
+        // 업로드 시작 시 Spinner 표시
+        setIsUploading(true);
+
         if (setIsImageUploaded) {
             setIsImageUploaded(true);
         }
@@ -541,9 +554,8 @@ const ImageUploader = forwardRef((props, ref) => {
 
                 const img = new Image();
                 img.onload = () => {
-                    // if (setIsImageUploaded) {
-                    //     setIsImageUploaded(true);
-                    // }
+                    // 이미지 업로드 완료 후 상태 업데이트
+                    setIsUploading(false); // 업로드 완료되면 Spinner 숨기기
                 };
                 img.src = res.data.original_image_base64; // base64로 trigger
 
@@ -567,7 +579,8 @@ const ImageUploader = forwardRef((props, ref) => {
             } catch (error) {
                 console.error("자동 업로드 또는 탐지 실패:", error);
                 alert("업로드 또는 탐지 중 오류가 발생했습니다.");
-            }
+                setIsUploading(false); // 업로드 실패 시에도 Spinner 숨기기
+        }
     };
     
     const drawMaskBorder = (ctx, obj, transform = {
@@ -917,6 +930,14 @@ const ImageUploader = forwardRef((props, ref) => {
                         </BlurredWrapper>
 
                     </>
+                )}
+
+                {/* 업로드 중 Spinner 표시 */}
+                {isUploading && (
+                    <LoadingBox>
+                        <LoadingSpinner />
+                        <Text size="base" $weight={500}>업로드중{loadingDots}</Text>
+                    </LoadingBox>
                 )}
 
                 <UploadInput
