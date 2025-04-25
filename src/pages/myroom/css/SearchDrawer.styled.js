@@ -54,7 +54,7 @@ export const Content = styled.div`
   overflow-y: auto;
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 40px 24px;
 
   & > div > p:nth-child(2){

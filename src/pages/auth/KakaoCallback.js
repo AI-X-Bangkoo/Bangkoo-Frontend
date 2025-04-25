@@ -25,7 +25,7 @@ const KakaoCallback = () => {
     setIsProcessing(true);
 
     axios
-        .post(`http://localhost:8080/auth/callback/kakao?code=${code}`, null, {
+        .post(`https://api.bangkoo.store/auth/callback/kakao?code=${code}`, null, {
           withCredentials: true,
         })
         .then((res) => {

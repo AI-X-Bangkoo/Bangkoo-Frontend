@@ -89,8 +89,8 @@ function MyRoom() {
         saveInterior(); // Hook에서 리턴된 함수 실행(태원님)
 
         // 튜토리얼 단계일 경우 다음 단계로
-        if (tutorialStep === "6.2") {
-            setTutorialStep("6.3");
+        if (tutorialStep === "4.2") {
+            setTutorialStep("4.3");
         }
     };
 
@@ -197,7 +197,7 @@ function MyRoom() {
                     />
                 )}
 
-                <TabBox className={tutorialStep === "6.3" ? "tabs-container" : ""}>
+                <TabBox className={tutorialStep === "4.3" ? "tabs-container" : ""}>
                     <CommonTabs
                         tabs={tabList}
                         current={currentTab}

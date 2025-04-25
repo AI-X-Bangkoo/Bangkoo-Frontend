@@ -222,7 +222,7 @@ function TutorialStep3({ phase, onNext, onPrev, onSkip, setTutorialStep }) {
                     drawer.style.zIndex = "1600";
                     drawer.style.position = "relative";
                 }
-            }, 5000);
+            }, 3000);
 
             return () => {
                 clearInterval(typingInterval);
@@ -251,7 +251,11 @@ function TutorialStep3({ phase, onNext, onPrev, onSkip, setTutorialStep }) {
 
     return (
         <>
-            <Backdrop style={{ zIndex: 1300 }} />
+            {phase === "3.6" ?
+                <Backdrop6 style={{ zIndex: 1300 }} />
+                :
+                <Backdrop style={{ zIndex: 1300 }} />
+            }
 
             {phase === "3.1" &&
                 highlight(highlightRects.searchBtn)
@@ -308,18 +312,20 @@ function TutorialStep3({ phase, onNext, onPrev, onSkip, setTutorialStep }) {
             )}
 
             <div style={{ position: "fixed", top: "24px", right: "24px", display: "flex", zIndex: 2000, gap: 16 }}>
-                <CommonButton
-                    type="outline"
-                    bgColor="orange"
-                    onClick={onPrev}
-                    children="이전"
-                    {...buttonProps}
-                />
-                <CommonButton
-                    onClick={() => phase === "3.6" ? setTutorialStep("6.1") : onNext()}
-                    children="다음"
-                    {...buttonProps}
-                />
+                {/*<CommonButton*/}
+                {/*    type="outline"*/}
+                {/*    bgColor="orange"*/}
+                {/*    onClick={onPrev}*/}
+                {/*    children="이전"*/}
+                {/*    {...buttonProps}*/}
+                {/*/>*/}
+                {phase === "3.7" && (
+                    <CommonButton
+                        onClick={onNext}
+                        children="다음"
+                        {...buttonProps}
+                    />
+                )}
                 <button onClick={onSkip}>종료</button>
             </div>
         </>
