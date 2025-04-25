@@ -5,7 +5,7 @@ import TutorialStep2 from "./TutorialStep2";
 import TutorialStep3 from "./TutorialStep3";
 import TutorialStep4 from "./TutorialStep4";
 
-function TutorialManager({ isImageUploaded, forceStart, forceEnd, onStepChange, externalStep }) {
+function TutorialManager({ isImageUploaded, forceStart, forceEnd, onStepChange, externalStep, currentTab }) {
     const [step, setStep] = useState(null);
     const [isRunning, setIsRunning] = useState(false);
     const hasForced = useRef(false);
@@ -131,6 +131,7 @@ function TutorialManager({ isImageUploaded, forceStart, forceEnd, onStepChange, 
             {["4.1", "4.2", "4.3", "4.4"].includes(step) && (
                 <TutorialStep4
                     phase={step}
+                    currentTab={currentTab}
                     onNext={() => {
                         if (step === "4.1") updateStep("4.2");
                         else if (step === "4.2") updateStep("4.3");

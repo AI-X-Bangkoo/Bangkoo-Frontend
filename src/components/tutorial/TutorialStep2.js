@@ -3,15 +3,14 @@ import TutorialOverlay from "./TutorialOverlay";
 import {
     Backdrop,
     Backdrop6,
-    HighlightStyle
+    HighlightStyle, SkipBox
 } from "./css/Tutorial.styled";
 import CommonButton from "../../common/CommonButton";
 
 const buttonProps = {
-    width: "40px",
-    height: "24px",
-    fontSize: "xxs",
-    radius: 0,
+    width:"90px",
+    height: "40px",
+    fontSize: "xs",
     fontWeight: 600
 };
 
@@ -115,16 +114,7 @@ function TutorialStep2({ phase, onNext, onPrev, onSkip }) {
                 />
             )}
 
-            <div
-                style={{
-                    position: "fixed",
-                    top: "24px",
-                    right: "24px",
-                    display: "flex",
-                    zIndex: 9999,
-                    gap: 16
-                }}
-            >
+            <SkipBox>
                 {/*<CommonButton*/}
                 {/*    type="outline"*/}
                 {/*    bgColor="orange"*/}
@@ -133,14 +123,16 @@ function TutorialStep2({ phase, onNext, onPrev, onSkip }) {
                 {/*    {...buttonProps}*/}
                 {/*/>*/}
 
-                {/*{phase === "2.3" && (*/}
-                {/*    <CommonButton onClick={onNext} children="다음" {...buttonProps} />*/}
-                {/*)}*/}
-
-                <CommonButton onClick={onNext} children="다음" {...buttonProps} />
-
-                <button onClick={onSkip}>종료</button>
-            </div>
+                {phase === "2.3" && (
+                    <CommonButton onClick={onNext} children="다음" {...buttonProps} />
+                )}
+                <CommonButton
+                    bgColor={"grey"}
+                    onClick={onSkip}
+                    children={"Skip"}
+                    {...buttonProps}
+                />
+            </SkipBox>
         </>
     );
 }
