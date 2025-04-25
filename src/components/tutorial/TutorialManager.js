@@ -5,7 +5,7 @@ import TutorialStep2 from "./TutorialStep2";
 import TutorialStep3 from "./TutorialStep3";
 import TutorialStep4 from "./TutorialStep4";
 
-function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalStep }) {
+function TutorialManager({ isImageUploaded, forceStart, forceEnd, onStepChange, externalStep }) {
     const [step, setStep] = useState(null);
     const [isRunning, setIsRunning] = useState(false);
     const hasForced = useRef(false);
@@ -18,9 +18,9 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
     };
 
     // 현재 튜토리얼 단계 디버깅 로그
-    useEffect(() => {
-        if (step) console.log("🎯 튜토리얼 현재 단계:", step);
-    }, [step]);
+    // useEffect(() => {
+    //     if (step) console.log("🎯 튜토리얼 현재 단계:", step);
+    // }, [step]);
 
     // 외부에서 step이 바뀌면 내부도 반영
     useEffect(() => {
@@ -39,13 +39,13 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
     }, [forceStart]);
 
     // 처음 들어온 사용자라면 튜토리얼 자동 시작
-    // useEffect(() => {
-    //     const seen = localStorage.getItem("hasSeenTutorial");
-    //     if (!seen && !forceStart) {
-    //         setIsRunning(true);
-    //         updateStep("0");
-    //     }
-    // }, [forceStart]);
+    useEffect(() => {
+        const seen = localStorage.getItem("hasSeenTutorial");
+        if (!seen && !forceStart) {
+            setIsRunning(true);
+            updateStep("0");
+        }
+    }, [forceStart]);
 
     const handleStart = () => updateStep("1.1");
 
@@ -55,14 +55,15 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
         setStep(null);
         onStepChange?.(null);
         hasForced.current = false;
+
     };
 
     // 업로드 완료 시 1.1 → 1.2 로 자동 전환
-    // useEffect(() => {
-    //     if (step === "1.1" && isImageUploaded) {
-    //         updateStep("1.2");
-    //     }
-    // }, [step, isImageUploaded]);
+    useEffect(() => {
+        if (step === "1.1" && isImageUploaded) {
+            updateStep("1.2");
+        }
+    }, [step, isImageUploaded]);
 
     if (!isRunning) return null;
 
@@ -78,6 +79,7 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
                     onNext={() => updateStep("2.1")} // Step2로 이동
                     onPrev={() => updateStep("0")}
                     onSkip={handleSkip}
+                    isImageUploaded={isImageUploaded}
                 />
             )}
 

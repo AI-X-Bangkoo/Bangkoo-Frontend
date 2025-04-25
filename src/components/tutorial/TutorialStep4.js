@@ -46,7 +46,7 @@ function TutorialStep4({ phase, onNext, onPrev, onSkip }) {
         elevateEls.forEach(el => {
             el.dataset.prevZIndex = el.style.zIndex;
             el.dataset.prevPosition = el.style.position;
-            el.style.zIndex = "1600";
+            el.style.zIndex = "1200";
             el.style.position = "relative";
         });
 
@@ -133,7 +133,7 @@ function TutorialStep4({ phase, onNext, onPrev, onSkip }) {
 
     return (
         <>
-            <Backdrop style={{ zIndex: 1300 }} />
+            <Backdrop style={{ zIndex: 1000 }} />
 
             {phase === "4.1" && highlightRects.save && highlight(highlightRects.save)}
             {phase === "4.1" && highlightRects.preview && highlight(highlightRects.preview)}

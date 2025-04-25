@@ -173,7 +173,6 @@ function TutorialStep3({ phase, onNext, onPrev, onSkip, setTutorialStep }) {
         const elevateEls = [];
         if (phase === "3.3") elevateEls.push(elements.firstResult, elements.placeBtn, elements.drawer);
         if (phase === "3.5") elevateEls.push(elements.preview, elements.generateBtn);
-        // if (phase === "3.6") elevateEls.push(elements.preview,);
 
         elevateEls.forEach(el => {
             if (!el) return;
@@ -319,13 +318,19 @@ function TutorialStep3({ phase, onNext, onPrev, onSkip, setTutorialStep }) {
                 {/*    children="이전"*/}
                 {/*    {...buttonProps}*/}
                 {/*/>*/}
-                {phase === "3.7" && (
-                    <CommonButton
-                        onClick={onNext}
-                        children="다음"
-                        {...buttonProps}
-                    />
-                )}
+                {/*{phase === "3.7" && (*/}
+                {/*    <CommonButton*/}
+                {/*        onClick={onNext}*/}
+                {/*        children="다음"*/}
+                {/*        {...buttonProps}*/}
+                {/*    />*/}
+                {/*)}*/}
+
+                <CommonButton
+                    onClick={onNext}
+                    children="다음"
+                    {...buttonProps}
+                />
                 <button onClick={onSkip}>종료</button>
             </div>
         </>

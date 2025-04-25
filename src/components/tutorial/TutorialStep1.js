@@ -14,7 +14,7 @@ const buttonProps = {
     fontWeight: 600
 };
 
-function TutorialStep1({ phase, onNext, onPrev, onSkip }) {
+function TutorialStep1({ phase, onNext, onPrev, onSkip, isImageUploaded}) {
     const [uploadBtnBox, setUploadBtnBox] = useState(null);
     const [previewBox, setPreviewBox] = useState(null);
     const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
@@ -99,6 +99,13 @@ function TutorialStep1({ phase, onNext, onPrev, onSkip }) {
         };
     }, [phase]);
 
+    // 업로드 완료되면 1.2로 자동 전환
+    useEffect(() => {
+        if (phase === "1.1" && isImageUploaded) {
+            onNext(); // 1.2로 넘어가도록 onNext 호출
+        }
+    }, [isImageUploaded, phase, onNext]);
+
     return (
         <>
             <Backdrop />
@@ -146,14 +153,20 @@ function TutorialStep1({ phase, onNext, onPrev, onSkip }) {
                 {/*    {...buttonProps}*/}
                 {/*/>*/}
 
-                {phase === "1.2" && (
-                    <CommonButton
-                        className="tutorial-next-button"
-                        onClick={onNext}
-                        children={"다음"}
-                        {...buttonProps}
-                    />
-                )}
+                {/*{phase === "1.2" && (*/}
+                {/*    <CommonButton*/}
+                {/*        className="tutorial-next-button"*/}
+                {/*        onClick={onNext}*/}
+                {/*        children={"다음"}*/}
+                {/*        {...buttonProps}*/}
+                {/*    />*/}
+                {/*)}*/}
+                <CommonButton
+                    className="tutorial-next-button"
+                    onClick={onNext}
+                    children={"다음"}
+                    {...buttonProps}
+                />
                 <button onClick={onSkip}>종료</button>
             </div>
         </>
