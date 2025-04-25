@@ -206,7 +206,7 @@ function MyRoom() {
                     {currentTab === "my" && <MyFurnitureTab
                         onCustomRemove={furnitureDialog.openDialog}
                         onGlbSelect={(item, index) => {
-                            console.log("🔥 GLB 클릭 감지됨:", item);
+                            // console.log("🔥 GLB 클릭 감지됨:", item);
                             setselectedIndex(index);
                             uploaderRef.current?.loadGlbModel(item.model3dUrl);
                             // loadGlbModelToCanvas(item.image); // 예시
