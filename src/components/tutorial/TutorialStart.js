@@ -3,8 +3,7 @@ import {
     Backdrop,
     Modal,
     Message, 
-    ButtonGroup, 
-    Button
+    ButtonGroup,
 } from "./css/Tutorial.styled";
 import CommonButton from "../../common/CommonButton";
 

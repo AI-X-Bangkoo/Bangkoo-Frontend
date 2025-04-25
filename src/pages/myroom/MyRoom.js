@@ -306,6 +306,7 @@ function MyRoom() {
             <TutorialManager
                 isImageUploaded={isImageUploaded}
                 forceStart={tutorialForceStart}
+                forceEnd={setTutorialForceStart}
                 onStepChange={(step) => setTutorialStep(step)}
                 externalStep={tutorialStep}
             />
