@@ -151,6 +151,9 @@ export default function MyFurnitureTab({
             }
           }}
           onGlbSelect={(item, index) => {
+            console.log("🔥 클릭된 item:", item);
+            console.log("🆔 model3dUrl:", item.model3dUrl);
+            console.log("🔢 index:", index);
             if (typeof setselectedIndex === "function") {
               setselectedIndex((prev) => (prev === index ? null : index));
             }
