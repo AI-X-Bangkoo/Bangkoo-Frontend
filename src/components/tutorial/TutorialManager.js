@@ -82,22 +82,25 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
             )}
 
             {/* Step 2 */}
-            {["2.1", "2.2", "2.3", "2.4"].includes(step) && (
+            {["2.1", "2.2", "2.3"].includes(step) && (
                 <TutorialStep2
                     phase={step}
                     onNext={() => {
                         if (step === "2.1") updateStep("2.2");
                         else if (step === "2.2") updateStep("2.3");
-                        else if (step === "2.3") updateStep("2.4");
-                        else if (step === "2.4") updateStep("3.1");
+                        else if (step === "2.3") updateStep("3.1");
                     }}
-                    onPrev={() => updateStep("1.2")}
+                    onPrev={() => {
+                        if (step === "2.3") updateStep("2.2");
+                        else if (step === "2.2") updateStep("2.1");
+                        else if (step === "2.1") updateStep("1.2");
+                    }}
                     onSkip={handleSkip}
                 />
             )}
 
             {/* Step 3 */}
-            {["3.1", "3.2", "3.3", "3.4", "3.5"].includes(step) && (
+            {["3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7"].includes(step) && (
                 <TutorialStep3
                     phase={step}
                     onNext={() => {
@@ -105,10 +108,14 @@ function TutorialManager({ isImageUploaded, forceStart, onStepChange, externalSt
                         else if (step === "3.2") updateStep("3.3");
                         else if (step === "3.3") updateStep("3.4");
                         else if (step === "3.4") updateStep("3.5");
-                        else if (step === "3.5") updateStep("6.1"); // 다음 단계로
+                        else if (step === "3.5") updateStep("3.6");
+                        else if (step === "3.6") updateStep("3.7");
+                        else if (step === "3.7") updateStep("6.1"); // 다음 단계로
                     }}
                     onPrev={() => {
-                        if (step === "3.5") updateStep("3.4");
+                        if (step === "3.7") updateStep("3.6");
+                        else if (step === "3.6") updateStep("3.5");
+                        else if (step === "3.5") updateStep("3.4");
                         else if (step === "3.4") updateStep("3.3");
                         else if (step === "3.3") updateStep("3.2");
                         else if (step === "3.2") updateStep("3.1");
