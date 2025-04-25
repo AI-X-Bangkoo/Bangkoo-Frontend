@@ -19,6 +19,8 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useThreeRenderer } from "./utils/useThreeRenderer";
+import { recommendFromImage } from "../../api/recommend";
+
 
 const ImageUploader = forwardRef((props, ref) => {
         const {
@@ -400,6 +402,10 @@ const ImageUploader = forwardRef((props, ref) => {
         setIsImageUploaded(true);
     }
 
+    if(typeof onImageUploaded === "function"){
+        onImageUploaded(file);
+    }
+
     // ✅ 기존 세션 히스토리 삭제
     clearHistory();
 
@@ -435,11 +441,9 @@ const ImageUploader = forwardRef((props, ref) => {
      console.groupEnd();
 
      console.group("📡 [recommend/from_image 요청 및 응답]");
-     console.log("요청 전송: /api/recommend/from_image");
-     const resRecommend = await axios.post("http://localhost:8080/api/recommend/from_image", formDataRecommend);
-     console.log("응답:", resRecommend);
+     const recommendResult = await recommendFromImage(formDataRecommend);
+     console.log("추천 응답:", recommendResult);
      console.groupEnd();
-
         // 첫 번째 요청 응답 처리 (detect_all_base64)
         originalImageRef.current = resDetect.data.original_image_base64;
         
@@ -462,7 +466,7 @@ const ImageUploader = forwardRef((props, ref) => {
         const filtered = smartFilterDuplicates(results, 0.5);
 
         // 두 번째 요청 응답 처리 (recommend/from-image)
-        const recommendedProducts = resRecommend.data; // 추천된 가구 리스트
+        const recommendedProducts = recommendResult.data; // 추천된 가구 리스트
 
         console.log("추천된 제품:", recommendedProducts);
         console.log("분석된 결과:", filtered);

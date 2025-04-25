@@ -29,6 +29,7 @@ import SearchDrawer from "./SearchDrawer";
 import ImageUploader from "./ImageUploader";
 import { useGlobalInertEffect } from "@/hooks/dialog/useGlobalInertEffect";
 import { useSaveInterior } from "@/hooks/useSaveInterior";
+import { useImageRecommend } from "@/hooks/useImageRecommend";
 
 
 // 튜토리얼
@@ -43,7 +44,7 @@ function MyRoom() {
     const canvasRef = useRef(null);
     const [mode, setMode] = useState(null);
     const uploaderRef = useRef(null);
-
+    const {redisKey, recommend } = useImageRecommend(null);
     const [showAiRecommended, setShowAiRecommended] = useState(false);
 
     // 이미지 등록 시 상태 값 체크용도 "김범석"
@@ -139,15 +140,16 @@ function MyRoom() {
                 <ImageUploader
                     ref={uploaderRef}
                     canvasRef={canvasRef}
-
                     onObjectSelect={(index) => setselectedIndex(index)}
                     resetObjectPositionRef={resetObjectPositionRef}
                     selectedIndex={selectedIndex}        // ✅ 이거 꼭 추가!
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
-                    onImageUploaded={(uploaded) => {
-                        console.log("이미지 업로드 여부:", uploaded);
+                    onImageUploaded={(file) => {
+                        setIsImageUploaded(true);
+                        console.log("이미지 업로드 여부:", file);
+                        recommend(file);
                     }}
-
+        
                     setCenterArea={setCenterArea} // ⬅️ 이거 추가
                     restoreInitialImageRef={restoreInitialImageRef}
                     mode={mode}
@@ -227,7 +229,7 @@ function MyRoom() {
                         // 튜토리얼
                         setTutorialStep={setTutorialStep}
                     />}
-                    {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} />}
+                    {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} redisKey={redisKey}/>}
                     {currentTab === "interior" && <InteriorTab onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}
                 </GridBox>
             </RightPanel>
