@@ -135,7 +135,7 @@ function MyRoom() {
                     centerArea={centerArea} // ⬅️ 전달 //
                     handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
                     onTutorialAdvance={() => {
-                        if (tutorialStep === "2.2") setTutorialStep("2.3");
+                        if (tutorialStep === "3.5") setTutorialStep("3.6");
                     }} //
                     tutorialStep={tutorialStep}
                     setTutorialStep={setTutorialStep}
@@ -288,7 +288,16 @@ function MyRoom() {
                 submitText="설정"
                 cancel={false}
                 submit={false}
-                onClose={() => setShowAiRecommended(false)}
+                onClose={() => {
+                    setShowAiRecommended(false);
+
+                    // 튜토리얼
+                    if (tutorialStep === "2.2") {
+                        setTutorialStep("2.3");
+                    } else if (tutorialStep === "3.6") {
+                        setTutorialStep("3.7");
+                    }
+                }}
             >
                 <AiRecommended/>
             </CommonDialog>

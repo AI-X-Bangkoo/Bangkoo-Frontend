@@ -68,6 +68,7 @@ function FurnitureController({
      */
      const handlePlacementClick = () => {
              console.log("배치 버튼 클릭됨");
+
              setShowAiRecommended(true);
              setIsAnalyzing(true);
              setStartProgress(true);

@@ -37,16 +37,7 @@ const CommonDialog = ({
     };
 
     return (
-        <DialogStyle
-            open={open}
-            disableEnforceFocus
-            PaperProps={{
-                style: {
-                    zIndex: 1600,
-                    pointerEvents: 'auto',
-                },
-            }}
-        >
+        <DialogStyle open={open}>
             <div ref={dialogRef} style={{ outline: "none" }}>
                 <TitleBox>
                     <Text size="base" $weight={700}>{title}</Text>
