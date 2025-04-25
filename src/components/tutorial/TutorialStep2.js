@@ -132,9 +132,12 @@ function TutorialStep2({ phase, onNext, onPrev, onSkip }) {
                 {/*    children="이전"*/}
                 {/*    {...buttonProps}*/}
                 {/*/>*/}
-                {phase === "2.3" && (
-                    <CommonButton onClick={onNext} children="다음" {...buttonProps} />
-                )}
+
+                {/*{phase === "2.3" && (*/}
+                {/*    <CommonButton onClick={onNext} children="다음" {...buttonProps} />*/}
+                {/*)}*/}
+
+                <CommonButton onClick={onNext} children="다음" {...buttonProps} />
 
                 <button onClick={onSkip}>종료</button>
             </div>
