@@ -19,7 +19,7 @@ import { useRemoveObject } from "@/hooks/useRemoveObject";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useThreeRenderer } from "./utils/useThreeRenderer";
-import { recommendFromImage } from "../../api/recommend";
+import { recommendFromImage } from "../../api/Recomendation/recommend";
 
 
 const ImageUploader = forwardRef((props, ref) => {
@@ -35,6 +35,7 @@ const ImageUploader = forwardRef((props, ref) => {
             setMode,
             className,
             setIsImageUploaded,
+           onRedisKey,
         } = props;
     const [imageUrl, setImageUrl] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -60,7 +61,6 @@ const ImageUploader = forwardRef((props, ref) => {
     const last3DMouse = useRef({ x: 0, y: 0 });
     const glbModelStateRef = useRef(new Map());
     const [rendererInitialized , setRendererInitialized] = useState(false);
-
 
     
     const [draggingThumbnailPos, setDraggingThumbnailPos] = useState(null);
@@ -396,6 +396,7 @@ const ImageUploader = forwardRef((props, ref) => {
 
     const handleFileChange = async (e) => {
     const file = e.target?.files?.[0] || e; // e가 File이면 직접 사용
+
     if (!file || !containerRef.current) return;
 
     if (setIsImageUploaded) {
@@ -426,6 +427,8 @@ const ImageUploader = forwardRef((props, ref) => {
     formData.append("canvasWidth", originalWidth);   // ⬅️ 원본 해상도 사용
     formData.append("canvasHeight", originalHeight); // ⬅️ 원본 해상도 사용
 
+ 
+
     console.log("현재 백엔드에서 보내는 file:",file);
 
     const formDataRecommend = new FormData();
@@ -444,9 +447,17 @@ const ImageUploader = forwardRef((props, ref) => {
      const recommendResult = await recommendFromImage(formDataRecommend);
      console.log("추천 응답:", recommendResult);
      console.groupEnd();
+
+
         // 첫 번째 요청 응답 처리 (detect_all_base64)
         originalImageRef.current = resDetect.data.original_image_base64;
         
+        //rediskey를 부모컴포넌트로 전달
+        // const key = recommendResult.data.redisKey; 
+        const key = recommendResult.redisKey;
+        if(typeof onRedisKey === "function"){
+            onRedisKey(key);
+        }
 
         const results = resDetect.data.results.map((obj, idx) => ({
             ...obj,

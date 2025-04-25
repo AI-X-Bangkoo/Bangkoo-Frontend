@@ -1,4 +1,5 @@
 import React, { useState, useEffect , useRef} from "react";
+import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { GridBox, LeftPanel, MainLayout, RightPanel, TabBox } from "./css/MyRoom.styled";
 import FurnitureController from "./FurnitureController";
@@ -29,7 +30,6 @@ import SearchDrawer from "./SearchDrawer";
 import ImageUploader from "./ImageUploader";
 import { useGlobalInertEffect } from "@/hooks/dialog/useGlobalInertEffect";
 import { useSaveInterior } from "@/hooks/useSaveInterior";
-import { useImageRecommend } from "@/hooks/useImageRecommend";
 
 
 // 튜토리얼
@@ -44,8 +44,11 @@ function MyRoom() {
     const canvasRef = useRef(null);
     const [mode, setMode] = useState(null);
     const uploaderRef = useRef(null);
-    const {redisKey, recommend } = useImageRecommend(null);
+
     const [showAiRecommended, setShowAiRecommended] = useState(false);
+
+    const [redisKey, setRedisKey] = useState(undefined);            //rediskey관련 상태 선언언
+
 
     // 이미지 등록 시 상태 값 체크용도 "김범석"
     const [isImageUploaded, setIsImageUploaded] = useState(false);
@@ -84,6 +87,7 @@ function MyRoom() {
             setTutorialForceStart(true);    // forceStart를 다시 true로 (강제 리렌더링 유도)
         }, 0);
     };
+
 
     const handleSave = () => {
         // 기존 저장 로직
@@ -130,7 +134,7 @@ function MyRoom() {
                     centerArea={centerArea} // ⬅️ 전달 //
                     handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
                     onTutorialAdvance={() => {
-                        if (tutorialStep === "3.5") setTutorialStep("3.6");
+                        if (tutorialStep === "2.2") setTutorialStep("2.3");
                     }} //
                     tutorialStep={tutorialStep}
                     setTutorialStep={setTutorialStep}
@@ -140,16 +144,19 @@ function MyRoom() {
                 <ImageUploader
                     ref={uploaderRef}
                     canvasRef={canvasRef}
+                    // onRedisKey={(key)=>{
+                    //     console.log("이미지 업로드하고 나온 키값:",key);
+                    //     setRedisKey(key);
+                    // }}
+                    onRedisKey={setRedisKey}  
                     onObjectSelect={(index) => setselectedIndex(index)}
                     resetObjectPositionRef={resetObjectPositionRef}
                     selectedIndex={selectedIndex}        // ✅ 이거 꼭 추가!
                     setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
-                    onImageUploaded={(file) => {
-                        setIsImageUploaded(true);
-                        console.log("이미지 업로드 여부:", file);
-                        recommend(file);
+                    onImageUploaded={(uploaded) => {
+                        console.log("이미지 업로드 여부:", uploaded);
                     }}
-        
+
                     setCenterArea={setCenterArea} // ⬅️ 이거 추가
                     restoreInitialImageRef={restoreInitialImageRef}
                     mode={mode}
@@ -229,7 +236,7 @@ function MyRoom() {
                         // 튜토리얼
                         setTutorialStep={setTutorialStep}
                     />}
-                    {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture} redisKey={redisKey}/>}
+                    {currentTab === "recommend" && <AIFurnitureTab onPlus={addFurniture}  redisKey={redisKey} />}
                     {currentTab === "interior" && <InteriorTab onDelete={interiorDialog.openDelete} onDeleteAll={interiorDialog.openDeleteAll} />}
                 </GridBox>
             </RightPanel>
@@ -284,16 +291,7 @@ function MyRoom() {
                 submitText="설정"
                 cancel={false}
                 submit={false}
-                onClose={() => {
-                    setShowAiRecommended(false);
-
-                    // 튜토리얼
-                    if (tutorialStep === "2.2") {
-                        setTutorialStep("2.3");
-                    } else if (tutorialStep === "3.6") {
-                        setTutorialStep("3.7");
-                    }
-                }}
+                onClose={() => setShowAiRecommended(false)}
             >
                 <AiRecommended/>
             </CommonDialog>

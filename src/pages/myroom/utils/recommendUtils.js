@@ -1,6 +1,6 @@
 // 작성자 : 김병훈
 
-import { recommendFromImage } from "../../../api/recommend";
+import { recommendFromImage } from "../../../api/Recomendation/recommend";
 
 export async function fetchRediskeyForImage(file){
     if(!file){

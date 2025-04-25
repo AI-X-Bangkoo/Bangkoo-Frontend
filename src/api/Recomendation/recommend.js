@@ -1,6 +1,6 @@
 //작성자: 김병훈
 //이미지 등록시 AI추천 및 임베딩
-import api from "./axios";
+import api from "../axios";
 
 export const recommendFromImage = async (formData) => {
     try {

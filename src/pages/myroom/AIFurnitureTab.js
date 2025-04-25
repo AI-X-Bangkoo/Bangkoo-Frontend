@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setRecommendedFurniture } from "../../features/furniture/recommendedSlice";
-import { getRecommendations } from "../../api/AIfurniture"; 
+import { getRecommendationList } from "../../api/Recomendation/getRecomendationlist";
 import AIFurnitureList from "./AIFurnitureList";
 
 export default function AIFurnitureTab({ redisKey, onPlus }) {
@@ -9,18 +9,16 @@ export default function AIFurnitureTab({ redisKey, onPlus }) {
   const furnitureList = useSelector((state) => state.recommended.list);
 
   useEffect(() => {
-    console.log("현재 rediskey", redisKey);
-    const fetchRecommendations = async () => {
-      if (!redisKey){
-        console.log("레디스 키 업음, 요청 못보냄");
-        return;
-      };
-      const data = await getRecommendations(redisKey);
-      console.log("퍼니쳐탭 에서 redis의 값을 가져오기:",data);
-      dispatch(setRecommendedFurniture(data));
-    };
+    if (!redisKey) return; // 키 없으면 호출 안 함
 
-    fetchRecommendations();
+    (async () => {
+      try {
+        const data = await getRecommendationList(redisKey);
+        dispatch(setRecommendedFurniture(data));
+      } catch (err) {
+        console.error("추천 가구 가져오기 실패:", err);
+      }
+    })();
   }, [redisKey, dispatch]);
 
   return <AIFurnitureList furnitureList={furnitureList} onPlus={onPlus} />;
