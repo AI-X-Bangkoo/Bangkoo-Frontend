@@ -41,9 +41,11 @@ export const RightPanel = styled.div`
 
 export const GridBox = styled.div`
   flex: 1;
+  position: relative;
   overflow-x: hidden;
   box-sizing: border-box;
   overflow-y: auto;
+  height: 100%;
   background-color: ${({ theme }) => theme.colors.white};
 
   /* 스크롤바 전체 영역 */
@@ -167,11 +169,15 @@ export const TabBox = styled.div`
 
 export const FurnitureGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  //grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
+  //align-items: stretch;
   gap: ${({ theme }) => theme.spacing.md};
   padding-bottom: ${({ theme }) => theme.spacing.md};
   padding-right: 10px;
   box-sizing: border-box;
+  //align-content: start;
+  background-color: ${({ theme }) => theme.colors.white};
   
   & > * {
     min-width: 0;

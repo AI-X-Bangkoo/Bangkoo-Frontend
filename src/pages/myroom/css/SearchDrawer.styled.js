@@ -6,7 +6,7 @@ export const DrawerRoot = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, ${({ $isOpen }) => ($isOpen ? 0 : 0.5)});
+  background: rgba(0, 0, 0, ${({ $isOpen }) => ($isOpen ? 0 : 0.85)});
   transition: background 0.4s ease-in-out;
   z-index: 998;
 `;
@@ -54,7 +54,7 @@ export const Content = styled.div`
   overflow-y: auto;
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 40px 24px;
 
   & > div > p:nth-child(2){

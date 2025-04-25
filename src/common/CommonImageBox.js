@@ -174,7 +174,7 @@ function CommonImageBox({
                                           e.stopPropagation(); // ✅ 공통 처리
                                           // onMinus?.(item,index);
                                           setMode("remove"); // ✅ 휴지통 클릭 시 모드 설정
-
+                                        
                                           setTimeout(() => {
                                               if (onMinus) onMinus(item, index); // 직접 props로 넘긴 item/index 사용
                                           }, 500);

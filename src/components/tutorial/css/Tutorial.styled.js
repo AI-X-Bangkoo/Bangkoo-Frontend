@@ -1,4 +1,16 @@
 import styled, { keyframes } from "styled-components";
+import { createGlobalStyle } from "styled-components";
+
+// export const TutorialGlobalStyle = createGlobalStyle`
+//   .tutorial-highlight {
+//     border: 3px solid ${({ theme }) => theme.colors.orange};
+//     box-shadow: 0 0 12px ${({ theme }) => theme.colors.orange};
+//     box-sizing: border-box;
+//     position: relative;
+//     z-index: 1700;
+//     height: 100%;
+//   }
+// `;
 
 const glow = keyframes`
   0% { opacity: 0.2; text-shadow: 0 0 2px #f90; }
@@ -18,7 +30,7 @@ export const Backdrop = styled.div`
 `;
 
 export const Backdrop6 = styled(Backdrop)`
-  pointer-events: none;
+  background: rgba(0,0,0,0.75) !important;
 `;
 
 export const Modal = styled.div`
@@ -78,15 +90,13 @@ export const HighlightStyle = styled.div`
 
 export const FixedMessage = styled.div`
   position: fixed;
-  top: 160px;
+  top: 50%;
   left: 50%;
   transform: translateX(-50%);
-  background: white;
   padding: 12px 20px;
+  font-size: ${({ theme }) => theme.fontSizes.md};
+  color: ${({ theme }) => theme.colors.white};
+  font-weight: 600;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  font-weight: 700;
-  font-size: 16px;
-  z-index: 1500;
-  pointer-events: none;
+  z-index: 1700;
 `;

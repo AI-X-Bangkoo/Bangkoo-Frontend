@@ -3,8 +3,8 @@ import styled from "styled-components";
 export const TooltipWrapper = styled.div`
   position: absolute;
   z-index: 10000;
-  top: ${({ $top }) => $top}px;
-  left: ${({ $left }) => $left}px;
+  top: ${({ $top }) => `${$top}px`};
+  left: ${({ $left }) => `${$left}px`};
 `;
 
 export const TooltipBubble = styled.div`
