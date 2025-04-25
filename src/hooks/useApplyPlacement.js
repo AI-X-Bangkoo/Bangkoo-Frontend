@@ -27,6 +27,9 @@ export const useApplyPlacement = ({
 }) => {
   const transformRef = useRef(null);
 
+  const scale = imageUploaderRef.current?.thumbnailScale || 1;
+  const angle = imageUploaderRef.current?.thumbnailRotation || 0;
+
   const { saveState } = usePlacementHistory(sessionIdRef);
 
   // 🔹 centerArea 부분 캡처 후 Blob으로 변환
@@ -47,7 +50,7 @@ export const useApplyPlacement = ({
 
   // 🔹 썸네일 이미지를 캔버스에 그려주고 윤곽선도 같이 그림
   const drawThumbnailOnCanvas = async (baseImage, {
-    thumbnail, finalPos, offsetRatio, transform, bbox, outputSize
+    thumbnail, finalPos, offsetRatio, transform, bbox, outputSize, scale=1, angle,
   }) => {
     const thumbImg = new Image();
     thumbImg.crossOrigin = 'anonymous';
@@ -59,19 +62,19 @@ export const useApplyPlacement = ({
     });
 
     const canvas = document.createElement("canvas");
-    canvas.width = outputSize.width;
-    canvas.height = outputSize.height;
     const ctx = canvas.getContext("2d");
 
     // 배경 이미지 그리기
     const { x, y, width, height } = transform.centerArea;
-    ctx.drawImage(baseImage, x, y, width, height, 0, 0, width, height);
+    canvas.width = outputSize.width;
+    canvas.height = outputSize.height;
+    ctx.drawImage(baseImage, 0, 0, outputSize.width, outputSize.height);
 
     // 썸네일 위치 계산
     const thumbWidth = bbox[2] * transform.scaleX;
     const thumbHeight = bbox[3] * transform.scaleY;
-    const tx = finalPos.x - thumbWidth * offsetRatio.x - x;
-    const ty = finalPos.y - thumbHeight * offsetRatio.y - y;
+    const tx = finalPos.x - thumbWidth * offsetRatio.x;
+    const ty = finalPos.y - thumbHeight * offsetRatio.y;
     ctx.drawImage(thumbImg, tx, ty, thumbWidth, thumbHeight);
 
     // 🔥 윤곽선 그리기 (Marching Squares 활용)
@@ -150,6 +153,8 @@ export const useApplyPlacement = ({
             transform,
             bbox,
             outputSize,
+            scale, 
+            angle,
           });
 
           const win = window.open("", "_blank");
@@ -164,18 +169,33 @@ export const useApplyPlacement = ({
 
       const resultImage = new Image();
       resultImage.onload = async () => {
+
         const ctx = canvas.getContext("2d");
         canvas.width = canvas.parentElement.clientWidth;
         canvas.height = canvas.parentElement.clientHeight;
         const transform = drawImageContainWithSideBlur(resultImage, ctx, canvas);
         transformRef.current = transform;
 
+        if (imageUploaderRef?.current) {
+          imageUploaderRef.current.updatedTransform?.(transform);
+          const { centerArea } = transform;
+          imageUploaderRef.current.updateCanvasSize?.({
+            width: centerArea?.width || canvas.width,
+            height: centerArea?.height || canvas.height,
+          });
+          imageUploaderRef.current.setImageBase64?.(canvas.toDataURL("image/png"));
+          imageUploaderRef.current.setBgImage?.(resultImage);
+          
+          imageUploaderRef.current.setFinalThumbnailPos?.(null);
+          imageUploaderRef.current.setDraggingThumbnailPos?.(null);
+        }
+
              if (!sessionIdRef.current) {
                 sessionIdRef.current = crypto.randomUUID();
                 console.log("🎯 applyPlacement onload 세션 ID:", sessionIdRef.current);
               }
         await saveState(`data:image/png;base64,${base64}`);
-        handleFileChange?.(base64ToFile(resultImage.src, "ai_result.png"));
+        // handleFileChange?.(base64ToFile(resultImage.src, "ai_result.png"));
       };
       resultImage.src = `data:image/png;base64,${base64}`;
     } catch (err) {
