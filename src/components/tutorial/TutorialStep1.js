@@ -138,19 +138,22 @@ function TutorialStep1({ phase, onNext, onPrev, onSkip }) {
                 zIndex: 9999,
                 gap: 16
             }}>
-                <CommonButton
-                    type="outline"
-                    bgColor={"orange"}
-                    onClick={onPrev}
-                    children={"이전"}
-                    {...buttonProps}
-                />
-                <CommonButton
-                    className="tutorial-next-button"
-                    onClick={onNext}
-                    children={"다음"}
-                    {...buttonProps}
-                />
+                {/*<CommonButton*/}
+                {/*    type="outline"*/}
+                {/*    bgColor={"orange"}*/}
+                {/*    onClick={onPrev}*/}
+                {/*    children={"이전"}*/}
+                {/*    {...buttonProps}*/}
+                {/*/>*/}
+
+                {phase === "1.2" && (
+                    <CommonButton
+                        className="tutorial-next-button"
+                        onClick={onNext}
+                        children={"다음"}
+                        {...buttonProps}
+                    />
+                )}
                 <button onClick={onSkip}>종료</button>
             </div>
         </>
