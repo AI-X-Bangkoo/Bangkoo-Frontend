@@ -73,7 +73,7 @@ export const useRemoveObject = ({
 
     // 🎨 삭제 요청용 이미지 생성
     const blob = await new Promise((resolve) =>
-      tempCanvas.toBlob((b) => resolve(b), 'image/png')
+      tempCanvas.toBlob((b) => resolve(b), 'image/jpeg',0.5)
     );
 
     const base64 = await requestPlacement("remove", blob);

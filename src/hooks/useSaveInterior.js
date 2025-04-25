@@ -42,7 +42,6 @@ export const useSaveInterior = (canvasRef, closeDialog) => {
         await requestPlacementSave(formData);
 
         // alert("저장 요청 전송 완료!");
-        console.log("저장 요청 전송 완료!");
       }, "image/png");
 
     } catch (err) {

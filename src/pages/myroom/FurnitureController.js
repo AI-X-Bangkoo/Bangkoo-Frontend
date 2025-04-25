@@ -8,7 +8,6 @@ import React, {useState, useEffect} from "react";
 import { ControllerBox, FlexBox } from "./css/MyRoom.styled";
 import CommonButton from "@/common/CommonButton";
 import { useApplyPlacement } from "@/hooks/useApplyPlacement";
-import { restoreInitialImageRef } from "@/pages/myroom/ImageUploader";
 import AiRecommended from "./dialog/AiRecommended";
 import { ModalOverlay, ModalContent } from "./dialog/css/ModalWrapper.styled";
 
@@ -25,6 +24,7 @@ function FurnitureController({
                                  tutorialStep,
                                  setTutorialStep,
                                  setShowAiRecommended,
+                                 sessionIdRef
 }) {
 
     const [startProgress, setStartProgress] = useState(false);
@@ -37,8 +37,8 @@ function FurnitureController({
     const canvasSize = { width: 1024, height: 720 };
 
     const handleRestoreClick = () => {
-        if (restoreInitialImageRef?.current) {
-          restoreInitialImageRef.current();
+        if (imageUploaderRef.current?.restoreOriginalImage) {
+            imageUploaderRef.current.restoreOriginalImage();
         } else {
           console.warn("restoreInitialImageRef가 비어있습니다.");
         }
@@ -51,6 +51,7 @@ function FurnitureController({
      * - 마스킹/헬퍼 UI는 비활성화(dummy 함수 전달)
      */
     const applyPlacement = useApplyPlacement({
+        sessionIdRef,
         mode,
         background: canvasRef,
         reference,
@@ -67,12 +68,16 @@ function FurnitureController({
      * - 100ms 뒤에 applyPlacement() 실행
      */
      const handlePlacementClick = () => {
-             console.log("배치 버튼 클릭됨");
+
+             if (!mode) {
+                alert("작업 모드를 먼저 선택하세요!");
+                return;
+             }
 
              setShowAiRecommended(true);
              setIsAnalyzing(true);
              setStartProgress(true);
-             applyPlacement();    
+             applyPlacement(mode);    
          
              setTimeout(() => {
                  setIsAnalyzing(false);
@@ -106,7 +111,7 @@ function FurnitureController({
             </CommonButton>
 
             <FlexBox>
-                {/* ✅ 초기 이미지로 되돌리기 버튼 (아직 동작 없음) */}
+                {/* ✅ 초기 이미지로 되돌리기 버튼 */}
                 <CommonButton
                     width="135px"
                     type="outline"
