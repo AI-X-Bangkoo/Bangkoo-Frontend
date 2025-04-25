@@ -108,12 +108,6 @@ function MyRoom() {
             { id: 3, image: TestImage, type: "removeButton", text: "세 번째 인테리어" },
         ]));
 
-        dispatch(setRecommendedFurniture([
-            { id: 101, image: TestImage, type: "aiPlus", title: "LAGAN 라간 1", text: "빌트인 식기세척기, 60cm", price: 699000 },
-            { id: 102, image: TestImage, type: "aiPlus", title: "LAGAN 라간 2", text: "스마트 테이블", price: 299000 },
-            { id: 103, image: TestImage, type: "aiPlus", title: "LAGAN 라간 3", text: "슬림 책상 세트", price: 159000 },
-            { id: 104, image: TestImage, type: "aiPlus", title: "LAGAN 라간 4", text: "인테리어 장식장", price: 499000 },
-        ]));
     }, [dispatch]);
 
     const tabList = [
