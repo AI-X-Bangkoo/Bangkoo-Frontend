@@ -49,10 +49,8 @@ export default function MyFurnitureTab({
   const handleClick = (e, item) => {
     e.stopPropagation();
     if (item.isCustom) {
-      console.log(item.type);
       onCustomRemove(item);
     } else {
-      console.log(item.type);
       item.type === "eyeOn"
         ? dispatch(removeFurniture(item.id))
         : dispatch(addFurniture(item.id));
@@ -90,7 +88,6 @@ export default function MyFurnitureTab({
   });
 
   const MyFurnitureDelete = () => {
-    console.log("배치 버튼 클릭됨");
     setShowAiRecommended(true);
     applyPlacement("remove");
     if (uploaderRef?.current?.updateTransformFromImage) {
@@ -120,8 +117,6 @@ export default function MyFurnitureTab({
           setMode={setMode}
           setTutorialStep={setTutorialStep}
           onMinus={(item, index) => {
-            console.log("🧹 클릭한 가구 index", index);
-
             if (!resetObjectPositionRef?.current) {
               console.warn("⚠️ resetObjectPositionRef가 정의되지 않았습니다.");
               return;

@@ -159,9 +159,6 @@ const ImageUploader = forwardRef((props, ref) => {
         const canvasAspect = canvas.width / canvas.height;
         const imageAspect = image.width / image.height;
 
-        console.log("📐 canvas size:", canvas.width, canvas.height);
-        console.log("🖼️ image size:", image.width, image.height);
-
         let renderableWidth, renderableHeight, xStart, yStart;
 
         if (imageAspect > canvasAspect) {
@@ -274,7 +271,6 @@ const ImageUploader = forwardRef((props, ref) => {
                   setClickOffsetRatio({ x: 0.5, y: 0.5 });
                 }
             };
-            console.log("✅ resetObjectPositionRef 등록 완료");
         }
     }, [resetObjectPositionRef]);
 
@@ -414,7 +410,6 @@ const ImageUploader = forwardRef((props, ref) => {
 
             useEffect(() => {
                 if (restoreInitialImageRef) {
-                    console.log("restoreOriginalImage 함수 등록");
                     restoreInitialImageRef.current = restoreOriginalImage;
                 } else {
                     console.warn("restoreInitialImageRef가 비어있음.")
@@ -502,7 +497,6 @@ const ImageUploader = forwardRef((props, ref) => {
             // 1) 세션 ID가 없으면 제일 먼저 생성
             if (!sessionIdRef.current) {
                 sessionIdRef.current = crypto.randomUUID();
-                console.log("🎯 생성된 세션 ID:", sessionIdRef.current);
             }
     
             // 2) 기존 히스토리 초기화 (await 반드시!)
@@ -531,7 +525,6 @@ const ImageUploader = forwardRef((props, ref) => {
                 originalImageRef.current = res.data.original_image_base64;
                 if (restoreInitialImageRef) {
                     restoreInitialImageRef.current = restoreOriginalImage;
-                    console.log("💾 초기 이미지 등록됨 (by 업로드 시점)");
                   }
                 const results = res.data.results.map((obj, idx) => ({
                     ...obj,
@@ -721,22 +714,10 @@ const ImageUploader = forwardRef((props, ref) => {
           const clickYRatio = (y - canvasY) / canvasH;
           setClickOffsetRatio({ x: clickXRatio, y: clickYRatio });
           setInitialDragBbox([...obj.bbox]);
-
-          console.log("✅ 드래그 시작!", {
-            index: selectedIndex,
-            offsetX: x - canvasX,
-            offsetY: y - canvasY,
-            ratioX: clickXRatio.toFixed(2),
-            ratioY: clickYRatio.toFixed(2),
-          });
       
           setDraggingThumbnailPos({ x: e.clientX, y: e.clientY });
-          console.log("ImageUploader setMode 호출 전",mode);
           setMode("move");
-          console.log("ImageUploader setMode 호출 후",mode);
-        } else {
-          console.log("❌ 선택된 객체를 클릭하지 않았습니다.");
-        }
+        } 
       };
 
         const handleMouseMove = (e) => {
@@ -854,7 +835,6 @@ const ImageUploader = forwardRef((props, ref) => {
     };
 
         useEffect(() => {
-            console.log("🔥 selectedIndex changed:", selectedIndex);
             drawMaskOnly(); // drawScene 대신
             setFinalThumbnailPos(null);
             setDraggingThumbnailPos(null);

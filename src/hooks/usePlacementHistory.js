@@ -26,7 +26,6 @@ export const usePlacementHistory = (sessionIdRef) => {
   const getSessionId = () => {
     if (!sessionIdRef?.current) {
       sessionIdRef.current = crypto.randomUUID();
-      console.log("🚀 sessionId 자동 생성:", sessionIdRef.current);
     }
     return sessionIdRef.current;
   };
@@ -45,7 +44,6 @@ export const usePlacementHistory = (sessionIdRef) => {
     try {
       // ⚙️ 인자 순서: (sessionId, payload)
       await pushPlacementState(base64Image,sid);
-      console.log("상태 저장 진입 완료");
 
       // 🔸 프론트 미리보기용 state 업데이트
       setCurrentImage(base64Image);
@@ -64,7 +62,6 @@ export const usePlacementHistory = (sessionIdRef) => {
 
     try {
       const prevImage = await undoPlacementState(sid); // Redis에서 pop
-      console.log("상태 되돌리기 진입 완료");
       if (prevImage) setCurrentImage(prevImage);
       return prevImage;
     } catch (err) {
@@ -83,7 +80,6 @@ export const usePlacementHistory = (sessionIdRef) => {
 
     try {
       const nextImage = await redoPlacementState(sid); // Redis에서 forward
-      console.log("redo 진입 성공");
       if (nextImage) setCurrentImage(nextImage);
       return nextImage;
     } catch (err) {

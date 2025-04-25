@@ -155,13 +155,13 @@ function MyRoom() {
 
                     onObjectSelect={(index) => setselectedIndex(index)}
                     resetObjectPositionRef={resetObjectPositionRef}
-                    selectedIndex={selectedIndex}        // ✅ 이거 꼭 추가!
-                    setselectedIndex={setselectedIndex}  // ✅ 이것도 함께!
+                    selectedIndex={selectedIndex}    
+                    setselectedIndex={setselectedIndex} 
                     onImageUploaded={(uploaded) => {
                         console.log("이미지 업로드 여부:", uploaded);
                     }}
 
-                    setCenterArea={setCenterArea} // ⬅️ 이거 추가
+                    setCenterArea={setCenterArea} 
                     restoreInitialImageRef={restoreInitialImageRef}
                     setMode={syncedSetMode}
                     mode={mode}

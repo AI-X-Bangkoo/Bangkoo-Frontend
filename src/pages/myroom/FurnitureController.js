@@ -68,7 +68,6 @@ function FurnitureController({
      * - 100ms 뒤에 applyPlacement() 실행
      */
      const handlePlacementClick = () => {
-             console.log("배치 버튼 클릭됨");
 
              if (!mode) {
                 alert("작업 모드를 먼저 선택하세요!");

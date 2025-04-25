@@ -118,10 +118,6 @@ export const useApplyPlacement = ({
   // 🔄 실제 실행 함수
   return async (mode) => {
 
-    if (!mode) {
-      console.log("mode 없음. applyPlacement 중단");
-      return;
-    }
     setShowMask(true);
     setShowHelper(false);
     await new Promise((res) => setTimeout(res, 200));
@@ -192,7 +188,6 @@ export const useApplyPlacement = ({
 
              if (!sessionIdRef.current) {
                 sessionIdRef.current = crypto.randomUUID();
-                console.log("🎯 applyPlacement onload 세션 ID:", sessionIdRef.current);
               }
         await saveState(`data:image/png;base64,${base64}`);
         // handleFileChange?.(base64ToFile(resultImage.src, "ai_result.png"));
