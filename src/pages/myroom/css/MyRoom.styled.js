@@ -169,8 +169,8 @@ export const TabBox = styled.div`
 
 export const FurnitureGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
-  //grid-template-columns: repeat(3, 1fr);
+  //grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   //align-items: stretch;
   gap: ${({ theme }) => theme.spacing.md};
   padding-bottom: ${({ theme }) => theme.spacing.md};
