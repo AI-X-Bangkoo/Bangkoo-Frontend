@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import TutorialOverlay from "./TutorialOverlay";
 import {
     Backdrop,
-    HighlightStyle
+    HighlightStyle,
+    SkipBox
 } from "./css/Tutorial.styled";
 import CommonButton from "@/common/CommonButton";
 
 const buttonProps = {
-    width: "40px",
-    height: "24px",
-    fontSize: "xxs",
-    borderRadius: 0,
+    width:"90px",
+    height: "40px",
+    fontSize: "xs",
     fontWeight: 600
 };
 
-function TutorialStep4({ phase, onNext, onPrev, onSkip }) {
+function TutorialStep4({ phase, onNext, onPrev, onSkip, currentTab }) {
     const [highlightRects, setHighlightRects] = useState({});
     const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
 
@@ -100,7 +100,7 @@ function TutorialStep4({ phase, onNext, onPrev, onSkip }) {
                     }
                     break;
                 case "4.3":
-                    if (interiorTab) {
+                    if (interiorTab && currentTab !== "interior" ) {
                         // 툴팁을 "탭 아래"로 위치
                         setTooltipPos({
                             top: rects.tab.bottom + 15,
@@ -116,7 +116,7 @@ function TutorialStep4({ phase, onNext, onPrev, onSkip }) {
         getRects();
         const interval = setInterval(getRects, 500);
         return () => clearInterval(interval);
-    }, [phase]);
+    }, [phase, currentTab]);
 
     const highlight = (rect) =>
         rect && (
@@ -161,7 +161,7 @@ function TutorialStep4({ phase, onNext, onPrev, onSkip }) {
                     style={{ zIndex: 1600 }}
                 />
             )}
-            {phase === "4.3" && (
+            {phase === "4.3" && currentTab !== "interior" && (
                 <TutorialOverlay
                     message={
                         <span>
@@ -194,8 +194,12 @@ function TutorialStep4({ phase, onNext, onPrev, onSkip }) {
                 {/*    children="이전"*/}
                 {/*    {...buttonProps}*/}
                 {/*/>*/}
-                {/*<CommonButton onClick={onNext} children="다음" {...buttonProps} />*/}
-                <button onClick={onSkip}>종료</button>
+                <CommonButton
+                    bgColor={"grey"}
+                    onClick={onSkip}
+                    children={"Skip"}
+                    {...buttonProps}
+                />
             </div>
         </>
     );

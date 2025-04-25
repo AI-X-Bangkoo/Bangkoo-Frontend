@@ -1,4 +1,3 @@
-// pages/myroom/ImageUploader.js
 import React, { useImperativeHandle, forwardRef, useRef, useState , useEffect } from "react";
 import { ReactComponent as ImageUploaderIcon } from "@/assets/images/ImageUploaderIcon.svg";
 import {Text} from "@/common/Typography";
@@ -74,12 +73,13 @@ const ImageUploader = forwardRef((props, ref) => {
     }, [currentImage]);    
 
     const webglCanvasRef = useRef(null); // 3D Canvas
-    const { initRenderer,loadModel,moveModel, zoom, focusModel, getCurrentModel  } = useThreeRenderer(webglCanvasRef); // 💡 초기화
+    const { initRenderer,loadModel,moveModel, zoom, focusModel, getCurrentModel,  sceneRef, glbModelStateRef, cameraRef, controlsRef,addBoundingBoxToModel  } = useThreeRenderer(webglCanvasRef); // 💡 초기화
     const transformRef = useRef(null); // 🔥 transform 기억해둠
     const is3DDragging = useRef(false);
     const last3DMouse = useRef({ x: 0, y: 0 });
-    const glbModelStateRef = useRef(new Map());
     const [rendererInitialized , setRendererInitialized] = useState(false);
+    const modelMap = useRef(new Map());           // 캐시된 모델
+    const modelRef = useRef(null);                // 현재 보이는 모델
 
     const [isUploading, setIsUploading] = useState(false); // 업로드 상태 관리
     const [loadingDots, setLoadingDots] = useState("");
@@ -273,69 +273,161 @@ const ImageUploader = forwardRef((props, ref) => {
             };
         }
     }, [resetObjectPositionRef]);
+    
+    const handleGlbClick = (url, id) => {
+        if (!rendererInitialized) {
+            initRenderer();
+            setRendererInitialized(true);
+        }
 
-    const handleGlbClick = (url) => {
         if (webglCanvasRef.current) {
-            // 3D 캔버스를 비활성화 상태에서 활성화
-            if (webglCanvasRef.current.style.pointerEvents === "none") {
-                // console.log("none 상태");
-                webglCanvasRef.current.style.pointerEvents = "auto"; // 3D 캔버스를 활성화
-                webglCanvasRef.current.style.visibility = "visible"; // 3D 캔버스를 보이게 설정
-                // console.log("초기화 시전");
-                // 렌더러 초기화가 한 번만 이루어지도록 보장
-                if (!rendererInitialized) {
-                    // console.log("초기화 시전");
-                    initRenderer();  // 렌더러 초기화 한 번만 호출
-                    setRendererInitialized(true); // 렌더러 초기화 완료 플래그 설정
+            webglCanvasRef.current.style.pointerEvents = "auto";
+            webglCanvasRef.current.style.visibility = "visible";
+        }
+
+        const modelMap = glbModelStateRef.current;
+        const currentModel = getCurrentModel();
+
+        // ✅ 같은 모델을 다시 클릭한 경우 → 숨김 처리
+        if (currentModel && currentModel.userData?.url === url && currentModel.visible) {
+           
+            sceneRef.current.remove(currentModel);
+            currentModel.visible = false;
+
+            const state = modelMap.get(url);
+            const box = currentModel.userData.boxHelper;
+            if (box) {
+                sceneRef.current.remove(box);       // ✅ 박스 제거
+                box.geometry.dispose();             // 메모리 해제 (선택)
+                box.material.dispose();
+                currentModel.userData.boxHelper = null;
+            }
+
+            modelMap.set(url, {
+                ...state,
+                visible: false,
+                position: currentModel.position.clone(),
+                rotation: currentModel.rotation.clone(),
+                scale: currentModel.scale.clone(),
+                cameraPosition: cameraRef.current.position.clone(),
+                cameraTarget: controlsRef.current.target.clone(),
+                instance: currentModel,
+                boxHelper: null
+                // boxHelper: state?.boxHelper
+            });
+            if (webglCanvasRef.current) {
+                webglCanvasRef.current.style.pointerEvents = "none";
+                webglCanvasRef.current.style.visibility = "hidden";
+            }
+            return;
+        }
+        // 🔁 현재 보이는 모델 모두 숨김
+        for (const [modelUrl, state] of modelMap.entries()) {
+            if (state.visible && state.instance) {
+                console.log("👻 기존 모델 숨김:", modelUrl);
+
+                sceneRef.current.remove(state.instance);
+                state.instance.visible = false;
+
+                const box = currentModel.userData.boxHelper;
+                if (box) {
+                    sceneRef.current.remove(box);       // ✅ 박스 제거
+                    box.geometry.dispose();             // 메모리 해제 (선택)
+                    box.material.dispose();
+                    currentModel.userData.boxHelper = null;
                 }
-            } else {
-                // console.log("auto 상태");
-                webglCanvasRef.current.style.pointerEvents = "none"; // 3D 캔버스를 비활성화
-                webglCanvasRef.current.style.visibility = "hidden"; // 3D 캔버스를 숨김 처리
+
+                // 상태 저장 + 카메라 위치도 함께 저장
+                modelMap.set(modelUrl, {
+                    ...state,
+                    visible: false,
+                    position: state.instance.position.clone(),
+                    rotation: state.instance.rotation.clone(),
+                    scale: state.instance.scale.clone(),
+                    cameraPosition: cameraRef.current.position.clone(),
+                    cameraTarget: controlsRef.current.target.clone(),
+                    instance: state.instance,
+                    boxHelper: null
+                    // boxHelper: state.boxHelper  // ✅ 박스 헬퍼 함께 저장
+                });
             }
         }
 
-        const currentState = glbModelStateRef.current.get(url);
-        const currentModel = getCurrentModel();
+        // 🔄 복원 처리 (모델이 이미 존재하지만 숨김 상태일 경우)
+        if (modelMap.has(url) && !modelMap.get(url).visible) {
+            const state = modelMap.get(url);
+            const model = state.instance;
 
-        // 🔴 현재 보이고 있으면 => 상태 저장하고 숨김
-        if (currentModel && currentState?.visible) {
-            glbModelStateRef.current.set(url, {
-                visible: false,
-                position: currentModel.position.clone(),
-                scale: currentModel.scale.clone(),
-                rotation: currentModel.rotation.clone(),
-            });
-            currentModel.visible = false;
+            model.visible = true;
+            model.position.copy(state.position);
+            model.rotation.copy(state.rotation);
+            model.scale.copy(state.scale);
+            model.userData.url = url;
+            modelRef.current = model;
+            sceneRef.current.add(model);
+            // ✅ 박스도 함께 복원
+            const box = model.userData.boxHelper;
+            if (!model.userData.boxHelper) {
+                const newBox = addBoundingBoxToModel(model);
+                model.userData.boxHelper = newBox;
+            } else {
+                // ✅ 박스가 있다면 씬에 다시 추가
+                sceneRef.current.add(model.userData.boxHelper);
+                model.userData.boxHelper.visible = true;
+            }
+            // 🔁 카메라 복원
+            if (state.cameraPosition && state.cameraTarget) {
+                cameraRef.current.position.copy(state.cameraPosition);
+                controlsRef.current.target.copy(state.cameraTarget);
+                controlsRef.current.update();
+            }
+
+            modelMap.set(url, { ...state, visible: true});
             return;
         }
 
-        // 🟡 숨겨져 있고 모델 존재 => 상태 복원해서 다시 보이기
-        if (currentState && currentModel) {
-            currentModel.visible = true;
-            currentModel.position.copy(currentState.position);
-            currentModel.scale.copy(currentState.scale);
-            currentModel.rotation.copy(currentState.rotation);
-            glbModelStateRef.current.set(url, { ...currentState, visible: true });
-            return;
-        }
+        // 📦 새로 로드
+        
+        loadModel(url)
+            .then((model) => {
+                model.userData.url = url;
 
-        // 🔵 최초 로딩
-        loadModel(url);
-        setTimeout(() => {
-            const model = getCurrentModel();
-            if (!model) return;
+                const saved = modelMap.get(url);
+                if (saved) {
+                    model.position.copy(saved.position);
+                    model.rotation.copy(saved.rotation);
+                    model.scale.copy(saved.scale);
+                }
 
-            focusModel();
+                model.visible = true;
+                const boxHelper = addBoundingBoxToModel(model);
+                modelRef.current = model;
 
-            glbModelStateRef.current.set(url, {
-                visible: true,
-                position: model.position.clone(),
-                scale: model.scale.clone(),
-                rotation: model.rotation.clone(),
+                sceneRef.current.add(model);
+
+                // 카메라 저장용 포커싱 후 상태 저장
+                focusModel();
+
+                modelMap.set(url, {
+                    visible: true,
+                    position: model.position.clone(),
+                    rotation: model.rotation.clone(),
+                    scale: model.scale.clone(),
+                    cameraPosition: cameraRef.current.position.clone(),
+                    cameraTarget: controlsRef.current.target.clone(),
+                    instance: model,
+                    boxHelper: boxHelper  // ✅ 박스 헬퍼 함께 저장
+                });
+            })
+            .catch((err) => {
+                console.error("❌ 모델 로딩 실패:", err);
             });
-        }, 500);
     };
+
+
+
+
+
 
 
     const handleUndo = async () => {
