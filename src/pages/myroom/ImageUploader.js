@@ -937,9 +937,11 @@ transformRef.current && (() => {
     detectedObjects[selectedIndex].bbox,
     transformRef.current,
     clickOffsetRatio,
-    9999
+    2
   );
-  return <img src={detectedObjects[draggingIndex].thumbnail} style={style} alt="dragging" />;
+  return <img src={detectedObjects[draggingIndex].thumbnail} 
+  style={style} 
+  alt="dragging" />;
 })()}
 
 
