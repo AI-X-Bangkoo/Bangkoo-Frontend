@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import TutorialOverlay from "./TutorialOverlay";
 import {
     Backdrop,
-    HighlightStyle
+    HighlightStyle,
+    SkipBox
 } from "./css/Tutorial.styled";
 import CommonButton from "../../common/CommonButton";
 
 const buttonProps = {
-    width: "40px",
-    height: "24px",
-    fontSize: "xxs",
-    radius: 0,
+    width:"90px",
+    height: "40px",
+    fontSize: "xs",
     fontWeight: 600
 };
 
@@ -137,14 +137,7 @@ function TutorialStep1({ phase, onNext, onPrev, onSkip, isImageUploaded}) {
             {/*)}*/}
 
             {/* 튜토리얼 상단 버튼 */}
-            <div style={{
-                position: "fixed",
-                top: "24px",
-                right: "24px",
-                display: "flex",
-                zIndex: 9999,
-                gap: 16
-            }}>
+            <SkipBox>
                 {/*<CommonButton*/}
                 {/*    type="outline"*/}
                 {/*    bgColor={"orange"}*/}
@@ -153,22 +146,22 @@ function TutorialStep1({ phase, onNext, onPrev, onSkip, isImageUploaded}) {
                 {/*    {...buttonProps}*/}
                 {/*/>*/}
 
-                {/*{phase === "1.2" && (*/}
-                {/*    <CommonButton*/}
-                {/*        className="tutorial-next-button"*/}
-                {/*        onClick={onNext}*/}
-                {/*        children={"다음"}*/}
-                {/*        {...buttonProps}*/}
-                {/*    />*/}
-                {/*)}*/}
+                {phase === "1.2" && (
+                    <CommonButton
+                        className="tutorial-next-button"
+                        onClick={onNext}
+                        children={"다음"}
+                        {...buttonProps}
+                    />
+                )}
+
                 <CommonButton
-                    className="tutorial-next-button"
-                    onClick={onNext}
-                    children={"다음"}
+                    bgColor={"grey"}
+                    onClick={onSkip}
+                    children={"Skip"}
                     {...buttonProps}
                 />
-                <button onClick={onSkip}>종료</button>
-            </div>
+            </SkipBox>
         </>
     );
 }

@@ -319,6 +319,7 @@ function MyRoom() {
                 forceEnd={setTutorialForceStart}
                 onStepChange={(step) => setTutorialStep(step)}
                 externalStep={tutorialStep}
+                currentTab={currentTab}
             />
         </MainLayout>
     );
