@@ -102,7 +102,7 @@ function SearchPage() {
         };
 
         fetchSearchResult();
-    }, [location.search]);
+    }, [location.search, userId, autoSave]);
 
 
     return (
