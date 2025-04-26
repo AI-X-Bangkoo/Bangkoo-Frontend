@@ -12,14 +12,14 @@ import ErrorPage from "../common/ErrorPage";
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/placement" element={<FurnitureEditorPage />} />
-      <Route path="/editor" element={<FurnitureEditorContainer />} />
-      <Route path="/search" element={<AISearchComponent />} />
-      <Route path="/myroom" element={<MyRoom />} />
-      <Route path="/auth/callback/kakao" element={<KakaoCallback />} />
-      <Route path="/admin" element={<AdminDashBoard />} />
-      <Route path="/*" element={<ErrorPage  />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/placement" element={<FurnitureEditorPage />} />
+        <Route path="/editor" element={<FurnitureEditorContainer />} />
+        <Route path="/search" element={<AISearchComponent />} />
+        <Route path="/myroom" element={<MyRoom />} />
+        <Route path="/auth/callback/kakao" element={<KakaoCallback />} />
+        <Route path="/admin" element={<AdminDashBoard />} />
+        <Route path="/*" element={<ErrorPage  />} />
         <Route path="/error" element={<ErrorPage error={"500"} />} />
     </Routes>
   );

@@ -18,17 +18,27 @@ export default function MyFurnitureTab({
   mode,
   setMode,
   setTutorialStep,
-
+  containerRef,
   //
   setShowAiRecommended,
   canvasRef,
   centerArea,
   onTutorialAdvance,
-  uploaderRef
+  uploaderRef,
+  sessionIdRef
 }) {
   const dispatch = useDispatch();
   const furnitureList = useSelector((state) => state.furniture.list);
-
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  useEffect(() => {
+    const parent = canvasRef?.current?.parentElement;
+    if (parent) {
+      setCanvasSize({
+        width: parent.clientWidth,
+        height: parent.clientHeight,
+      });
+    }
+  }, [canvasRef]);
   const { uncheck } = useCheckedFurniture();
 
   // ✅ mode가 변경될 때마다 콘솔 출력
@@ -39,10 +49,8 @@ export default function MyFurnitureTab({
   const handleClick = (e, item) => {
     e.stopPropagation();
     if (item.isCustom) {
-      console.log(item.type);
       onCustomRemove(item);
     } else {
-      console.log(item.type);
       item.type === "eyeOn"
         ? dispatch(removeFurniture(item.id))
         : dispatch(addFurniture(item.id));
@@ -67,9 +75,6 @@ export default function MyFurnitureTab({
   // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
   const reference = null;
 
-  // 🔹 캔버스 사이즈 정보 (현재는 고정값 사용)
-  const canvasSize = { width: 1024, height: 720 };
-
   const applyPlacement = useApplyPlacement({
     background: canvasRef,
     reference,
@@ -79,13 +84,15 @@ export default function MyFurnitureTab({
     centerArea,
     handleFileChange: (file) => uploaderRef.current?.handleFileChange(file),
     imageUploaderRef: uploaderRef,
+    sessionIdRef: sessionIdRef,
   });
 
   const MyFurnitureDelete = () => {
-    console.log("배치 버튼 클릭됨");
     setShowAiRecommended(true);
     applyPlacement("remove");
-
+    if (uploaderRef?.current?.updateTransformFromImage) {
+      uploaderRef.current.updateTransformFromImage();
+    }
     setTimeout(() => {
       // setShowAiRecommended(false);
     }, 7000);
@@ -110,8 +117,6 @@ export default function MyFurnitureTab({
           setMode={setMode}
           setTutorialStep={setTutorialStep}
           onMinus={(item, index) => {
-            console.log("🧹 클릭한 가구 index", index);
-
             if (!resetObjectPositionRef?.current) {
               console.warn("⚠️ resetObjectPositionRef가 정의되지 않았습니다.");
               return;
@@ -119,11 +124,20 @@ export default function MyFurnitureTab({
 
             resetObjectPositionRef.current(index); // ✅ 원래 위치 복원
 
+            if (uploaderRef?.current) {
+              uploaderRef.current.setFinalThumbnailPos?.(null);
+              uploaderRef.current.setDraggingThumbnailPos?.(null);
+              uploaderRef.current.setClickOffsetRatio?.({ x: 0.5, y: 0.5 });
+            }
+
+            uploaderRef.current.forceRedraw?.(); 
+
             setselectedIndex((prev) => (prev === index ? null : index));
-            setTimeout(() => setselectedIndex(index), 0); // ✅ 강제 리렌더
-            // setMode("remove"); // ✅ 휴지통 클릭 시 모드 설정
+            setTimeout(() => {
+              setselectedIndex(index); // ✅ 강제 리렌더
 
             MyFurnitureDelete();
+            }, 100);
 
             // 튜토리얼
             if (typeof setTutorialStep === "function") {
@@ -137,6 +151,9 @@ export default function MyFurnitureTab({
             }
           }}
           onGlbSelect={(item, index) => {
+            console.log("🔥 클릭된 item:", item);
+            console.log("🆔 model3dUrl:", item.model3dUrl);
+            console.log("🔢 index:", index);
             if (typeof setselectedIndex === "function") {
               setselectedIndex((prev) => (prev === index ? null : index));
             }

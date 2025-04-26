@@ -20,7 +20,7 @@ const RootIn = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  & > svg {
+  & > div > svg {
     width: 400px;
     height: auto;
   }
@@ -34,14 +34,15 @@ const RootIn = styled.div`
 
 const TextStyle = styled.p`
   margin: 0;
-  font-size: ${({ theme }) => theme.fontSizes.md};
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  color: ${({ theme }) => theme.colors.dark};
   font-weight: 600;
 `;
 
 const SmallStyle = styled.p`
   margin: 6px 0;
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.grey};
+  font-size: ${({ theme }) => theme.fontSizes.xs};
+  color: ${({ theme }) => theme.colors.dark};
   & a {
     color: ${({ theme }) => theme.colors.orange};
     font-weight: bold;
@@ -56,12 +57,12 @@ const ErrorPage = ({error = "404"}) => {
                 {error === "500" &&
                     <div>
                         <Error500/>
-                        <TextStyle>Sorry! Something went wrong on our end.</TextStyle>
+                        <TextStyle>죄송합니다! 서버에서 문제가 발생했습니다.</TextStyle>
                         <SmallStyle>
-                            Please try again in a moment.
+                            잠시 후에 다시 시도해 주세요.
                         </SmallStyle>
                         <SmallStyle>
-                            <Link to="/">go back</Link>
+                            <Link to="/">돌아가기</Link>
                         </SmallStyle>
                     </div>
                 }
@@ -69,12 +70,13 @@ const ErrorPage = ({error = "404"}) => {
                 {error === "404" &&
                     <div>
                         <Error404/>
-                        <TextStyle>Sorry, the page you're looking for doesn't exist.</TextStyle>
+                        <TextStyle>
+                            죄송합니다. 찾으시는 페이지가 존재하지 않습니다.</TextStyle>
                         <SmallStyle>
-                            Please check the URL or go back to the homepage.
+                            URL을 확인하시거나 홈페이지로 돌아가시기 바랍니다.
                         </SmallStyle>
                         <SmallStyle>
-                            <Link to="/">go back</Link>
+                            <Link to="/">돌아가기</Link>
                         </SmallStyle>
                     </div>
                 }

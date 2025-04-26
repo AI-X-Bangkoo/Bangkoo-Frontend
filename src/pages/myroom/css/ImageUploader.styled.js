@@ -37,9 +37,24 @@ export const UploadBox = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
   
   & p {
     margin: ${({ theme }) => theme.spacing.xl} 0 0;
+  }
+`;
+
+export const LoadingBox = styled.div`
+  height: calc(100% - 150px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 150px;
+  box-sizing: border-box;
+  
+  & p {
+    margin-top: ${({ theme }) => theme.spacing.xs};
   }
 `;
 

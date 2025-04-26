@@ -3,15 +3,16 @@ import TutorialOverlay from "./TutorialOverlay";
 import {
     Backdrop,
     HighlightStyle,
-    FixedMessage, Backdrop6,
+    FixedMessage,
+    Backdrop6,
+    SkipBox,
 } from "./css/Tutorial.styled";
 import CommonButton from "@/common/CommonButton";
 
 const buttonProps = {
-    width: "40px",
-    height: "24px",
-    fontSize: "xxs",
-    radius: 0,
+    width:"90px",
+    height: "40px",
+    fontSize: "xs",
     fontWeight: 600
 };
 
@@ -173,7 +174,6 @@ function TutorialStep3({ phase, onNext, onPrev, onSkip, setTutorialStep }) {
         const elevateEls = [];
         if (phase === "3.3") elevateEls.push(elements.firstResult, elements.placeBtn, elements.drawer);
         if (phase === "3.5") elevateEls.push(elements.preview, elements.generateBtn);
-        // if (phase === "3.6") elevateEls.push(elements.preview,);
 
         elevateEls.forEach(el => {
             if (!el) return;
@@ -222,7 +222,7 @@ function TutorialStep3({ phase, onNext, onPrev, onSkip, setTutorialStep }) {
                     drawer.style.zIndex = "1600";
                     drawer.style.position = "relative";
                 }
-            }, 5000);
+            }, 3000);
 
             return () => {
                 clearInterval(typingInterval);
@@ -251,7 +251,11 @@ function TutorialStep3({ phase, onNext, onPrev, onSkip, setTutorialStep }) {
 
     return (
         <>
-            <Backdrop style={{ zIndex: 1300 }} />
+            {phase === "3.6" ?
+                <Backdrop6 style={{ zIndex: 1300 }} />
+                :
+                <Backdrop style={{ zIndex: 1300 }} />
+            }
 
             {phase === "3.1" &&
                 highlight(highlightRects.searchBtn)
@@ -307,21 +311,29 @@ function TutorialStep3({ phase, onNext, onPrev, onSkip, setTutorialStep }) {
                 />
             )}
 
-            <div style={{ position: "fixed", top: "24px", right: "24px", display: "flex", zIndex: 2000, gap: 16 }}>
+            <SkipBox>
+                {/*<CommonButton*/}
+                {/*    type="outline"*/}
+                {/*    bgColor="orange"*/}
+                {/*    onClick={onPrev}*/}
+                {/*    children="이전"*/}
+                {/*    {...buttonProps}*/}
+                {/*/>*/}
+
+                {phase === "3.7" && (
+                    <CommonButton
+                        onClick={onNext}
+                        children="다음"
+                        {...buttonProps}
+                    />
+                )}
                 <CommonButton
-                    type="outline"
-                    bgColor="orange"
-                    onClick={onPrev}
-                    children="이전"
+                    bgColor={"grey"}
+                    onClick={onSkip}
+                    children={"Skip"}
                     {...buttonProps}
                 />
-                <CommonButton
-                    onClick={() => phase === "3.6" ? setTutorialStep("6.1") : onNext()}
-                    children="다음"
-                    {...buttonProps}
-                />
-                <button onClick={onSkip}>종료</button>
-            </div>
+            </SkipBox>
         </>
     );
 }

@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import TutorialOverlay from "./TutorialOverlay";
 import {
     Backdrop,
-    HighlightStyle
+    Backdrop6,
+    HighlightStyle, SkipBox
 } from "./css/Tutorial.styled";
 import CommonButton from "../../common/CommonButton";
 
 const buttonProps = {
-    width: "40px",
-    height: "24px",
-    fontSize: "xxs",
-    radius: 0,
+    width:"90px",
+    height: "40px",
+    fontSize: "xs",
     fontWeight: 600
 };
 
@@ -86,7 +86,12 @@ function TutorialStep2({ phase, onNext, onPrev, onSkip }) {
 
     return (
         <>
-            <Backdrop style={{ zIndex: 1300 }} />
+            {phase === "2.2" ?
+                <Backdrop6 style={{ zIndex: 1300 }} />
+                :
+                <Backdrop style={{ zIndex: 1300 }} />
+            }
+
 
             {phase === "2.1" && highlightRects.preview && highlight(highlightRects.preview)}
             {phase === "2.1" && highlightRects.firstItem && highlight(highlightRects.firstItem)}
@@ -109,26 +114,25 @@ function TutorialStep2({ phase, onNext, onPrev, onSkip }) {
                 />
             )}
 
-            <div
-                style={{
-                    position: "fixed",
-                    top: "24px",
-                    right: "24px",
-                    display: "flex",
-                    zIndex: 9999,
-                    gap: 16
-                }}
-            >
+            <SkipBox>
+                {/*<CommonButton*/}
+                {/*    type="outline"*/}
+                {/*    bgColor="orange"*/}
+                {/*    onClick={onPrev}*/}
+                {/*    children="이전"*/}
+                {/*    {...buttonProps}*/}
+                {/*/>*/}
+
+                {phase === "2.3" && (
+                    <CommonButton onClick={onNext} children="다음" {...buttonProps} />
+                )}
                 <CommonButton
-                    type="outline"
-                    bgColor="orange"
-                    onClick={onPrev}
-                    children="이전"
+                    bgColor={"grey"}
+                    onClick={onSkip}
+                    children={"Skip"}
                     {...buttonProps}
                 />
-                <CommonButton onClick={onNext} children="다음" {...buttonProps} />
-                <button onClick={onSkip}>종료</button>
-            </div>
+            </SkipBox>
         </>
     );
 }

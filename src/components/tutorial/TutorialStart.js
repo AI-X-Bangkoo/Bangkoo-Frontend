@@ -3,8 +3,8 @@ import {
     Backdrop,
     Modal,
     Message, 
-    ButtonGroup, 
-    Button
+    ButtonGroup,
+    SkipBox
 } from "./css/Tutorial.styled";
 import CommonButton from "../../common/CommonButton";
 
@@ -56,13 +56,6 @@ function TutorialStart({ onStart, onSkip }) {
                 {isComplete && (
                     <ButtonGroup>
                         <CommonButton
-                            bgColor={"grey"}
-                            onClick={onSkip}
-                            children={"종료"}
-                            {...buttonProps}
-                        />
-
-                        <CommonButton
                             onClick={onStart}
                             children={"시작하기"}
                             {...buttonProps}
@@ -70,6 +63,14 @@ function TutorialStart({ onStart, onSkip }) {
                     </ButtonGroup>
                 )}
             </Modal>
+            <SkipBox>
+                <CommonButton
+                    bgColor={"grey"}
+                    onClick={onSkip}
+                    children={"Skip"}
+                    {...buttonProps}
+                />
+            </SkipBox>
         </>
     );
 }

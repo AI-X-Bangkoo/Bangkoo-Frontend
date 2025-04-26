@@ -30,7 +30,7 @@ export const Backdrop = styled.div`
 `;
 
 export const Backdrop6 = styled(Backdrop)`
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.75) !important;
 `;
 
 export const Modal = styled.div`
@@ -64,9 +64,18 @@ export const ButtonGroup = styled.div`
   display: flex;
   justify-content: center;
   
-  & button:last-child {
-    margin-left: 16px;
-  }
+  //& button:last-child {
+  //  margin-left: 16px;
+  //}
+`;
+
+export const SkipBox = styled.div`
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  z-index: 9999;
+  gap: 16px;
 `;
 
 const pulse = keyframes`
