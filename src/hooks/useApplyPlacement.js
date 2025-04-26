@@ -31,6 +31,8 @@ export const useApplyPlacement = ({
 
   const { saveState } = usePlacementHistory(sessionIdRef);
 
+  const originalBackgroundRef = useRef(null);
+
   // 🔹 centerArea 부분 캡처 후 Blob으로 변환
   const extractCenterImageBlob = async (canvas, centerArea) => {
     const { x, y, width, height } = centerArea;
@@ -65,15 +67,31 @@ export const useApplyPlacement = ({
 
     // 배경 이미지 그리기
     const { x, y, width, height } = transform.centerArea;
-    canvas.width = outputSize.width;
-    canvas.height = outputSize.height;
-    ctx.drawImage(baseImage, 0, 0, outputSize.width, outputSize.height);
-
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(
+      baseImage,
+      transform.centerArea.x, transform.centerArea.y, transform.centerArea.width, transform.centerArea.height, // source
+      0, 0, outputSize.width, outputSize.height 
+    );
     // 썸네일 위치 계산
+    const scaleX = transform.centerArea.width / canvas.width;
+    const scaleY = transform.centerArea.height / canvas.height;
+    
+    const originalThumbWidth = thumbImg.width;
+    const originalThumbHeight = thumbImg.height;
+    const originalAspect = originalThumbWidth / originalThumbHeight;
+    
+    // 1️⃣ bbox width 기준으로 계산
     const thumbWidth = bbox[2] * transform.scaleX;
-    const thumbHeight = bbox[3] * transform.scaleY;
-    const tx = finalPos.x - thumbWidth * offsetRatio.x;
-    const ty = finalPos.y - thumbHeight * offsetRatio.y;
+    const thumbHeight = thumbWidth / originalAspect;
+
+    const centerX = finalPos.x - x;
+    const centerY = finalPos.y - y;
+    
+    const tx = centerX - thumbWidth * offsetRatio.x;
+    const ty = centerY - thumbHeight * offsetRatio.y;
+
     ctx.drawImage(thumbImg, tx, ty, thumbWidth, thumbHeight);
 
     // 🔥 윤곽선 그리기 (Marching Squares 활용)
@@ -152,8 +170,12 @@ export const useApplyPlacement = ({
           clickOffsetRatio,
           transform,
           bbox,
-          outputSize,
         } = imageUploaderRef.current;
+
+        const outputSize = {
+          width: transform.centerArea.width,
+          height: transform.centerArea.height,
+        };
 
         if ([thumbnail, finalThumbnailPos, clickOffsetRatio, transform, bbox, outputSize].every(Boolean)) {
           blob = await drawThumbnailOnCanvas(canvas, {
@@ -193,10 +215,13 @@ export const useApplyPlacement = ({
       resultImage.onload = async () => {
 
         const ctx = canvas.getContext("2d");
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
+        canvas.width = resultImage.width;
+        canvas.height = resultImage.height;
+
         const transform = drawImageContainWithSideBlur(resultImage, ctx, canvas);
         transformRef.current = transform;
+
+        originalBackgroundRef.current = resultImage;
 
         if (imageUploaderRef?.current) {
           imageUploaderRef.current.updatedTransform?.(transform);

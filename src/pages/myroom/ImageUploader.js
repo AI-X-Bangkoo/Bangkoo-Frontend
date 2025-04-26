@@ -233,7 +233,7 @@ const ImageUploader = forwardRef((props, ref) => {
         is3DDragging.current = false;
         const model = modelRef.current; // 현재 선택된 3D 모델
         if (model && ref.current) {
-            const refImage = model.userData?.referenceImage; // 너가 model에 이미지 연결해놨다면
+            const refImage = model.userData?.referenceImage;
             if (refImage) {
                 ref.current.reference = refImage;
                 console.log("✅ 3D 드래그 후 reference 자동 세팅 완료:", refImage);
@@ -525,6 +525,12 @@ const ImageUploader = forwardRef((props, ref) => {
                   setBgImage: (img) => {
                     bgImageRef.current = img;
                   },
+                setOriginalBackground: (img) => {
+                    originalImageRef.current = img;
+                },  
+                getOriginalBackground: () => {
+                    return originalImageRef.current;
+                  },
                 loadGlbModel: (url) => {
                     handleGlbClick(url);
                 },
@@ -568,48 +574,57 @@ const ImageUploader = forwardRef((props, ref) => {
                 })(),
                 restoreOriginalImage,
                 thumbnailControlRef,
-                  merge3DWithCanvas: async () => {
-                        const canvas2d  = canvasRef.current;
-                        const canvas3d  = webglCanvasRef.current;
-                        console.log(webglCanvasRef.current.toDataURL("image/png"));
-                        console.log("💡 canvas 2D", canvas2d.width, canvas2d.height);
-                        console.log("💡 canvas 3D", canvas3d.width, canvas3d.height);
-
-                        if (!canvas2d || !canvas3d) throw new Error("캔버스가 없습니다");
-                        const transform = transformRef.current;
-                        if (!transform || !transform.centerArea) {
-                          throw new Error("CenterArea 정보가 없습니다!");
-                        }
-                      
-                        const { x, y, width, height } = transform.centerArea;
-                        
-                        canvas3d.width = canvas2d.width;
-                        canvas3d.height = canvas2d.height;
-
-                        const renderer = rendererRef.current;
-                        const scene = sceneRef.current;
-                        const camera = cameraRef.current;
-                      
-                        await new Promise((resolve) => requestAnimationFrame(resolve));
-                        renderer.render(scene, camera);
-
-                        const merged = document.createElement("canvas");
-                        merged.width  = canvas2d.width;
-                        merged.height = canvas2d.height;
-                        const ctx = merged.getContext("2d");
+                merge3DWithCanvas: async () => {
+                    const canvas2d = canvasRef.current;
+                    const canvas3d = webglCanvasRef.current;
+                  
+                    if (!canvas2d || !canvas3d) throw new Error("캔버스가 없습니다");
+                    const transform = transformRef.current;
+                    if (!transform || !transform.centerArea) {
+                      throw new Error("CenterArea 정보가 없습니다!");
+                    }
                     
-                        // 2D → 3D 순서로 그리기
-                        ctx.drawImage(canvas2d, 0, 0);
-                        ctx.drawImage(canvas3d, 0, 0);
-                    
-                        // **순수 JS** Promise 생성: 반드시 resolver 함수를 넘깁니다
-                        return new Promise((resolve, reject) => {
-                          merged.toBlob((blob) => {
-                            if (blob) resolve(blob);
-                            else reject(new Error("Blob 생성 실패"));
-                          }, "image/png", 1.0);
-                        });
-                      },
+                    canvas3d.width = canvas2d.width;
+                    canvas3d.height = canvas2d.height;
+
+                    const { x, y, width, height } = transform.centerArea;
+                  
+                    const renderer = rendererRef.current;
+                    const scene = sceneRef.current;
+                    const camera = cameraRef.current;
+                  
+                    // 💥 강제 렌더링
+                    await new Promise((resolve) => requestAnimationFrame(resolve));
+                    renderer.render(scene, camera);
+                  
+                    // 🔧 캔버스 병합용
+                    const merged = document.createElement("canvas");
+                    merged.width = width;
+                    merged.height = height;
+                    const ctx = merged.getContext("2d");
+                  
+                    // 🔄 canvas2D → centerArea만 crop
+                    ctx.drawImage(
+                      canvas2d,
+                      x, y, width, height,   // src
+                      0, 0, width, height    // dst
+                    );
+                  
+                    // 🔄 canvas3D → centerArea만 crop
+                    ctx.drawImage(
+                      canvas3d,
+                      x, y, width, height,
+                      0, 0, width, height
+                    );
+                  
+                    return new Promise((resolve, reject) => {
+                      merged.toBlob((blob) => {
+                        if (blob) resolve(blob);
+                        else reject(new Error("Blob 생성 실패"));
+                      }, "image/png", 1.0);
+                    });
+                  },
+                  
                       reference: null,
             }));
     const applyAiImage = (aiBase64) => {
@@ -618,6 +633,7 @@ const ImageUploader = forwardRef((props, ref) => {
         const image = new Image();
         image.onload = () => {
             bgImageRef.current = image;
+            ref.current?.setOriginalBackground(image);
             const transform = drawImageContainWithSideBlur(image, canvasRef.current.getContext("2d"), canvasRef.current);
             transformRef.current = transform;
             drawScene(); // 선택된 객체에 대해 마스크만 다시 그림
@@ -697,6 +713,8 @@ const ImageUploader = forwardRef((props, ref) => {
                 // 3) 첫번째 상태 저장
                 await saveState(res.data.original_image_base64);
                 
+                originalImageRef.current = res.data.original_image_base64;
+
                 if (isFirstUpload) {
                     dispatch(setInitialFurniture(
                         filtered.map((item, index) => ({
@@ -802,11 +820,20 @@ const ImageUploader = forwardRef((props, ref) => {
       
           canvas.width = width;
           canvas.height = height;
-      
+
+          if (webglCanvasRef.current) {
+            webglCanvasRef.current.width = canvas.width;
+            webglCanvasRef.current.height = canvas.height;
+          }
+        
           const ctx = canvas.getContext("2d");
           const transform = drawImageContainWithSideBlur(image, ctx, canvas);
           transformRef.current = transform;
       
+          if (rendererRef.current) {
+            rendererRef.current.setSize(canvas.width, canvas.height);
+          }
+
           setImageWidth(image.width);
           setImageHeight(image.height);
           bgImageRef.current = image;
