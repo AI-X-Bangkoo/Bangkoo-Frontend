@@ -10,6 +10,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { searchByText, searchImageUnified } from "@/api/search/search";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
 import useAuth from "@/hooks/login/useAuth";
+import { getAnonymousId } from "@/features/search/generateAnonymousId";
 
 function AISearchComponent({
     mode = "redirect", // "redirect" or "inline"
@@ -21,8 +22,9 @@ function AISearchComponent({
     const navigate = useNavigate();
     const location = useLocation();
     const { addKeyword } = useSearchHistory();
-    const { user } = useAuth();
-    const userId = user?.userId || "anonymous";
+    const { user, isLoggedIn } = useAuth();
+    const userId = isLoggedIn ? user?.userId : getAnonymousId();
+    // const userId = user?.userId || "anonymous";
 
     const [isHover, setIsHover] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -35,6 +37,7 @@ function AISearchComponent({
 
     const containerRef = useRef(null); // 전체 검색 영역 감싸는 div
     const isSubmittingRef = useRef(false);
+
 
     useEffect(() => {
         if (tutorialStep === "3.2") {

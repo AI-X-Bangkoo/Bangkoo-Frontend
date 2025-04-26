@@ -4,7 +4,7 @@ import api from "../axios";
 export const searchByText = async (query, userId = null) => {
     const formData = new FormData();
     formData.append("query", query);
-    formData.append("userId", userId ? userId : "anonymous");
+    formData.append("userId", userId);
 
     const response = await api.post("/api/search", formData, {
       headers: {
