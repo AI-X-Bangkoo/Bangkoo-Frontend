@@ -226,6 +226,7 @@ function MyRoom() {
                             // console.log("🔥 GLB 클릭 감지됨:", item);
                             setselectedIndex(index);
                             uploaderRef.current?.loadGlbModel(item.model3dUrl);
+                            uploaderRef.current.reference = item.image;
                             // loadGlbModelToCanvas(item.image); // 예시
                         }}
                         onSelect={(index) => setselectedIndex(index)}

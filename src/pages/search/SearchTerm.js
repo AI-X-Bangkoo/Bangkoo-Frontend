@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef  } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
     setConfirmedKeyword,
@@ -23,6 +23,7 @@ import CommonButton from "@/common/CommonButton";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
 import useAuth from "@/hooks/login/useAuth";
 import { getAnonymousId } from "@/features/search/generateAnonymousId";
+import { saveSearchLog } from "./SearchLog";
 
 import {
     fetchRecentSearches,
@@ -39,64 +40,80 @@ function SearchTerm({onClose, onSearch, setInputValue}) {
 
     const [recentKeywords, setRecentKeywords] = useState([]);
     const [popularKeywords, setPopularKeywords] = useState([]);
+    const [refreshKey, setRefreshKey] = useState(0);
+    const offSessionQueriesRef = useRef(new Set());
+
+    useEffect(() => {
+        if (!autoSave) {
+          setRecentKeywords([]); 
+          return;
+        }
+        (async () => {
+          const recents = isLoggedIn
+            ? await fetchRecentSearches(userId)
+            : JSON.parse(localStorage.getItem("recentKeywords") || "[]");
+          setRecentKeywords(recents);
+    
+          const popular = await fetchPopularSearches();
+          setPopularKeywords(popular.map(item => item.query));
+        })();
+      }, [userId, autoSave]);
     
     // 검색 실행
     const handleSearch = async (keyword) => {
         const trimmed = keyword.trim();
         if (!trimmed) return;
-
+    
         dispatch(setConfirmedKeyword(trimmed));
         dispatch(setUploadedImage(null));
-
-        if (typeof setInputValue === "function") {
-            setInputValue(trimmed);
-        }
-
-        if (typeof onSearch === "function") {
-            onSearch(trimmed); // 검색 실행
-        }
-
+        if (setInputValue) setInputValue(trimmed);
+        if (onSearch) onSearch(trimmed, autoSave);
         if (onClose) onClose();
-    };
-
-    // 개별 삭제
-    const handleDeleteKeyword = async (keyword) => {
-        if (userId) {
-            await deleteSearchItem(userId, keyword);
-            const updated = recentKeywords.filter((item) => item !== keyword);
-            setRecentKeywords(updated);
+    
+        if (!autoSave) return;
+    
+        if (isLoggedIn) {
+          // 로그인 유저는 서버에 저장 후 로컬 상태만 바로 갱신
+          try {
+            await saveSearchLog(userId, trimmed, "text");
+          } catch (e) {
+            console.error("검색 로그 저장 실패", e);
+          }
+         // 로컬 상태에만 반영 (서버 반영은 백그라운드에서)
+          setRecentKeywords(prev => {
+            const updated = [trimmed, ...prev.filter(q => q !== trimmed)];
+            return updated.slice(0, 10);
+          });
         } else {
-            dispatch(removeRecentKeyword(keyword));
+          // 익명유저는 localStorage + 로컬 상태
+          const stored = JSON.parse(localStorage.getItem("recentKeywords") || "[]");
+          const updated = [trimmed, ...stored.filter(k => k !== trimmed)].slice(0, 10);
+          localStorage.setItem("recentKeywords", JSON.stringify(updated));
+          setRecentKeywords(updated);
         }
-    };
-
-    // 전체 삭제
-    const handleClearAll = async () => {
-        if (userId) {
-            await deleteAllSearchLogs(userId);
-            setRecentKeywords([]);
+      };
+    
+      // 개별 삭제
+      const handleDeleteKeyword = async (keyword) => {
+        if (isLoggedIn) {
+          await deleteSearchItem(userId, keyword);
+          setRecentKeywords(prev => prev.filter(q => q !== keyword));
         } else {
-            dispatch(clearRecentKeywords());
+          dispatch(removeRecentKeyword(keyword));
+          setRecentKeywords(prev => prev.filter(q => q !== keyword));
         }
-    };
-
-    // 인기/최근 검색어 가져오기
-    useEffect(() => {
-        const loadSearchKeywords = async () => {
-            if (userId) {
-                const recents = await fetchRecentSearches(userId);
-                setRecentKeywords(recents);
-            } else {
-                const stored = JSON.parse(localStorage.getItem("recentKeywords") || "[]");
-                setRecentKeywords(stored);
-            }
-
-            const popular = await fetchPopularSearches();
-            setPopularKeywords(popular.map((item) => item.query));
-        };
-
-        loadSearchKeywords();
-    }, [userId]);
+      };
+    
+      // 전체 삭제
+      const handleClearAll = async () => {
+        if (isLoggedIn) {
+          await deleteAllSearchLogs(userId);
+          setRecentKeywords([]);
+        } else {
+          dispatch(clearRecentKeywords());
+          setRecentKeywords([]);
+        }
+      };
 
     return (
         <SearchTermBox>

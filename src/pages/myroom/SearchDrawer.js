@@ -237,6 +237,7 @@ const SearchDrawer = ({ onClose, tutorialStep, setTutorialStep }) => {
                             );
                             console.log(selectedFurniture);
                             selectedFurniture.forEach((item) => {
+                                console.log(item.glb이미지);
                                 dispatch(appendFurniture({
                                     id: item.id,
                                     image: item.이미지,

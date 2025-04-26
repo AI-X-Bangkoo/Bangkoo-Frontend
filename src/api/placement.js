@@ -17,6 +17,14 @@ import api from "./axios";
  */
 export async function requestPlacement(mode, backgroundBlob, referenceBlob = null,width,height) {
 
+  if (typeof backgroundBlob === "string") {
+    backgroundBlob = await (await fetch(backgroundBlob)).blob();
+  }
+  if (referenceBlob && typeof referenceBlob === "string") {
+    referenceBlob = await (await fetch(referenceBlob)).blob();
+  }
+
+
   const formData = new FormData();
   formData.append("mode", mode);
   formData.append("background", backgroundBlob, "bg.png");
@@ -24,9 +32,9 @@ export async function requestPlacement(mode, backgroundBlob, referenceBlob = nul
   formData.append("height", height);
 
   // reference 이미지는 add 모드일 때만 사용
-  if (mode === "add" && referenceBlob) {
-    formData.append("reference", referenceBlob, "ref.png");
-  }
+  // if (mode === "add" && referenceBlob) {
+  //   formData.append("reference", referenceBlob, "ref.png");
+  // }
 
   const response = await api.post("/api/placement", formData, {
     headers: {

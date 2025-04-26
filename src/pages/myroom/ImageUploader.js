@@ -76,7 +76,7 @@ const ImageUploader = forwardRef((props, ref) => {
     }, [currentImage]);    
 
     const webglCanvasRef = useRef(null); // 3D Canvas
-    const { initRenderer,loadModel,moveModel, zoom, focusModel, getCurrentModel,  sceneRef, glbModelStateRef, cameraRef, controlsRef,addBoundingBoxToModel  } = useThreeRenderer(webglCanvasRef); // 💡 초기화
+    const { initRenderer,loadModel,moveModel, zoom, focusModel, getCurrentModel,  sceneRef, glbModelStateRef, cameraRef, controlsRef,addBoundingBoxToModel, rendererRef  } = useThreeRenderer(webglCanvasRef); // 💡 초기화
     const transformRef = useRef(null); // 🔥 transform 기억해둠
     const is3DDragging = useRef(false);
     const last3DMouse = useRef({ x: 0, y: 0 });
@@ -93,11 +93,6 @@ const ImageUploader = forwardRef((props, ref) => {
     const [initialDragBbox, setInitialDragBbox] = useState(null);
     const [finalImagePos, setFinalImagePos] = useState(null);
     
-    const canvasSize = {
-        width: containerRef.current?.clientWidth || 1024,
-        height: containerRef.current?.clientHeight || 720,
-    }
-
     useEffect(() => {
         if (!isUploading) return;
         const interval = setInterval(() => {
@@ -223,6 +218,7 @@ const ImageUploader = forwardRef((props, ref) => {
             }
         };
     const handle3DMouseDown = (e) => {
+        setMode("add");
         is3DDragging.current = true;
         last3DMouse.current = { x: e.clientX, y: e.clientY };
     };
@@ -238,6 +234,16 @@ const ImageUploader = forwardRef((props, ref) => {
 
     const handle3DMouseUp = () => {
         is3DDragging.current = false;
+        const model = modelRef.current; // 현재 선택된 3D 모델
+        if (model && ref.current) {
+            const refImage = model.userData?.referenceImage;
+            if (refImage) {
+                ref.current.reference = refImage;
+                console.log("✅ 3D 드래그 후 reference 자동 세팅 완료:", refImage);
+            } else {
+                console.warn("⚠️ 모델에 referenceImage가 없습니다.");
+            }
+        }
     };
     useEffect(() => {
         if (resetObjectPositionRef) {
@@ -278,6 +284,7 @@ const ImageUploader = forwardRef((props, ref) => {
     }, [resetObjectPositionRef]);
     
     const handleGlbClick = (url, id) => {
+        setMode("add");
         if (!rendererInitialized) {
             initRenderer();
             setRendererInitialized(true);
@@ -521,6 +528,12 @@ const ImageUploader = forwardRef((props, ref) => {
                   setBgImage: (img) => {
                     bgImageRef.current = img;
                   },
+                setOriginalBackground: (img) => {
+                    originalImageRef.current = img;
+                },  
+                getOriginalBackground: () => {
+                    return originalImageRef.current;
+                  },
                 loadGlbModel: (url) => {
                     handleGlbClick(url);
                 },
@@ -564,6 +577,63 @@ const ImageUploader = forwardRef((props, ref) => {
                 })(),
                 restoreOriginalImage,
                 thumbnailControlRef,
+                merge3DWithCanvas: async () => {
+                    const canvas2d = canvasRef.current;
+                    const canvas3d = webglCanvasRef.current;
+                  
+                    if (!canvas2d || !canvas3d) throw new Error("캔버스가 없습니다");
+                    const transform = transformRef.current;
+                    if (!transform || !transform.centerArea) {
+                      throw new Error("CenterArea 정보가 없습니다!");
+                    }
+                    
+                    canvas3d.width = canvas2d.width;
+                    canvas3d.height = canvas2d.height;
+
+                    const { x, y, width, height } = transform.centerArea;
+                  
+                    const renderer = rendererRef.current;
+                    const scene = sceneRef.current;
+                    const camera = cameraRef.current;
+                  
+                    // 💥 강제 렌더링
+                    await new Promise((resolve) => requestAnimationFrame(resolve));
+                    renderer.render(scene, camera);
+                  
+                    // 🔧 캔버스 병합용
+                    const merged = document.createElement("canvas");
+                    merged.width = width;
+                    merged.height = height;
+                    const ctx = merged.getContext("2d");
+                  
+                    // 🔄 canvas2D → centerArea만 crop
+                    ctx.drawImage(
+                      canvas2d,
+                      x, y, width, height,   // src
+                      0, 0, width, height    // dst
+                    );
+                  
+                    // 🔄 canvas3D → centerArea만 crop
+                    ctx.drawImage(
+                      canvas3d,
+                      x, y, width, height,
+                      0, 0, width, height
+                    );
+                  
+                    return new Promise((resolve, reject) => {
+                      merged.toBlob((blob) => {
+                        if (blob) resolve(blob);
+                        else reject(new Error("Blob 생성 실패"));
+                      }, "image/png", 1.0);
+                    });
+                  },
+                  
+                      reference: null,
+                  clearSelectedIndex: () => {
+                    if (typeof setselectedIndex === 'function') {
+                        setselectedIndex(null);
+                    }
+                  }
             }));
     const applyAiImage = (aiBase64) => {
         setImageBase64(aiBase64);
@@ -571,6 +641,7 @@ const ImageUploader = forwardRef((props, ref) => {
         const image = new Image();
         image.onload = () => {
             bgImageRef.current = image;
+            ref.current?.setOriginalBackground(image);
             const transform = drawImageContainWithSideBlur(image, canvasRef.current.getContext("2d"), canvasRef.current);
             transformRef.current = transform;
             drawScene(); // 선택된 객체에 대해 마스크만 다시 그림
@@ -624,9 +695,9 @@ const ImageUploader = forwardRef((props, ref) => {
 
     console.log("현재 백엔드에서 보내는 file:",file);
 
-    const formDataRecommend = new FormData();
-    formDataRecommend.append("file",file);
-    console.log("AI서버로 보낼 데이터:",formDataRecommend);
+    // const formDataRecommend = new FormData();
+    // formDataRecommend.append("file",file);
+    // console.log("AI서버로 보낼 데이터:",formDataRecommend);
 
     try {
      // 두 개의 요청을 병렬로 보내기 위해 Promise.all 사용
@@ -636,10 +707,10 @@ const ImageUploader = forwardRef((props, ref) => {
      console.log("응답:", resDetect);
      console.groupEnd();
 
-     console.group("📡 [recommend/from_image 요청 및 응답]");
-     const recommendResult = await recommendFromImage(formDataRecommend);
-     console.log("추천 응답:", recommendResult);
-     console.groupEnd();
+    //  console.group("📡 [recommend/from_image 요청 및 응답]");
+    //  const recommendResult = await recommendFromImage(formDataRecommend);
+    //  console.log("추천 응답:", recommendResult);
+    //  console.groupEnd();
 
 
         // 첫 번째 요청 응답 처리 (detect_all_base64)
@@ -650,10 +721,10 @@ const ImageUploader = forwardRef((props, ref) => {
         
         //rediskey를 부모컴포넌트로 전달
         // const key = recommendResult.data.redisKey; 
-        const key = recommendResult.redisKey;
-        if(typeof onRedisKey === "function"){
-            onRedisKey(key);
-        }
+        // const key = recommendResult.redisKey;
+        // if(typeof onRedisKey === "function"){
+        //     onRedisKey(key);
+        // }
 
         const results = resDetect.data.results.map((obj, idx) => ({
             ...obj,
@@ -674,9 +745,9 @@ const ImageUploader = forwardRef((props, ref) => {
         filtered.sort((a, b) => a.thumbIndex - b.thumbIndex);
 
         // 두 번째 요청 응답 처리 (recommend/from-image)
-        const recommendedProducts = recommendResult.data; // 추천된 가구 리스트
+        // const recommendedProducts = recommendResult.data; // 추천된 가구 리스트
 
-        console.log("추천된 제품:", recommendedProducts);
+        // console.log("추천된 제품:", recommendedProducts);
         console.log("분석된 결과:", filtered);
 
         // 이후 작업 (예: 상태 업데이트 등)
@@ -694,6 +765,8 @@ const ImageUploader = forwardRef((props, ref) => {
                 
                 await saveState(resDetect.data.original_image_base64);
                 
+                originalImageRef.current = resDetect.data.original_image_base64;
+
                 if (isFirstUpload) {
                     dispatch(setInitialFurniture(
                         filtered.map((item, index) => ({
@@ -799,11 +872,20 @@ const ImageUploader = forwardRef((props, ref) => {
       
           canvas.width = width;
           canvas.height = height;
-      
+
+          if (webglCanvasRef.current) {
+            webglCanvasRef.current.width = canvas.width;
+            webglCanvasRef.current.height = canvas.height;
+          }
+        
           const ctx = canvas.getContext("2d");
           const transform = drawImageContainWithSideBlur(image, ctx, canvas);
           transformRef.current = transform;
       
+          if (rendererRef.current) {
+            rendererRef.current.setSize(canvas.width, canvas.height);
+          }
+
           setImageWidth(image.width);
           setImageHeight(image.height);
           bgImageRef.current = image;
@@ -1076,7 +1158,7 @@ transformRef.current && (() => {
     detectedObjects[selectedIndex].bbox,
     transformRef.current,
     clickOffsetRatio,
-    9999
+    2
   );
   return <img src={detectedObjects[draggingIndex].thumbnail} style={style} alt="dragging" />;
 })()}

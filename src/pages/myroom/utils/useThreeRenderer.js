@@ -41,7 +41,7 @@ export const useThreeRenderer = (canvasRef,options = {}) => {
         camera.position.set(0, 2, 5);
         camera.lookAt(0, 0, 0);
 
-        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true});
         renderer.setSize(width,height);
         renderer.setPixelRatio(window.devicePixelRatio);
         // renderer.outputEncoding = THREE.sRGBEncoding;
@@ -145,7 +145,7 @@ export const useThreeRenderer = (canvasRef,options = {}) => {
             const model = gltf.scene;
             model.userData.url = url; // ✅ 여기에 추가
             console.log("✅ 모델 로드 성공:", model);
-
+            
             if (modelRef.current) {
                 // sceneRef.current.remove(modelRef.current);
                 modelRef.current.visible = false; // 🔥 제거 대신 숨기기
@@ -350,6 +350,7 @@ export const useThreeRenderer = (canvasRef,options = {}) => {
         glbModelStateRef,
         cameraRef,           // 👈 추가
         controlsRef,         // 👈 추가
-        addBoundingBoxToModel
+        addBoundingBoxToModel,
+        rendererRef,
     };
 };
