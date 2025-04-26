@@ -17,6 +17,10 @@ const searchSlice = createSlice({
     name: 'search',
     initialState,
     reducers: {
+        setRecentKeywords: (state, action) => {
+            state.recentKeywords = action.payload;
+            localStorage.setItem("recentKeywords", JSON.stringify(action.payload));
+        },    
         setKeyword: (state, action) => {
             state.keyword = action.payload;
         },
@@ -72,6 +76,7 @@ const searchSlice = createSlice({
 });
 
 export const {
+    setRecentKeywords,
     setKeyword,
     setUploadedImage,
     clearSearch,
