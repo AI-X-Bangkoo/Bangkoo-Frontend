@@ -629,6 +629,11 @@ const ImageUploader = forwardRef((props, ref) => {
                   },
                   
                       reference: null,
+                  clearSelectedIndex: () => {
+                    if (typeof setselectedIndex === 'function') {
+                        setselectedIndex(null);
+                    }
+                  }
             }));
     const applyAiImage = (aiBase64) => {
         setImageBase64(aiBase64);
@@ -1153,7 +1158,7 @@ transformRef.current && (() => {
     detectedObjects[selectedIndex].bbox,
     transformRef.current,
     clickOffsetRatio,
-    9999
+    2
   );
   return <img src={detectedObjects[draggingIndex].thumbnail} style={style} alt="dragging" />;
 })()}

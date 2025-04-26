@@ -198,7 +198,10 @@ export const useApplyPlacement = ({
       }
 
       console.log("🚩 blob:", blob, blob instanceof Blob);
-
+      
+      imageUploaderRef?.current?.setFinalThumbnailPos?.(null);
+      imageUploaderRef?.current?.setDraggingThumbnailPos?.(null);
+      
       let base64;
       if (mode === "add") {
         // add 모드일 땐 thumbnail(base64 string) 을 참조로 
@@ -211,8 +214,16 @@ export const useApplyPlacement = ({
         base64 = await requestPlacement(mode, blob);
       }
       console.log("🚩 sending reference:", reference);
+
       const resultImage = new Image();
       resultImage.onload = async () => {
+
+        if (imageUploaderRef?.current) {
+          imageUploaderRef.current.setFinalThumbnailPos?.(null);
+          imageUploaderRef.current.setDraggingThumbnailPos?.(null);
+          imageUploaderRef.current.setClickOffsetRatio?.({ x: 0.5, y: 0.5 }); 
+          imageUploaderRef.current.clearSelectedIndex?.();
+        }
 
         const ctx = canvas.getContext("2d");
         canvas.width = resultImage.width;
@@ -220,7 +231,6 @@ export const useApplyPlacement = ({
 
         const transform = drawImageContainWithSideBlur(resultImage, ctx, canvas);
         transformRef.current = transform;
-
         originalBackgroundRef.current = resultImage;
 
         if (imageUploaderRef?.current) {
@@ -232,9 +242,6 @@ export const useApplyPlacement = ({
           });
           imageUploaderRef.current.setImageBase64?.(canvas.toDataURL("image/png"));
           imageUploaderRef.current.setBgImage?.(resultImage);
-          
-          imageUploaderRef.current.setFinalThumbnailPos?.(null);
-          imageUploaderRef.current.setDraggingThumbnailPos?.(null);
         }
 
              if (!sessionIdRef.current) {
