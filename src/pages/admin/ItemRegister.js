@@ -15,19 +15,22 @@ import {
 function GaguRegisterModal({ handleClose }) {
   const [gaguName, setGaguName] = useState("");
   const [description, setDescription] = useState("");
+  const [detail, setDetail] = useState("");
   const [price, setPrice] = useState("");
   const [url, setUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [category, setCategory] = useState("");
-
+  const [model3dUrl, setModel3dUrl] = useState("");
   const handleRegister = () => {
     const newGagu = {
       gaguName,
       description,
+      detail,
       price,
       url,
       imageUrl,
       category,
+      model3dUrl
     };
     console.log("등록된 가구:", newGagu);
     handleClose(); // 모달 닫기
@@ -67,6 +70,18 @@ function GaguRegisterModal({ handleClose }) {
               placeholder="ex)바스톨, 66cm...."
             />
           </InputRow>
+         
+          <InputRow>
+            <label>상세 설명</label>
+            <CommonTextField
+              fontSize="sx"
+              custom="outline"
+              label="detail"
+              value={detail}
+              onChange={(e) => setDetail(e.target.value)}
+              placeholder="시각적 외형, 스타일 정보를 입력하세요요"
+            />
+          </InputRow>
 
           <InputRow>
             <label>가격</label>
@@ -100,6 +115,18 @@ function GaguRegisterModal({ handleClose }) {
               label="imageUrl"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="ex)http:// ...."
+            />
+          </InputRow>
+
+          <InputRow>
+            <label>3D(URL)</label>
+            <CommonTextField
+              fontSize="sx"
+              custom="outline"
+              label="model3dUrl"
+              value={model3dUrl}
+              onChange={(e) => setModel3dUrl(e.target.value)}
               placeholder="ex)http:// ...."
             />
           </InputRow>

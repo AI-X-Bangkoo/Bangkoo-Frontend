@@ -10,6 +10,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { searchByText, searchImageUnified } from "@/api/search/search";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
 import useAuth from "@/hooks/login/useAuth";
+import { getAnonymousId } from "@/features/search/generateAnonymousId";
+import { addRecentKeyword } from "@/features/search/searchSlice";
+import { saveSearchLog } from "./SearchLog";
 
 function AISearchComponent({
     mode = "redirect", // "redirect" or "inline"
@@ -20,9 +23,10 @@ function AISearchComponent({
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-    const { addKeyword } = useSearchHistory();
-    const { user } = useAuth();
-    const userId = user?.userId || "anonymous";
+    const { addKeyword, autoSave } = useSearchHistory();
+    const { user, isLoggedIn } = useAuth();
+    const userId = isLoggedIn ? user?.userId : getAnonymousId();
+    // const userId = user?.userId || "anonymous";
 
     const [isHover, setIsHover] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -35,6 +39,7 @@ function AISearchComponent({
 
     const containerRef = useRef(null); // 전체 검색 영역 감싸는 div
     const isSubmittingRef = useRef(false);
+
 
     useEffect(() => {
         if (tutorialStep === "3.2") {
@@ -146,6 +151,16 @@ function AISearchComponent({
             return;
         }
 
+        if (autoSave) {
+            dispatch(addRecentKeyword(searchText));
+
+        if (isLoggedIn) {
+            try {
+                await saveSearchLog(userId, searchText, "text");
+            } catch (e) { console.error(e); }
+            }
+        }
+
         try {
             if (mode === "inline") {
                 if (typeof onSearchStart === "function") onSearchStart();
@@ -156,7 +171,8 @@ function AISearchComponent({
                         imageFile: isFile ? imageFile : null,
                         imageUrl: isUrl ? imagePreviewUrl : null,
                         query: searchText,
-                        userId
+                        userId,
+                        autoSave
                     });
                 } else {
                     result = await searchByText(searchText, userId);
@@ -173,7 +189,8 @@ function AISearchComponent({
                         imageFile,
                         imageUrl: null,
                         query: searchText,
-                        userId
+                        userId,
+                        autoSave
                     });
                     dispatch(setSearchResults(result));
                     dispatch(setConfirmedKeyword(searchText));

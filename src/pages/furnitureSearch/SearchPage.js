@@ -10,13 +10,16 @@ import useAuth from "@/hooks/login/useAuth";
 import { setSearchResults, setConfirmedKeyword, setUploadedImage, setLoading } from "@/features/search/searchSlice";
 import { searchByText, searchImageUnified } from "@/api/search/search";
 import LoadingSpinner from "@/common/LoadingSpinner";
+import { getAnonymousId } from "@/features/search/generateAnonymousId";
+import useSearchHistory from "@/hooks/search/useSearchHistory";
 
 function SearchPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const location = useLocation();
     const { isLoggedIn, login, user } = useAuth(); // 로그인 상태, 로그인 함수
-    const userId = user?.userId || "anonymous";
+    const userId = isLoggedIn ? user?.userId : getAnonymousId();
+    const { autoSave } = useSearchHistory();
 
     const isLoading = useSelector(state => state.search.isLoading); // 로딩
     const searchResults = useSelector((state) => state.search.resultList); // 검색 결과 불러오기
@@ -80,10 +83,11 @@ function SearchPage() {
                         imageFile: null,
                         imageUrl: imageParam,
                         query: decodedQuery,
-                        userId
+                        userId,
+                        autoSave
                     });
                 } else if (query) {
-                    result = await searchByText(decodedQuery, userId);
+                    result = await searchByText(decodedQuery, userId, autoSave);
                 } else {
                     return;
                 }

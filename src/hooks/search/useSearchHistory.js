@@ -23,13 +23,16 @@ export default function useSearchHistory() {
 
     // 키워드 저장(로그인 여부 따라 다르게 처리)
     const addKeyword = async (value) => {
-        if (!autoSave || !value.trim()) return;
+        if (!value.trim()) return;
 
         if (userId) {
-      
+            // 로그인 상태일 경우 서버 저장만 따로 처리
+            // (이 부분은 기존 서버 저장 로직이 없어서 유지)
         } else {
-            // 비로그인 상태 → Redux + localStorage 저장
-            dispatch(addRecentKeyword(value));
+            if (autoSave) {
+                // 자동저장 켜져있을 때만 Redux+로컬스토리지에 저장
+                dispatch(addRecentKeyword(value));
+            }
         }
     };
 

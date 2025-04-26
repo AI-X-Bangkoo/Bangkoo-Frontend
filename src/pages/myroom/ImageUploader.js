@@ -19,6 +19,8 @@ import {FaUndo, FaRedo} from "react-icons/fa";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useThreeRenderer } from "./utils/useThreeRenderer";
+import { recommendFromImage } from "../../api/Recomendation/recommend";
+
 import LoadingSpinner from "../../common/LoadingSpinner";
 import { current } from "@reduxjs/toolkit";
 import ThumbnailControls from "@/components/ThumbnailControls";
@@ -36,6 +38,7 @@ const ImageUploader = forwardRef((props, ref) => {
             setMode,
             className,
             setIsImageUploaded,
+           onRedisKey,
             sessionIdRef,
         } = props;
     
@@ -640,6 +643,7 @@ const ImageUploader = forwardRef((props, ref) => {
         };
         image.src = aiBase64;
     };
+
     const handleFileChange = async (e) => {
         // const file = e.target.files[0];
         const file = e.target?.files?.[0] || e; // e가 File이면 직접 사용
@@ -648,9 +652,13 @@ const ImageUploader = forwardRef((props, ref) => {
         // 업로드 시작 시 Spinner 표시
         setIsUploading(true);
 
-        if (setIsImageUploaded) {
-            setIsImageUploaded(true);
-        }
+    if (setIsImageUploaded) {
+        setIsImageUploaded(true);
+    }
+
+    if(typeof onImageUploaded === "function"){
+        onImageUploaded(file);
+    }
 
             // 1) 세션 ID가 없으면 제일 먼저 생성
             if (!sessionIdRef.current) {
@@ -665,53 +673,92 @@ const ImageUploader = forwardRef((props, ref) => {
         const divHeight = containerRef.current.clientHeight;
         // console.log("📏 div 영역:", divWidth, divHeight);
 
-        // ✅ 원본 이미지 크기 추출
-        const imageBitmap = await createImageBitmap(file);
-        const originalWidth = imageBitmap.width;
-        const originalHeight = imageBitmap.height;
+    // ✅ 원본 이미지 크기 추출
+    const imageBitmap = await createImageBitmap(file);
+    const originalWidth = imageBitmap.width;
+    const originalHeight = imageBitmap.height;
 
-        setImageUrl(file);
-        setPreviewUrl(URL.createObjectURL(file));
+    setImageUrl(file);
+    setPreviewUrl(URL.createObjectURL(file));
 
-        const formData = new FormData();
-        formData.append("file", file); // ⬅️ 원본 그대로 전송
-        formData.append("canvasWidth", originalWidth);   // ⬅️ 원본 해상도 사용
-        formData.append("canvasHeight", originalHeight); // ⬅️ 원본 해상도 사용
+    const formData = new FormData();
+    formData.append("file", file); // ⬅️ 원본 그대로 전송
+    formData.append("canvasWidth", originalWidth);   // ⬅️ 원본 해상도 사용
+    formData.append("canvasHeight", originalHeight); // ⬅️ 원본 해상도 사용
 
-            try {
-                const res = await axios.post("http://localhost:8080/api/detect_all_base64", formData);
-                originalImageRef.current = res.data.original_image_base64;
-                if (restoreInitialImageRef) {
-                    restoreInitialImageRef.current = restoreOriginalImage;
-                  }
-                const results = res.data.results.map((obj, idx) => ({
-                    ...obj,
-                    x: obj.bbox?.[0],
-                    y: obj.bbox?.[1],
-                    width: obj.bbox?.[2],
-                    height: obj.bbox?.[3],
-                    bbox: obj.bbox,
-                    originalBbox: [...obj.bbox],  // ✅ 초기 위치 보존
-                    mask: obj.mask,
-                    thumbIndex: idx,
-                    thumbnail: res.data.thumbnails_base64[idx],
-                    flipHorizontal: false,
-                }));
-                const filtered = smartFilterDuplicates(results, 0.5);
-                filtered.sort((a, b) => a.thumbIndex - b.thumbIndex);
-                setDetectedObjects(filtered);
+ 
 
-                setImageBase64(res.data.original_image_base64);
+    console.log("현재 백엔드에서 보내는 file:",file);
+
+    const formDataRecommend = new FormData();
+    formDataRecommend.append("file",file);
+    console.log("AI서버로 보낼 데이터:",formDataRecommend);
+
+    try {
+     // 두 개의 요청을 병렬로 보내기 위해 Promise.all 사용
+     console.group("📡 [detect_all_base64 요청 및 응답]");
+     console.log("요청 전송: /api/detect_all_base64");
+     const resDetect = await axios.post("http://localhost:8080/api/detect_all_base64", formData);
+     console.log("응답:", resDetect);
+     console.groupEnd();
+
+     console.group("📡 [recommend/from_image 요청 및 응답]");
+     const recommendResult = await recommendFromImage(formDataRecommend);
+     console.log("추천 응답:", recommendResult);
+     console.groupEnd();
+
+
+        // 첫 번째 요청 응답 처리 (detect_all_base64)
+        originalImageRef.current = resDetect.data.original_image_base64;
+        if (restoreInitialImageRef) {
+            restoreInitialImageRef.current = restoreOriginalImage;
+          }
+        
+        //rediskey를 부모컴포넌트로 전달
+        // const key = recommendResult.data.redisKey; 
+        const key = recommendResult.redisKey;
+        if(typeof onRedisKey === "function"){
+            onRedisKey(key);
+        }
+
+        const results = resDetect.data.results.map((obj, idx) => ({
+            ...obj,
+            x: obj.bbox?.[0],
+            y: obj.bbox?.[1],
+            width: obj.bbox?.[2],
+            height: obj.bbox?.[3],
+            bbox: obj.bbox,
+            originalBbox: [...obj.bbox], // ✅ 초기 위치 보존
+            mask: obj.mask,
+            thumbIndex: idx,
+            thumbnail: resDetect.data.thumbnails_base64[idx],
+            flipHorizontal: false,
+        }));
+
+        // 결과에서 중복 항목을 필터링 (선택적으로 적용)
+        const filtered = smartFilterDuplicates(results, 0.5);
+        filtered.sort((a, b) => a.thumbIndex - b.thumbIndex);
+
+        // 두 번째 요청 응답 처리 (recommend/from-image)
+        const recommendedProducts = recommendResult.data; // 추천된 가구 리스트
+
+        console.log("추천된 제품:", recommendedProducts);
+        console.log("분석된 결과:", filtered);
+
+        // 이후 작업 (예: 상태 업데이트 등)
+        setDetectedObjects(filtered);
+        setImageBase64(resDetect.data.original_image_base64);
 
                 const img = new Image();
                 img.onload = () => {
                     // 이미지 업로드 완료 후 상태 업데이트
                     setIsUploading(false); // 업로드 완료되면 Spinner 숨기기
                 };
-                img.src = res.data.original_image_base64; // base64로 trigger
+                img.src = resDetect.data.original_image_base64; // base64로 trigger
 
                 // 3) 첫번째 상태 저장
-                await saveState(res.data.original_image_base64);
+                
+                await saveState(resDetect.data.original_image_base64);
                 
                 originalImageRef.current = res.data.original_image_base64;
 

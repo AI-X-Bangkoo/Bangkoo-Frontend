@@ -94,6 +94,7 @@ function MyRoom() {
         }, 0);
     };
 
+
     const handleSave = () => {
         // 기존 저장 로직
         saveInterior(); // Hook에서 리턴된 함수 실행(태원님)

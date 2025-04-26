@@ -344,3 +344,11 @@ export const DropZone = styled.div`
     margin-bottom: 0px !important;
   }
 `;
+
+export const AutoSaveBox = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;

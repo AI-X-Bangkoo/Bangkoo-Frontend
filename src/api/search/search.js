@@ -1,22 +1,25 @@
 import api from "../axios";
 
 // 텍스트 기반
-export const searchByText = async (query, userId = null) => {
+export const searchByText = async (query, userId = null, autoSave = true) => {
     const formData = new FormData();
     formData.append("query", query);
-    formData.append("userId", userId ? userId : "anonymous");
+    formData.append("userId", userId);
 
     const response = await api.post("/api/search", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      params: {
+        autoSave
+      }
     });
 
     return response.data;
   };
 
 // 이미지 기반 통합(파일, URL, 텍스트 조합)
-export const searchImageUnified = async ({ imageFile = null, imageUrl = null, query = "", userId = null }) => {
+export const searchImageUnified = async ({ imageFile = null, imageUrl = null, query = "", userId = null, autoSave = true }) => {
     const formData = new FormData();
 
     if (imageFile) formData.append("image", imageFile);
@@ -28,6 +31,9 @@ export const searchImageUnified = async ({ imageFile = null, imageUrl = null, qu
         headers: {
             "Content-Type": "multipart/form-data",
         },
+        params: {
+          autoSave
+        }
     });
 
     return res.data;

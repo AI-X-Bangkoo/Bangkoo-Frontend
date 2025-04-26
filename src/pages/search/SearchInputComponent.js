@@ -1,6 +1,5 @@
 import React, {useState, useRef, useEffect} from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
     setUploadedImage,
     setKeyword,
@@ -35,15 +34,12 @@ const SearchInputComponent = ({
                                   inputValue,
                                   setInputValue
         }) => {
-    const navigate = useNavigate();
     const dispatch = useDispatch();
     const recognitionRef = useRef(null); // 음성 인식 인스턴스 저장
     const fileRef = useRef(null);
 
     const { updateKeyword } = useSearchHistory();
-    const uploadedImage = useSelector((state) => state.search.uploadedImage);
     const [isListening, setIsListening] = useState(false); // 음성
-    const userId = useSelector((state) => state.auth.user?.userId || "anonymous");
 
     const {
         dialogOpen,
