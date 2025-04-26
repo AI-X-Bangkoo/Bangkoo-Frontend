@@ -55,34 +55,55 @@ export async function updateAdminProducts(id, updateData) {
       headers: { "Content-Type": "application/json" },
     });
     console.log("업데이트된 객체:", JSON.stringify(updateData, null, 2));
-    console.log("*******",updateData);
+    console.log("*******", updateData);
     return response.data;
   } catch (error) {
     console.error("가구 수정 실패:", error);
     throw error;
   }
 }
-  //검색
-  export async function searchProducts(searchTerm, currentPage = 0, pageSize = 10) {
-    try {
-        const params = {
-            page: currentPage || 0,
-            size: pageSize,
-            searchTerm: searchTerm
-        };
 
-        console.log("searchTerm:", searchTerm);
-        console.log("API 호출 params:", params);
+// 검색
+export async function searchProducts(searchTerm, currentPage = 0, pageSize = 10) {
+  try {
+    const params = {
+      page: currentPage || 0,
+      size: pageSize,
+      searchTerm: searchTerm,
+    };
 
-        const response = await api.get('/api/admin/products', { params });
+    console.log("searchTerm:", searchTerm);
+    console.log("API 호출 params:", params);
 
+    const response = await api.get('/api/admin/products', { params });
 
-        console.log("*****응답 데이터:", response.data);
-        return response.data;
+    console.log("*****응답 데이터:", response.data);
+    return response.data;
 
-    } catch (error) {
-        console.error("검색 요청 실패:", error);
-        throw error;
-    }
+  } catch (error) {
+    console.error("검색 요청 실패:", error);
+    throw error;
+    
+  }
+}
+
+// CSV 업로드
+export async function handleCSVUpload(file) {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);  // file은 파일 입력 필드에서 가져온 파일 객체
+
+    const response = await api.post('/api/admin/CSVupload', formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    console.log("CSV 업로드 성공:", response.data);
+    return response.data; // 업로드된 제품 정보 반환
+  } catch (error) {
+    console.error("CSV 업로드 실패:", error);
+    throw error;
+  }
 }
 
