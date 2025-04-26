@@ -21,7 +21,8 @@ import CommonIconButton from "@/common/CommonIconButton"
 import { ReactComponent as CloseIcon } from "@/assets/images/CloseIcon.svg";
 import CommonButton from "@/common/CommonButton";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
-import { useNavigate } from "react-router-dom";
+import useAuth from "@/hooks/login/useAuth";
+import { getAnonymousId } from "@/features/search/generateAnonymousId";
 
 import {
     fetchRecentSearches,
@@ -32,9 +33,9 @@ import {
 
 function SearchTerm({onClose, onSearch, setInputValue}) {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const { autoSave, toggleAuto } = useSearchHistory();
-    const userId = useSelector((state) => state.auth.user?.userId || "anonymous");
+    const { user, isLoggedIn } = useAuth();
+    const userId = isLoggedIn ? user?.userId : getAnonymousId();
 
     const [recentKeywords, setRecentKeywords] = useState([]);
     const [popularKeywords, setPopularKeywords] = useState([]);
