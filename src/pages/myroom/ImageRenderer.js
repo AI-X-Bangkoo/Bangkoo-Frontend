@@ -33,7 +33,7 @@ function ImageRenderer({ imageBase64, width, height, detectedObjects, selectedIn
     };
 
 
-    //  useEffect(() => {
+    //useEffect(() => {
     //     if (!canvasRef.current || !imageBase64) return;
     //
     //     const canvas = canvasRef.current;

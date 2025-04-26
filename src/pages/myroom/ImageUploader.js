@@ -73,7 +73,7 @@ const ImageUploader = forwardRef((props, ref) => {
     }, [currentImage]);    
 
     const webglCanvasRef = useRef(null); // 3D Canvas
-    const { initRenderer,loadModel,moveModel, zoom, focusModel, getCurrentModel,  sceneRef, glbModelStateRef, cameraRef, controlsRef,addBoundingBoxToModel  } = useThreeRenderer(webglCanvasRef); // 💡 초기화
+    const { initRenderer,loadModel,moveModel, zoom, focusModel, getCurrentModel,  sceneRef, glbModelStateRef, cameraRef, controlsRef,addBoundingBoxToModel, rendererRef  } = useThreeRenderer(webglCanvasRef); // 💡 초기화
     const transformRef = useRef(null); // 🔥 transform 기억해둠
     const is3DDragging = useRef(false);
     const last3DMouse = useRef({ x: 0, y: 0 });
@@ -90,11 +90,6 @@ const ImageUploader = forwardRef((props, ref) => {
     const [initialDragBbox, setInitialDragBbox] = useState(null);
     const [finalImagePos, setFinalImagePos] = useState(null);
     
-    const canvasSize = {
-        width: containerRef.current?.clientWidth || 1024,
-        height: containerRef.current?.clientHeight || 720,
-    }
-
     useEffect(() => {
         if (!isUploading) return;
         const interval = setInterval(() => {
@@ -220,6 +215,7 @@ const ImageUploader = forwardRef((props, ref) => {
             }
         };
     const handle3DMouseDown = (e) => {
+        setMode("add");
         is3DDragging.current = true;
         last3DMouse.current = { x: e.clientX, y: e.clientY };
     };
@@ -235,6 +231,16 @@ const ImageUploader = forwardRef((props, ref) => {
 
     const handle3DMouseUp = () => {
         is3DDragging.current = false;
+        const model = modelRef.current; // 현재 선택된 3D 모델
+        if (model && ref.current) {
+            const refImage = model.userData?.referenceImage; // 너가 model에 이미지 연결해놨다면
+            if (refImage) {
+                ref.current.reference = refImage;
+                console.log("✅ 3D 드래그 후 reference 자동 세팅 완료:", refImage);
+            } else {
+                console.warn("⚠️ 모델에 referenceImage가 없습니다.");
+            }
+        }
     };
     useEffect(() => {
         if (resetObjectPositionRef) {
@@ -275,6 +281,7 @@ const ImageUploader = forwardRef((props, ref) => {
     }, [resetObjectPositionRef]);
     
     const handleGlbClick = (url, id) => {
+        setMode("add");
         if (!rendererInitialized) {
             initRenderer();
             setRendererInitialized(true);
@@ -561,6 +568,49 @@ const ImageUploader = forwardRef((props, ref) => {
                 })(),
                 restoreOriginalImage,
                 thumbnailControlRef,
+                  merge3DWithCanvas: async () => {
+                        const canvas2d  = canvasRef.current;
+                        const canvas3d  = webglCanvasRef.current;
+                        console.log(webglCanvasRef.current.toDataURL("image/png"));
+                        console.log("💡 canvas 2D", canvas2d.width, canvas2d.height);
+                        console.log("💡 canvas 3D", canvas3d.width, canvas3d.height);
+
+                        if (!canvas2d || !canvas3d) throw new Error("캔버스가 없습니다");
+                        const transform = transformRef.current;
+                        if (!transform || !transform.centerArea) {
+                          throw new Error("CenterArea 정보가 없습니다!");
+                        }
+                      
+                        const { x, y, width, height } = transform.centerArea;
+                        
+                        canvas3d.width = canvas2d.width;
+                        canvas3d.height = canvas2d.height;
+
+                        const renderer = rendererRef.current;
+                        const scene = sceneRef.current;
+                        const camera = cameraRef.current;
+                      
+                        await new Promise((resolve) => requestAnimationFrame(resolve));
+                        renderer.render(scene, camera);
+
+                        const merged = document.createElement("canvas");
+                        merged.width  = canvas2d.width;
+                        merged.height = canvas2d.height;
+                        const ctx = merged.getContext("2d");
+                    
+                        // 2D → 3D 순서로 그리기
+                        ctx.drawImage(canvas2d, 0, 0);
+                        ctx.drawImage(canvas3d, 0, 0);
+                    
+                        // **순수 JS** Promise 생성: 반드시 resolver 함수를 넘깁니다
+                        return new Promise((resolve, reject) => {
+                          merged.toBlob((blob) => {
+                            if (blob) resolve(blob);
+                            else reject(new Error("Blob 생성 실패"));
+                          }, "image/png", 1.0);
+                        });
+                      },
+                      reference: null,
             }));
     const applyAiImage = (aiBase64) => {
         setImageBase64(aiBase64);
@@ -1029,11 +1079,9 @@ transformRef.current && (() => {
     detectedObjects[selectedIndex].bbox,
     transformRef.current,
     clickOffsetRatio,
-    2
+    9999
   );
-  return <img src={detectedObjects[draggingIndex].thumbnail} 
-  style={style} 
-  alt="dragging" />;
+  return <img src={detectedObjects[draggingIndex].thumbnail} style={style} alt="dragging" />;
 })()}
 
 

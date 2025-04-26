@@ -35,7 +35,7 @@ function MyFurnitureList({ furnitureList = [], onPlus, onMinus, onSelect, onGlbS
                         // onMinus={(e) => onMinus(item,index)}
                         onClick={() =>  {
                             const isGlb = item.model3dUrl?.toLowerCase().endsWith(".glb");
-                            console.log(item.image);
+                            console.log(item.model3dUrl?.toLowerCase());
                             if (isGlb) {
                                 console.log("🧩 GLB 파일 클릭됨:", item.model3dUrl);
                                 console.log("클릭한 가구 index",index);
