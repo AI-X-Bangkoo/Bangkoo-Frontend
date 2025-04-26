@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-    setSearchResults,
     setConfirmedKeyword,
-    setKeyword,
     setUploadedImage,
     removeRecentKeyword,
     clearRecentKeywords,
@@ -16,7 +14,7 @@ import {
     RecentTextBox,
     RecentBottomBox,
     SearchScrollBox,
-    KeywordBox,
+    KeywordBox, AutoSaveBox,
 } from "./css/SearchInput.styled";
 import { Text } from "@/common/Typography";
 import CommonIconButton from "@/common/CommonIconButton"
@@ -116,8 +114,17 @@ function SearchTerm({onClose, onSearch, setInputValue}) {
                 </RecentTitleBox>
 
                 <SearchScrollBox>
-                    {recentKeywords.length === 0 ? (
-                        <Text size="xs" color="grey">최근 검색어가 없습니다.</Text>
+                    {!autoSave ? (
+                        <AutoSaveBox>
+                            <Text size="xs">검색어 저장 기능이 꺼져있습니다.</Text>
+                            <Text size="xxs" color="grey" style={{marginTop: 4}}>"자동저장 켜기"를 활성화하면  최근검색어를 확인하실수 있습니다.</Text>
+                        </AutoSaveBox>
+
+                    ) : recentKeywords.length === 0 ? (
+                        <AutoSaveBox>
+                            <Text size="xs" color="grey">최근 검색어가 없습니다.</Text>
+                        </AutoSaveBox>
+
                     ) : (
                         recentKeywords.map((item) => (
                             <RecentTextBox key={item}>
@@ -126,7 +133,6 @@ function SearchTerm({onClose, onSearch, setInputValue}) {
                                     $weight={500}
                                     onClick={() => handleSearch(item)}
                                     style={{ cursor: 'pointer' }}
-
                                 >
                                     {item}
                                 </Text>
