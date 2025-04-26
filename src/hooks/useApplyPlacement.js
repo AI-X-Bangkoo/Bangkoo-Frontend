@@ -16,7 +16,6 @@ import { isoContours } from 'marchingsquares';
 export const useApplyPlacement = ({
   mode,                  // 현재 모드: add | remove | move
   background,            // 캔버스 Ref (AI 처리 대상)
-  reference,             // 추가 시 사용할 참조 이미지 (add 모드에서만 사용)
   canvasSize,            // (미사용) 캔버스 사이즈
   setShowMask,           // 마스킹 UI 표시 토글 함수
   setShowHelper,         // 헬퍼 UI 표시 토글 함수
@@ -31,6 +30,8 @@ export const useApplyPlacement = ({
   const angle = imageUploaderRef.current?.thumbnailRotation || 0;
 
   const { saveState } = usePlacementHistory(sessionIdRef);
+
+  const originalBackgroundRef = useRef(null);
 
   // 🔹 centerArea 부분 캡처 후 Blob으로 변환
   const extractCenterImageBlob = async (canvas, centerArea) => {
@@ -66,15 +67,31 @@ export const useApplyPlacement = ({
 
     // 배경 이미지 그리기
     const { x, y, width, height } = transform.centerArea;
-    canvas.width = outputSize.width;
-    canvas.height = outputSize.height;
-    ctx.drawImage(baseImage, 0, 0, outputSize.width, outputSize.height);
-
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(
+      baseImage,
+      transform.centerArea.x, transform.centerArea.y, transform.centerArea.width, transform.centerArea.height, // source
+      0, 0, outputSize.width, outputSize.height 
+    );
     // 썸네일 위치 계산
+    const scaleX = transform.centerArea.width / canvas.width;
+    const scaleY = transform.centerArea.height / canvas.height;
+    
+    const originalThumbWidth = thumbImg.width;
+    const originalThumbHeight = thumbImg.height;
+    const originalAspect = originalThumbWidth / originalThumbHeight;
+    
+    // 1️⃣ bbox width 기준으로 계산
     const thumbWidth = bbox[2] * transform.scaleX;
-    const thumbHeight = bbox[3] * transform.scaleY;
-    const tx = finalPos.x - thumbWidth * offsetRatio.x;
-    const ty = finalPos.y - thumbHeight * offsetRatio.y;
+    const thumbHeight = thumbWidth / originalAspect;
+
+    const centerX = finalPos.x - x;
+    const centerY = finalPos.y - y;
+    
+    const tx = centerX - thumbWidth * offsetRatio.x;
+    const ty = centerY - thumbHeight * offsetRatio.y;
+
     ctx.drawImage(thumbImg, tx, ty, thumbWidth, thumbHeight);
 
     // 🔥 윤곽선 그리기 (Marching Squares 활용)
@@ -118,6 +135,14 @@ export const useApplyPlacement = ({
   // 🔄 실제 실행 함수
   return async (mode) => {
 
+    const reference = imageUploaderRef.current?.reference;
+
+  //   if (mode === "add" && !reference) {
+  //     alert("참조 이미지(reference)가 필요합니다. 가구를 선택해 주세요!");
+  //     setShowMask(false);
+  //     return;
+  // }
+
     setShowMask(true);
     setShowHelper(false);
     await new Promise((res) => setTimeout(res, 200));
@@ -128,8 +153,15 @@ export const useApplyPlacement = ({
       return;
     }
 
-    let blob = await extractCenterImageBlob(canvas, centerArea);
+    let blob;
 
+    if (mode === 'add' && imageUploaderRef?.current?.merge3DWithCanvas) {
+      blob = await imageUploaderRef.current.merge3DWithCanvas();
+      console.log("🧩 3D + 2D 캔버스 병합 완료");
+      window.open(URL.createObjectURL(blob),"_blank");
+    } else {
+      blob = await extractCenterImageBlob(canvas, centerArea);
+    }
     try {
       if (mode === 'move' && imageUploaderRef?.current) {
         const {
@@ -138,8 +170,12 @@ export const useApplyPlacement = ({
           clickOffsetRatio,
           transform,
           bbox,
-          outputSize,
         } = imageUploaderRef.current;
+
+        const outputSize = {
+          width: transform.centerArea.width,
+          height: transform.centerArea.height,
+        };
 
         if ([thumbnail, finalThumbnailPos, clickOffsetRatio, transform, bbox, outputSize].every(Boolean)) {
           blob = await drawThumbnailOnCanvas(canvas, {
@@ -161,16 +197,31 @@ export const useApplyPlacement = ({
         }
       }
 
-      const base64 = await requestPlacement(mode, blob, reference);
+      console.log("🚩 blob:", blob, blob instanceof Blob);
 
+      let base64;
+      if (mode === "add") {
+        // add 모드일 땐 thumbnail(base64 string) 을 참조로 
+          base64 = await requestPlacement(
+          mode,
+          blob,
+        );
+      } else {
+        // remove / move 모드
+        base64 = await requestPlacement(mode, blob);
+      }
+      console.log("🚩 sending reference:", reference);
       const resultImage = new Image();
       resultImage.onload = async () => {
 
         const ctx = canvas.getContext("2d");
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
+        canvas.width = resultImage.width;
+        canvas.height = resultImage.height;
+
         const transform = drawImageContainWithSideBlur(resultImage, ctx, canvas);
         transformRef.current = transform;
+
+        originalBackgroundRef.current = resultImage;
 
         if (imageUploaderRef?.current) {
           imageUploaderRef.current.updatedTransform?.(transform);
