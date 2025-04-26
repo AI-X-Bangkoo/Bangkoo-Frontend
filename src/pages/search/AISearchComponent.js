@@ -11,6 +11,8 @@ import { searchByText, searchImageUnified } from "@/api/search/search";
 import useSearchHistory from "@/hooks/search/useSearchHistory";
 import useAuth from "@/hooks/login/useAuth";
 import { getAnonymousId } from "@/features/search/generateAnonymousId";
+import { addRecentKeyword } from "@/features/search/searchSlice";
+import { saveSearchLog } from "./SearchLog";
 
 function AISearchComponent({
     mode = "redirect", // "redirect" or "inline"
@@ -21,7 +23,7 @@ function AISearchComponent({
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-    const { addKeyword } = useSearchHistory();
+    const { addKeyword, autoSave } = useSearchHistory();
     const { user, isLoggedIn } = useAuth();
     const userId = isLoggedIn ? user?.userId : getAnonymousId();
     // const userId = user?.userId || "anonymous";
@@ -149,6 +151,16 @@ function AISearchComponent({
             return;
         }
 
+        if (autoSave) {
+            dispatch(addRecentKeyword(searchText));
+
+        if (isLoggedIn) {
+            try {
+                await saveSearchLog(userId, searchText, "text");
+            } catch (e) { console.error(e); }
+            }
+        }
+
         try {
             if (mode === "inline") {
                 if (typeof onSearchStart === "function") onSearchStart();
@@ -159,7 +171,8 @@ function AISearchComponent({
                         imageFile: isFile ? imageFile : null,
                         imageUrl: isUrl ? imagePreviewUrl : null,
                         query: searchText,
-                        userId
+                        userId,
+                        autoSave
                     });
                 } else {
                     result = await searchByText(searchText, userId);
@@ -176,7 +189,8 @@ function AISearchComponent({
                         imageFile,
                         imageUrl: null,
                         query: searchText,
-                        userId
+                        userId,
+                        autoSave
                     });
                     dispatch(setSearchResults(result));
                     dispatch(setConfirmedKeyword(searchText));
