@@ -5,6 +5,7 @@ import CommonIconButton from "../../common/CommonIconButton";
 import { ReactComponent as MinusIcon } from "../../assets/images/MinusIcon.svg";
 
 function MyFurnitureList({ furnitureList = [], onPlus, onMinus, onSelect, onGlbSelect, setMode, setTutorialStep }) {
+    console.log("6.내 가구리스트 렌더, props,furniturerList:", furnitureList);
     return (
         <FurnitureGrid>
             {furnitureList.map((item,index) => (

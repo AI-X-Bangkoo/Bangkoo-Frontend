@@ -29,6 +29,7 @@ export default function MyFurnitureTab({
 }) {
   const dispatch = useDispatch();
   const furnitureList = useSelector((state) => state.furniture.list);
+  console.log("5.내 가구 탭에서 의 랜더, furnitureList:", furnitureList);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   useEffect(() => {
     const parent = canvasRef?.current?.parentElement;
