@@ -175,7 +175,7 @@ function AISearchComponent({
                         autoSave
                     });
                 } else {
-                    result = await searchByText(searchText, userId);
+                    result = await searchByText(searchText, userId, autoSave);
                 }
                 if (typeof onSearchResults === "function") {
                     onSearchResults(result, searchText);
