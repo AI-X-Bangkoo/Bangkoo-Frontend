@@ -239,7 +239,7 @@ const ImageUploader = forwardRef((props, ref) => {
             const refImage = model.userData?.referenceImage;
             if (refImage) {
                 ref.current.reference = refImage;
-                console.log("✅ 3D 드래그 후 reference 자동 세팅 완료:", refImage);
+                // console.log("✅ 3D 드래그 후 reference 자동 세팅 완료:", refImage);
             } else {
                 console.warn("⚠️ 모델에 referenceImage가 없습니다.");
             }
