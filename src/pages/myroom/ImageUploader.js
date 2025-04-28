@@ -600,6 +600,10 @@ const ImageUploader = forwardRef((props, ref) => {
                     canvas3d.width = canvas2d.width;
                     canvas3d.height = canvas2d.height;
 
+                    if (rendererRef.current) {
+                        rendererRef.current.setSize(canvas2d.width, canvas2d.height);
+                      }
+
                     const { x, y, width, height } = transform.centerArea;
                   
                     const renderer = rendererRef.current;
@@ -626,7 +630,7 @@ const ImageUploader = forwardRef((props, ref) => {
                     // 🔄 canvas3D → centerArea만 crop
                     ctx.drawImage(
                       canvas3d,
-                      x, y, width, height,
+                      0, 0, canvas3d.width, canvas3d.height,
                       0, 0, width, height
                     );
                   

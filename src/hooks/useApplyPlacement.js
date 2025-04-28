@@ -198,10 +198,7 @@ export const useApplyPlacement = ({
       }
 
       console.log("🚩 blob:", blob, blob instanceof Blob);
-      
-      imageUploaderRef?.current?.setFinalThumbnailPos?.(null);
-      imageUploaderRef?.current?.setDraggingThumbnailPos?.(null);
-      
+
       let base64;
       if (mode === "add") {
         // add 모드일 땐 thumbnail(base64 string) 을 참조로 
