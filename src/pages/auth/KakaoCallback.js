@@ -29,10 +29,7 @@ const KakaoCallback = () => {
           withCredentials: true,
         })
         .then((res) => {
-          console.log("전체 응답 객체:", res);
-          console.log("headers:", res.headers);
-          console.log("data:", res.data);
-
+          
           const { nickname, email } = res.data;
 
           if (nickname && email) {
