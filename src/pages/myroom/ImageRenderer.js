@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { MainCanvas } from "./css/ImageUploader.styled";
+import { drawImageContainWithSideBlur } from "@/hooks/utils/drawUtils.js";
 
 function ImageRenderer({ imageBase64, width, height, detectedObjects, selectedIndex, onMouseDown, onMouseMove, onMouseUp,canvasRef }) {
     const drawBox = (ctx, bbox) => {
@@ -32,7 +33,7 @@ function ImageRenderer({ imageBase64, width, height, detectedObjects, selectedIn
     };
 
 
-    // useEffect(() => {
+    //useEffect(() => {
     //     if (!canvasRef.current || !imageBase64) return;
     //
     //     const canvas = canvasRef.current;

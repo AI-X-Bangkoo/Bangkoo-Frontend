@@ -31,7 +31,7 @@ function FurnitureController({
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     // 🔹 추후 사용될 참조 이미지 (추가 기능 대비)
-    const reference = null;
+    // const reference = null;
 
     // 🔹 캔버스 사이즈 정보 (현재는 고정값 사용)
     const canvasSize = { width: 1024, height: 720 };
@@ -54,7 +54,6 @@ function FurnitureController({
         sessionIdRef,
         mode,
         background: canvasRef,
-        reference,
         canvasSize,
         setShowMask: () => {},
         setShowHelper: () => {},

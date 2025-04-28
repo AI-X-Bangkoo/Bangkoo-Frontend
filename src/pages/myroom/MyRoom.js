@@ -140,7 +140,7 @@ function MyRoom() {
                     centerArea={centerArea} // ⬅️ 전달 //
                     handleFileChange = {(file) => uploaderRef.current?.handleFileChange(file)}
                     onTutorialAdvance={() => {
-                        if (tutorialStep === "2.2") setTutorialStep("2.3");
+                        if (tutorialStep === "3.5") setTutorialStep("3.6");
                     }} //
                     tutorialStep={tutorialStep}
                     setTutorialStep={setTutorialStep}
@@ -226,6 +226,7 @@ function MyRoom() {
                             // console.log("🔥 GLB 클릭 감지됨:", item);
                             setselectedIndex(index);
                             uploaderRef.current?.loadGlbModel(item.model3dUrl);
+                            uploaderRef.current.reference = item.image;
                             // loadGlbModelToCanvas(item.image); // 예시
                         }}
                         onSelect={(index) => setselectedIndex(index)}
@@ -301,7 +302,16 @@ function MyRoom() {
                 submitText="설정"
                 cancel={false}
                 submit={false}
-                onClose={() => setShowAiRecommended(false)}
+                onClose={() => {
+                    setShowAiRecommended(false);
+
+                    // 튜토리얼
+                    if (tutorialStep === "2.2") {
+                        setTutorialStep("2.3");
+                    } else if (tutorialStep === "3.6") {
+                        setTutorialStep("3.7");
+                    }
+                }}
             >
                 <AiRecommended/>
             </CommonDialog>

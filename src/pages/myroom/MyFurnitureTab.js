@@ -47,6 +47,12 @@ export default function MyFurnitureTab({
     console.log("🧠 [useEffect] mode 변경됨:", mode);
   }, [mode]);
 
+  useEffect(() => {
+    if (uploaderRef?.current) {
+      uploaderRef.current.reference = null; // 혹은 안전한 초기화
+    }
+  }, [uploaderRef]);
+
   const handleClick = (e, item) => {
     e.stopPropagation();
     if (item.isCustom) {
@@ -56,7 +62,9 @@ export default function MyFurnitureTab({
         ? dispatch(removeFurniture(item.id))
         : dispatch(addFurniture(item.id));
     }
-
+    if (uploaderRef?.current) {
+      uploaderRef.current.reference = item.image;
+  }
     // originalId 기준 → SearchDrawer 체크 해제
     if (item.originalId !== undefined) {
       uncheck(item.originalId);
@@ -78,7 +86,6 @@ export default function MyFurnitureTab({
 
   const applyPlacement = useApplyPlacement({
     background: canvasRef,
-    reference,
     canvasSize,
     setShowMask: () => {},
     setShowHelper: () => {},
@@ -143,7 +150,6 @@ export default function MyFurnitureTab({
             // 튜토리얼
             if (typeof setTutorialStep === "function") {
               setTutorialStep("2.2");
-              console.log("🎯 튜토리얼 강제 전환 → 2.2");
             }
           }}
           onSelect={(index) => {
