@@ -149,7 +149,6 @@ export default function MyFurnitureTab({
             // 튜토리얼
             if (typeof setTutorialStep === "function") {
               setTutorialStep("2.2");
-              console.log("🎯 튜토리얼 강제 전환 → 2.2");
             }
           }}
           onSelect={(index) => {
