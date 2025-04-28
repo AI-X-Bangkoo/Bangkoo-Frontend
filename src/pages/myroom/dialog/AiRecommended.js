@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
     AiRecommendedRoot,
     FurnitureImageStyled,
@@ -7,11 +7,9 @@ import {
 } from "./css/AiRecommended.styled";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import {Text} from "@/common/Typography";
+import { Text } from "@/common/Typography";
 import { useDispatch } from "react-redux";
 import { startAnalysis, endAnalysis } from "@/features/ai/aiSlice";
-
-import TestImage from "../../../assets/images/TestImage.png";
 
 function AiRecommended() {
     const dispatch = useDispatch();
@@ -33,7 +31,6 @@ function AiRecommended() {
         }, 500);
 
         return () => clearInterval(timer);
-
     }, [dispatch]);
 
     const sliderSettings = {
@@ -49,9 +46,22 @@ function AiRecommended() {
         pauseOnHover: false,
     };
 
-    const images = Array.from({ length: 10 }).map((_, i) => (
+    const imageUrls = [
+        "https://www.ikea.com/kr/ko/images/products/antilop-highchair-with-safety-belt-white-silver-colour__0727491_pe735716_s5.jpg",
+        "https://www.ikea.com/kr/ko/images/products/antilop-supporting-cushion-and-cover-multicolour__1250501_pe923783_s5.jpg",
+        "https://www.ikea.com/kr/ko/images/products/foderskopa-cable-organizer-bag-black__1165769_pe890944_s5.jpg",
+        "https://www.ikea.com/kr/ko/images/products/goersnygg-carrier-bag-large-light-beige__1013442_pe829201_s5.jpg",
+        "https://www.ikea.com/kr/ko/images/products/pillerstarr-cooling-bag-patterned-blue__1383823_pe962686_s5.jpg",
+        "https://www.ikea.com/kr/ko/images/products/eftertraeda-bag-white__0915950_pe784933_s5.jpg",
+        "https://www.ikea.com/kr/ko/images/products/ingolf-bar-stool-with-backrest-white__0728062_pe736035_s5.jpg",
+        "https://www.ikea.com/kr/ko/images/products/roenninge-bar-table-birch__1044552_pe842223_s5.jpg",
+        "https://www.ikea.com/kr/ko/images/products/norberg-wall-mounted-drop-leaf-table-white__0736622_pe740674_s5.jpg",
+        "https://www.ikea.com/kr/ko/images/products/lillanaes-bar-stool-chrome-plated-gunnared-dark-grey__1150252_pe884439_s5.jpg",
+    ];
+
+    const images = imageUrls.map((url, i) => (
         <ImageWrapper key={i}>
-            <FurnitureImageStyled src={TestImage} alt={`가구 ${i + 1}`} />
+            <FurnitureImageStyled src={url} alt={`가구 ${i + 1}`} />
         </ImageWrapper>
     ));
 
