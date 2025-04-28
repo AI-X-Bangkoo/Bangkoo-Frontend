@@ -10,7 +10,8 @@ import { BoxHelper } from 'three';
 import { ACESFilmicToneMapping } from 'three/src/constants.js';
 // import { sRGBEncoding } from 'three/src/constants.js';
 
-export const useThreeRenderer = (canvasRef) => {
+export const useThreeRenderer = (canvasRef,options = {}) => {
+    const getCenterArea = options.getCenterArea ?? (() => null);
     const sceneRef = useRef();
     const cameraRef = useRef();
     const rendererRef = useRef();
@@ -101,6 +102,17 @@ export const useThreeRenderer = (canvasRef) => {
     const animate = () => {
         requestAnimationFrame(animate);
         controlsRef.current?.update();
+
+        // ✅ WebGL 렌더링 마스크 영역 제한
+
+        const region = getCenterArea(); // ⬅️ 외부에서 전달된 centerArea 사용
+        if (region && rendererRef.current) {
+            const { x, y, width, height } = region;
+            rendererRef.current.setScissorTest(true);
+            rendererRef.current.setScissor(x, y, width, height);
+            rendererRef.current.setViewport(x, y, width, height);
+        }
+
         // ✅ 바운딩 박스 업데이트
         if (boundingBoxHelperRef.current && modelRef.current) {
             boundingBoxHelperRef.current.update(); // 💡 핵심

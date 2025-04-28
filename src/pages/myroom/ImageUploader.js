@@ -76,7 +76,7 @@ const ImageUploader = forwardRef((props, ref) => {
     }, [currentImage]);    
 
     const webglCanvasRef = useRef(null); // 3D Canvas
-    const { initRenderer,loadModel,moveModel, zoom, focusModel, getCurrentModel,  sceneRef, glbModelStateRef, cameraRef, controlsRef,addBoundingBoxToModel, rendererRef  } = useThreeRenderer(webglCanvasRef); // 💡 초기화
+    const { initRenderer,loadModel,moveModel, zoom, focusModel, getCurrentModel,  sceneRef,rendererRef, glbModelStateRef, cameraRef, controlsRef,addBoundingBoxToModel  } = useThreeRenderer(webglCanvasRef,{getCenterArea:() => transformRef.current?.centerArea}); // 💡 초기화
     const transformRef = useRef(null); // 🔥 transform 기억해둠
     const is3DDragging = useRef(false);
     const last3DMouse = useRef({ x: 0, y: 0 });
@@ -558,6 +558,16 @@ const ImageUploader = forwardRef((props, ref) => {
                     const transform = drawImageContainWithSideBlur(bgImageRef.current, ctx, canvas);
                     transformRef.current = transform;
                   },
+                getCanvasMaskRegion: () => {
+                    if (!transformRef.current) return null;
+                    const { offsetX, offsetY, centerArea } = transformRef.current;
+                    return {
+                        x: offsetX,
+                        y: offsetY,
+                        width: centerArea.width,
+                        height: centerArea.height,
+                    };
+                },
                 finalThumbnailPos,
                 clickOffsetRatio,
                 thumbnailScale,

@@ -15,7 +15,7 @@ import api from "./axios";
  * @param {Blob=} referenceBlob - add일 때 필요한 참조 이미지
  * @returns {Promise<string>} base64 인코딩된 이미지 결과
  */
-export async function requestPlacement(mode, backgroundBlob, referenceBlob = null) {
+export async function requestPlacement(mode, backgroundBlob, referenceBlob = null,width,height) {
 
   if (typeof backgroundBlob === "string") {
     backgroundBlob = await (await fetch(backgroundBlob)).blob();
@@ -28,6 +28,8 @@ export async function requestPlacement(mode, backgroundBlob, referenceBlob = nul
   const formData = new FormData();
   formData.append("mode", mode);
   formData.append("background", backgroundBlob, "bg.png");
+  formData.append("width", width);
+  formData.append("height", height);
 
   // reference 이미지는 add 모드일 때만 사용
   // if (mode === "add" && referenceBlob) {
