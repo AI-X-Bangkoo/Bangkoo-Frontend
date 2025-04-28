@@ -73,10 +73,6 @@ const useAuth = () => {
 
     const userId = email.split("@")[0];          // email에서 userId 파싱
     const role = Cookies.get("role");  // 쿠키에서 role 읽기
-    // const userRole = role || 'user'; // 백엔드에서 role이 없으면 'user'로 기본 설정
-    // console.log('📦 최종 userRole:', userRole);
-
-    console.log("✅ 로그인 성공:", { nickname, email, userId, role });
 
     // Redux에 로그인 정보 저장
     dispatch(setLoginInfo({
@@ -89,8 +85,6 @@ const useAuth = () => {
     document.cookie = `nickname=${encodeURIComponent(nickname)}; path=/`;
     document.cookie = `role=${encodeURIComponent(role)}; path=/`;
     document.cookie = `userId=${encodeURIComponent(userId)}; path=/`;
-
-    console.log('쿠키 저장:', document.cookie);
   };
 
   // 로그인 상태 초기화 (쿠키에서 상태 확인)

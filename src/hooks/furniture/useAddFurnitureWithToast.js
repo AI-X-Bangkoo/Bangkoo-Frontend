@@ -14,8 +14,9 @@ export function useAddFurnitureWithToast() {
             type: "hoverMinus",
             isCustom: true,
         };
-
+        console.log("2.디스패치 전에 토스트 내부:",newItem);
         dispatch(addFurnitureAction(newItem));
+        console.log("3.디스패치 후의 토스트 내부:");
 
         toast(({ closeToast }) => (
             <CustomToast
