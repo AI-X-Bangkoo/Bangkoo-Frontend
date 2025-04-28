@@ -157,8 +157,8 @@ export const useApplyPlacement = ({
 
     if (mode === 'add' && imageUploaderRef?.current?.merge3DWithCanvas) {
       blob = await imageUploaderRef.current.merge3DWithCanvas();
-      console.log("🧩 3D + 2D 캔버스 병합 완료");
-      window.open(URL.createObjectURL(blob),"_blank");
+      // console.log("🧩 3D + 2D 캔버스 병합 완료");
+      // window.open(URL.createObjectURL(blob),"_blank");
     } else {
       blob = await extractCenterImageBlob(canvas, centerArea);
     }
@@ -197,11 +197,8 @@ export const useApplyPlacement = ({
         }
       }
 
-      console.log("🚩 blob:", blob, blob instanceof Blob);
-      
-      imageUploaderRef?.current?.setFinalThumbnailPos?.(null);
-      imageUploaderRef?.current?.setDraggingThumbnailPos?.(null);
-      
+      // console.log("🚩 blob:", blob, blob instanceof Blob);
+
       let base64;
       if (mode === "add") {
         // add 모드일 땐 thumbnail(base64 string) 을 참조로 
@@ -213,7 +210,6 @@ export const useApplyPlacement = ({
         // remove / move 모드
         base64 = await requestPlacement(mode, blob);
       }
-      console.log("🚩 sending reference:", reference);
 
       const resultImage = new Image();
       resultImage.onload = async () => {

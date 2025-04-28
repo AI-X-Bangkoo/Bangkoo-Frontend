@@ -239,7 +239,7 @@ const ImageUploader = forwardRef((props, ref) => {
             const refImage = model.userData?.referenceImage;
             if (refImage) {
                 ref.current.reference = refImage;
-                console.log("✅ 3D 드래그 후 reference 자동 세팅 완료:", refImage);
+                // console.log("✅ 3D 드래그 후 reference 자동 세팅 완료:", refImage);
             } else {
                 console.warn("⚠️ 모델에 referenceImage가 없습니다.");
             }
@@ -600,6 +600,10 @@ const ImageUploader = forwardRef((props, ref) => {
                     canvas3d.width = canvas2d.width;
                     canvas3d.height = canvas2d.height;
 
+                    if (rendererRef.current) {
+                        rendererRef.current.setSize(canvas2d.width, canvas2d.height);
+                      }
+
                     const { x, y, width, height } = transform.centerArea;
                   
                     const renderer = rendererRef.current;
@@ -626,7 +630,7 @@ const ImageUploader = forwardRef((props, ref) => {
                     // 🔄 canvas3D → centerArea만 crop
                     ctx.drawImage(
                       canvas3d,
-                      x, y, width, height,
+                      0, 0, canvas3d.width, canvas3d.height,
                       0, 0, width, height
                     );
                   
