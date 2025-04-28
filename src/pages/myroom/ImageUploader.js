@@ -709,9 +709,9 @@ const ImageUploader = forwardRef((props, ref) => {
 
     console.log("현재 백엔드에서 보내는 file:",file);
 
-    // const formDataRecommend = new FormData();
-    // formDataRecommend.append("file",file);
-    // console.log("AI서버로 보낼 데이터:",formDataRecommend);
+    const formDataRecommend = new FormData();
+    formDataRecommend.append("file",file);
+    console.log("AI서버로 보낼 데이터:",formDataRecommend);
 
     try {
      // 두 개의 요청을 병렬로 보내기 위해 Promise.all 사용
@@ -721,10 +721,10 @@ const ImageUploader = forwardRef((props, ref) => {
      console.log("응답:", resDetect);
      console.groupEnd();
 
-    //  console.group("📡 [recommend/from_image 요청 및 응답]");
-    //  const recommendResult = await recommendFromImage(formDataRecommend);
-    //  console.log("추천 응답:", recommendResult);
-    //  console.groupEnd();
+     console.group("📡 [recommend/from_image 요청 및 응답]");
+     const recommendResult = await recommendFromImage(formDataRecommend);
+     console.log("추천 응답:", recommendResult);
+     console.groupEnd();
 
 
         // 첫 번째 요청 응답 처리 (detect_all_base64)
@@ -733,12 +733,12 @@ const ImageUploader = forwardRef((props, ref) => {
             restoreInitialImageRef.current = restoreOriginalImage;
           }
         
-        //rediskey를 부모컴포넌트로 전달
+        // rediskey를 부모컴포넌트로 전달
         // const key = recommendResult.data.redisKey; 
-        // const key = recommendResult.redisKey;
-        // if(typeof onRedisKey === "function"){
-        //     onRedisKey(key);
-        // }
+        const key = recommendResult.redisKey;
+        if(typeof onRedisKey === "function"){
+            onRedisKey(key);
+        }
 
         const results = resDetect.data.results.map((obj, idx) => ({
             ...obj,
@@ -759,9 +759,9 @@ const ImageUploader = forwardRef((props, ref) => {
         filtered.sort((a, b) => a.thumbIndex - b.thumbIndex);
 
         // 두 번째 요청 응답 처리 (recommend/from-image)
-        // const recommendedProducts = recommendResult.data; // 추천된 가구 리스트
+        const recommendedProducts = recommendResult.data; // 추천된 가구 리스트
 
-        // console.log("추천된 제품:", recommendedProducts);
+        console.log("추천된 제품:", recommendedProducts);
         console.log("분석된 결과:", filtered);
 
         // 이후 작업 (예: 상태 업데이트 등)

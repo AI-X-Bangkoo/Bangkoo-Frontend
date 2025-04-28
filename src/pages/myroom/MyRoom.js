@@ -53,7 +53,7 @@ function MyRoom() {
 
     const [showAiRecommended, setShowAiRecommended] = useState(false);
 
-    const [redisKey, setRedisKey] = useState(undefined);            //rediskey관련 상태 선언언
+    const [redisKey, setRedisKey] = useState(undefined);            //rediskey관련 상태 선언
 
 
     // 이미지 등록 시 상태 값 체크용도 "김범석"
