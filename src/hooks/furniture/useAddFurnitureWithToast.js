@@ -12,7 +12,7 @@ export function useAddFurnitureWithToast() {
         const newItem = {
             ...item,
             id: Date.now(),
-            type: "hoverMinus",
+            type: "addFurniture",
             isCustom: true,
             name: item.이름,
             description: item.설명,

@@ -20,38 +20,38 @@ function AIFurnitureList({ furnitureList = [], onPlus }) {
   return (
     <FurnitureGrid>
       {furnitureList.map((item) => {
-        const price =
-          item.가격 === "정보 없음"
+        const price = item.price
+          ? item.price === "정보 없음"
             ? "가격 정보 없음"
-            : parseInt(item.가격.replace(/[^0-9]/g, ""), 10);
+            : parseInt(item.price.replace(/[^0-9]/g, ""), 10)
+          : "가격 정보 없음"; // 가격 정보가 undefined일 경우 처리
 
         return (
           <TextBox
-            key={item.링크}
-            onMouseEnter={() => setHoveredItemId(item.링크)}
+            key={item._id} // 고유한 _id를 key로 사용
+            onMouseEnter={() => setHoveredItemId(item._id)}
             onMouseLeave={() => setHoveredItemId(null)}
           >
             <ImageWrapper>
-              {/* CommonImageBox 위에 HoverReason이 겹치도록 배치 */}
               <CommonImageBox
-                image={item.이미지}
+                image={item.image}
                 type={item.type || "aiPlus"} // 기본값으로 aiPlus 사용
                 onPlus={() => {
-                    console.log("1. 추가하려는 아이템 호출:", item)
-                    onPlus(item)   
+                    console.log("1. 추가하려는 아이템 호출:", item);
+                    onPlus(item);
                 }}
                 recommendationReason={
-                  hoveredItemId === item.링크 ? item.추천이유 : null
+                  hoveredItemId === item._id ? item.recommendationReason : null
                 }
               />
-              {/* 아래는 CommonImageBox 내부에서 렌더링되는 방식이라 이 위치는 생략 가능 */}
-              {/* hoveredItemId === item.링크 && (
-                <HoverReason>추천 이유: {item.추천이유}</HoverReason>
-              ) */}
             </ImageWrapper>
 
-            <ItemName onClick={() => handleLinkClick(item.링크)}>{item.이름}</ItemName>
-            <ItemDescription onClick={() => handleLinkClick(item.링크)}>{item.설명}</ItemDescription>
+            <ItemName onClick={() => handleLinkClick(item.link)}>
+              {item.name}
+            </ItemName>
+            <ItemDescription onClick={() => handleLinkClick(item.link)}>
+              {item.description}
+            </ItemDescription>
             <ItemPrice>
               {typeof price === "number" ? `₩ ${price.toLocaleString()}` : price}
             </ItemPrice>
