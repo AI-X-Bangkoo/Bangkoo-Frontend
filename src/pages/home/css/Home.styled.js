@@ -45,7 +45,7 @@ export const BannerText = styled.p`
   margin-bottom: ${({ theme }) => theme.spacing.lg};
   text-shadow: 0 3px 4px rgba(0, 0, 0, 0.25);
   & span {
-    font-weight: 900;
+    font-weight: 600;
   }
 
   ${media.tablet`

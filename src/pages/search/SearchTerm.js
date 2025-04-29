@@ -188,7 +188,7 @@ function SearchTerm({onClose, onSearch, setInputValue}) {
                             width="90px"
                             height="30px"
                             fontSize="xxs"
-                            fontWeight={900}
+                            fontWeight={700}
                             radius="full"
                             type="outline"
                             onClick={() => handleSearch(keyword)}
