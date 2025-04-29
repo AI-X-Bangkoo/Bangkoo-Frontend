@@ -157,7 +157,7 @@ function SearchPage() {
                                     width="100%"
                                     height="44px"
                                     fontSize="xs"
-                                    fontWeight={900}
+                                    fontWeight={700}
                                     radius="sm"
                                     type="fill"
                                     onClick={goToRoom}

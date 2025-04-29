@@ -54,7 +54,7 @@ export const ProgressBarWrapper = styled.div`
     text-align: center;
     margin-bottom: ${({ theme }) => theme.spacing.sm};;
     & span {
-      font-weight: 900;
+      font-weight: 700;
     }
   }
 `;

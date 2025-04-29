@@ -22,7 +22,7 @@ function StartComponent() {
                 width="220px"
                 height="50px"
                 fontSize="base"
-                fontWeight={900}
+                fontWeight={700}
                 radius="full"
                 type="fill"
                 onClick={goToRoom}

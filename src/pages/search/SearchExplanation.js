@@ -49,8 +49,8 @@ function SearchExplanation({ visible }) {
 
     return (
         <ExplanationBox>
-            <Text size="md" $weight={900}>가구 AI 검색</Text>
-            <Text size="xs" $weight={700}>
+            <Text size="md" $weight={700}>가구 AI 검색</Text>
+            <Text size="xs" $weight={600}>
                 원하는 가구를 자연스럽게 설명해보세요.<br />
                 새로워진 AI 검색엔진으로 원하는 가구를 찾아드립니다.
             </Text>

@@ -239,6 +239,10 @@ export const PopularityBox = styled.div`
   & p {
     margin-bottom: ${({ theme }) => theme.spacing.lg};
   }
+  
+  & button {
+    height: auto;
+  }
 `;
 
 // 카테고리
