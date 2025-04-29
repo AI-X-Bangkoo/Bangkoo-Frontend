@@ -110,7 +110,7 @@ export const useThreeRenderer = (canvasRef,options = {}) => {
             const { x, y, width, height } = region;
             rendererRef.current.setScissorTest(true);
             rendererRef.current.setScissor(x, y, width, height);
-            rendererRef.current.setViewport(x, y, width, height);
+            // rendererRef.current.setViewport(x, y, width, height);
         }
 
         // ✅ 바운딩 박스 업데이트

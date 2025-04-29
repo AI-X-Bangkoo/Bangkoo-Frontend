@@ -1,19 +1,24 @@
 import React from "react";
-import {AddItem, FurnitureGrid, ImageBox} from "./css/MyRoom.styled";
+import { AddItem, FurnitureGrid, ImageBox } from "./css/MyRoom.styled";
 import CommonImageBox from "../../common/CommonImageBox";
 import CommonIconButton from "../../common/CommonIconButton";
 import { ReactComponent as MinusIcon } from "../../assets/images/MinusIcon.svg";
+import useFurnitureItem from "../../hooks/furniture/useFurnitureItems"; // 훅 사용
 
-function MyFurnitureList({ furnitureList = [], onPlus, onMinus, onSelect, onGlbSelect, setMode, setTutorialStep }) {
-    console.log("6.내 가구리스트 렌더, props,furniturerList:", furnitureList);
+function MyFurnitureList({ furnitureList = [], onPlus, onSelect, onGlbSelect, setMode, setTutorialStep }) {
+    // 훅에서 반환된 값 사용
+    const { furnitureItems, handleminus } = useFurnitureItem(furnitureList); // `furnitureList`를 `furnitureItems`로 변환
+
+    console.log("6.내 가구리스트 렌더, props, furnitureList:", furnitureList);
+
     return (
         <FurnitureGrid>
-            {furnitureList.map((item,index) => (
+            {furnitureItems.map((item, index) => (
                 <ImageBox
-                    className={`furniture-item ${index === 0 ? "first-item" : ""} ${index === furnitureList.length - 1 ? "last-item" : ""}`}
+                    className={`furniture-item ${index === 0 ? "first-item" : ""} ${index === furnitureItems.length - 1 ? "last-item" : ""}`}
                     key={item.id}
                 >
-                    {item.type === "addFurniture" &&
+                    {item.type === "addFurniture" && (
                         <AddItem>
                             <CommonIconButton
                                 icon={<MinusIcon />}
@@ -21,51 +26,32 @@ function MyFurnitureList({ furnitureList = [], onPlus, onMinus, onSelect, onGlbS
                                 height="28px"
                                 type="full"
                                 color="red"
-                                onClick={()=> onMinus(item,index)}
+                                onClick={() => handleminus(item.image)} // 아이템 제거 함수 호출
                             />
                         </AddItem>
-                    }
+                    )}
                     <CommonImageBox
-                        // key={item.id}
                         image={item.image}
                         type={item.type}
-                        item={item}                     // ✅ 추가
-                        index={index}                   // ✅ 추가
+                        item={item}
+                        index={index}
                         setMode={setMode}
-                        onPlus={(e) => onPlus(item,index)}
-                        onMinus={(item, index) => onMinus(item, index)}
-                        onClick={() =>  {
+                        onPlus={(e) => onPlus(item, index)}
+                        onMinus={(item, index) => handleminus(item, index)} // `handleminus` 사용
+                        onClick={() => {
                             const isGlb = item.model3dUrl?.toLowerCase().endsWith(".glb");
-                            console.log(item.model3dUrl?.toLowerCase());
                             if (isGlb) {
-                                console.log("🧩 GLB 파일 클릭됨:", item.model3dUrl);
-                                console.log("클릭한 가구 index",index);
                                 onGlbSelect(item, index);
-                                // 여기에 GLB 전용 이벤트 추가
-                                // 예: setSelectedModel(item.image) or loadGLBModel(item.image)
                             } else {
-                                console.log("🖼️ JPG 이미지 클릭:", item.image);
-                                console.log("클릭한 가구 index",index);
-                                onSelect(index);  // 기존 이미지 선택 처리
+                                onSelect(index);
                             }
 
                             // 튜토리얼: 마지막 아이템 클릭 시 step3.5로
-                            const isLast = index === furnitureList.length - 1;
+                            const isLast = index === furnitureItems.length - 1;
                             if (isLast) {
                                 setTutorialStep && setTutorialStep("3.5");
                             }
-
-                            // onSelect(index);
-                        }} // ✅ 클릭 핸들러 연결
-
-                        onPlusMinus={(e) => {  // 지은 추가
-                            if (item.type === "hoverMinus") {
-                                onMinus(item, index);
-                            } else if (item.type === "hoverPlus") {
-                                onPlus(item, index);
-                            }
                         }}
-
                     />
                 </ImageBox>
             ))}

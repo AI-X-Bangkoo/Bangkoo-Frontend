@@ -28,8 +28,8 @@ function AIFurnitureList({ furnitureList = [], onPlus }) {
 
           return (
               <TextBox
-                  key={item._id} // 고유한 _id를 key로 사용
-                  onMouseEnter={() => setHoveredItemId(item._id)}
+                  key={item.링크}
+                  onMouseEnter={() => setHoveredItemId(item.링크)}
                   onMouseLeave={() => setHoveredItemId(null)}
               >
                 <ImageWrapper>
@@ -40,10 +40,13 @@ function AIFurnitureList({ furnitureList = [], onPlus }) {
                         console.log("1. 추가하려는 아이템 호출:", item);
                         onPlus(item);
                       }}
-                      recommendationReason={
-                        hoveredItemId === item._id ? item.추천이유 : null
-                      }
                   />
+                  {/* HoverReason 컴포넌트 추가 */}
+                  {hoveredItemId === item.링크 && (
+                      <HoverReason>
+                        {item.추천이유} {/* 추천 이유 표시 */}
+                      </HoverReason>
+                  )}
                 </ImageWrapper>
 
                 <ItemName onClick={() => handleLinkClick(item.링크)}>
