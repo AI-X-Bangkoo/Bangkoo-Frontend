@@ -9,15 +9,11 @@ const furnitureSlice = createSlice({
     initialState,
     reducers: {
         addFurniture: (state, action) => {
-            // 아이템을 추가하는 방식으로 수정
-            state.list.push(action.payload);
+            state.list = [...state.list, action.payload];
         },
         removeFurniture: (state, action) => {
-            state.list = state.list.map(item =>
-                item.id === action.payload
-                    ? { ...item, type: 'eyeClosed' } // 아이콘 보이게 변경
-                    : item
-            );
+            // 🔥 진짜 삭제하는 버전
+            state.list = state.list.filter(item => item.id !== action.payload);
         },
         toggleFurniture: (state, action) => {
             state.list = state.list.map(item =>
@@ -33,7 +29,7 @@ const furnitureSlice = createSlice({
             const newItem = action.payload;
             const exists = state.list.some(item => item.id === newItem.id);
             if (!exists) {
-                state.list.push(newItem);
+                state.list = [...state.list, newItem];
             }
         },
     },
