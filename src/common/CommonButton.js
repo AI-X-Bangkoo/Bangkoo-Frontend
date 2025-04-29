@@ -9,7 +9,7 @@ const CommonButton = ({
           bgColor,
           fontSize,
           fontWeight,
-          borderRadius,
+          radius,
           color,
           type = "fill",
           onClick,
@@ -22,7 +22,7 @@ const CommonButton = ({
             $bgColor={bgColor}
             fontSize={fontSize}
             fontWeight={fontWeight}
-            $borderRadius={borderRadius}
+            $borderRadius={radius}
             color={color}
             type={type}
             onClick={onClick}
