@@ -8,7 +8,7 @@ export const DrawerRoot = styled.div`
   height: 100%;
   background: rgba(0, 0, 0, ${({ $isOpen }) => ($isOpen ? 0 : 0.35)});
   transition: background 0.4s ease-in-out;
-  z-index: 998;
+  z-index: 1998;
 `;
 
 export const DrawerWrapper = styled.div`
